@@ -1,0 +1,34 @@
+{
+  "name": "force-bridge",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/**",
+    "apps/**"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.13.14",
+    "@babel/core": "^7.13.15",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-typescript": "^7.13.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "eslint": "^7.24.0",
+    "eslint-formatter-pretty": "^4.0.0",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.5.4",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "build:lib": "yarn run build:lib:js && yarn run build:lib:types",
+    "build:lib:js": "babel --relative packages/**/src -d ../lib --extensions .ts --ignore \"packages/**/*.spec.ts\"",
+    "build:lib:types": "tsc -b tsconfig.build.json",
+    "clean:lib": "rimraf packages/*/lib packages/*/*.tsbuildinfo",
+    "lint": "eslint --color --format=pretty packages/*/src/**/*.{ts,tsx} --color --format=pretty",
+    "test": "jest"
+  }
+}

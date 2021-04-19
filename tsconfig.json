@@ -1,0 +1,26 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "pretty": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "preserveWatchOutput": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@force-bridge/*": ["./packages/*/src"]
+    }
+  },
+  "references": [{ "path": "tsconfig.build.json"}, { "path": "packages/commons" }]
+}
