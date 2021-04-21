@@ -1,15 +1,31 @@
-import { API } from '@force-bridge/commons';
+import { API, XChainNetwork } from '@force-bridge/commons';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { GlobalSetting, useGlobalSetting } from './setting';
 import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector';
-import { createDummyAPI } from 'suite/apiv1';
+import { createDummyAPI } from 'suite/dummy/apiv1';
 import { DummyWallet } from 'xchain/dummy/DummyWallet';
 
+export enum BridgeDirection {
+  // bridge in to nervos
+  // XChain -> Nervos
+  In = 'In',
+  // bridge out to xchain
+  // Nervos -> XChain
+  Out = 'Out',
+}
+
 interface ForceBridgeState {
-  api: API.ForceBridgeAPIV1;
-  wallet: Wallet;
   globalSetting: GlobalSetting;
+
+  network: XChainNetwork['Network'];
+  setNetwork: (network: XChainNetwork['Network']) => void;
+
+  direction: BridgeDirection;
+  setDirection: (direction: BridgeDirection) => void;
+
+  api: API.ForceBridgeAPIV1;
   walletConnectStatus: ConnectStatus;
+  wallet: Wallet;
   signer: TwoWaySigner | undefined;
 }
 
@@ -20,6 +36,10 @@ export const ForceBridgeProvider: React.FC = (props) => {
   const wallet = useMemo<Wallet>(() => new DummyWallet(), []);
 
   const [globalSetting] = useGlobalSetting();
+
+  const [network, setNetwork] = useState<XChainNetwork['Network']>('Ethereum');
+  const [direction, setDirection] = useState<BridgeDirection>(BridgeDirection.In);
+
   const [signer, setSigner] = useState<TwoWaySigner | undefined>();
   const [walletConnectStatus, setWalletConnectStatus] = useState<ConnectStatus>(ConnectStatus.Disconnected);
 
@@ -28,11 +48,19 @@ export const ForceBridgeProvider: React.FC = (props) => {
     wallet.on('connectStatusChanged', setWalletConnectStatus);
   }, [wallet]);
 
-  return (
-    <Context.Provider value={{ api, wallet, globalSetting, signer, walletConnectStatus }}>
-      {props.children}
-    </Context.Provider>
-  );
+  const state: ForceBridgeState = {
+    api,
+    wallet,
+    globalSetting,
+    signer,
+    walletConnectStatus,
+    setDirection,
+    setNetwork,
+    network,
+    direction,
+  };
+
+  return <Context.Provider value={state}>{props.children}</Context.Provider>;
 };
 
 export function useForceBridge(): ForceBridgeState {
