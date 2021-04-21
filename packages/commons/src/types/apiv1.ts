@@ -6,12 +6,14 @@ export enum BridgeTransactionStatus {
   Failed = 'Failed',
 }
 
+/* unix timestamp in milliseconds */
+type Timestamp = number;
 export type TransactionIdent = { txId: string };
 export type TransactionSummary = {
   fromAsset: AllNetworks['FungibleAssetWithAmount'];
   toAsset: AllNetworks['FungibleAssetWithAmount'];
-  fromTransaction: TransactionIdent;
-  toTransaction: TransactionIdent;
+  fromTransaction: TransactionIdent & { timestamp?: Timestamp };
+  toTransaction?: TransactionIdent & { timestamp?: Timestamp };
 };
 export type FailedTransactionSummary = TransactionSummary & { status: BridgeTransactionStatus.Failed; message: string };
 export type UnFailedTransactionSummary = TransactionSummary & {
@@ -65,6 +67,11 @@ export type GetBridgeTransactionStatusPayload<N extends AllNetworks> = {
   txId: string;
 };
 
+export type GetBridgeTransactionSummariesPayload = {
+  userIdent: NervosNetwork['UserIdent'];
+  network: XChainNetwork['Network'];
+};
+
 export type GetBridgeTransactionStatusResponse<N extends AllNetworks> = {
   network: N['Network'];
   status: BridgeTransactionStatus;
@@ -88,7 +95,8 @@ export interface ForceBridgeAPIV1 {
    * get the status of a transaction
    */
   getBridgeTransactionStatus: (payload: GetBridgeTransactionStatusPayload<AllNetworks>) => Promise<GetBridgeTransactionStatusResponse<AllNetworks>>;
-  getBridgeTransactionSummaries: (payload: NervosNetwork['UserInfo']) => Promise<TransactionSummaryWithStatus[]>;
+  // prettier-ignore
+  getBridgeTransactionSummaries: (payload: GetBridgeTransactionSummariesPayload) => Promise<TransactionSummaryWithStatus[]>;
 
   // get an asset list, or if no `name` param is passed in, return a default list of whitelisted assets
   getAssetList: (name?: string) => Promise<XChainNetwork['AssetInfo'][]>;
