@@ -1,10 +1,11 @@
+import { NetworkTypes } from '@force-bridge/commons';
 import { DummyWalletSigner } from './DummyWalletSigner';
 import { AbstractWalletConnector } from 'interfaces/WalletConnector';
 import { unimplemented } from 'interfaces/errors';
 
 const asyncSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export class DummyWallet extends AbstractWalletConnector {
+export class DummyWallet extends AbstractWalletConnector<NetworkTypes> {
   constructor() {
     super();
     console.log('waiting for connect');
@@ -12,7 +13,7 @@ export class DummyWallet extends AbstractWalletConnector {
 
   _connect(): Promise<void> {
     asyncSleep(2000 * Math.random()).then(() =>
-      super.changeSigner(new DummyWalletSigner(Math.random() + 'rand address')),
+      super.changeSigner(new DummyWalletSigner({ codeHash: '0x', hashType: 'type', args: '0x' }, { address: '0x' })),
     );
     return Promise.resolve(undefined);
   }

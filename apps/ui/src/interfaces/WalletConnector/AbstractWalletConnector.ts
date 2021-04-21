@@ -1,3 +1,4 @@
+import { NetworkBase } from '@force-bridge/commons';
 import { EventEmitter } from 'eventemitter3';
 import { ConnectStatus, TwoWaySigner, Wallet } from './types';
 
@@ -18,9 +19,7 @@ import { ConnectStatus, TwoWaySigner, Wallet } from './types';
  * }
  * ```
  */
-export abstract class AbstractWalletConnector<Raw = unknown, Signed = unknown>
-  extends EventEmitter
-  implements Wallet<Raw, Signed> {
+export abstract class AbstractWalletConnector<T extends NetworkBase> extends EventEmitter implements Wallet<T> {
   status: ConnectStatus = ConnectStatus.Disconnected;
 
   connect(): void {
@@ -48,7 +47,7 @@ export abstract class AbstractWalletConnector<Raw = unknown, Signed = unknown>
     this.emit('connectStatusChanged', connectStatus);
   }
 
-  protected changeSigner(signer: TwoWaySigner<Raw, Signed> | undefined): void {
+  protected changeSigner(signer: TwoWaySigner<T> | undefined): void {
     this.emit('signerChanged', signer);
   }
 
