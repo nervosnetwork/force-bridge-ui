@@ -1,4 +1,4 @@
-import { AmountWithoutDecimals, FungibleAsset, NetworkTypes } from './network';
+import { AmountWithoutDecimals, ComposeAsset, FungibleAsset, NativeAsset, NetworkTypes } from './network';
 
 type Promisifiable<T> = Promise<T> | T;
 
@@ -10,10 +10,8 @@ export interface ModuleTypes extends NetworkTypes {
   SerializedData?: unknown;
 }
 
-export type AssetLike<T extends NetworkTypes = NetworkTypes> = {
-  network: T['Network'];
-  ident: T['NativeAssetIdent'];
-};
+// prettier-ignore
+export type AssetLike<T extends NetworkTypes = NetworkTypes> = ComposeAsset<T, 'FungibleAssetIdent' | 'NativeAssetIdent'>;
 
 export interface AssetModel<T extends NetworkTypes> {
   network: T['Network'];
@@ -27,9 +25,9 @@ export interface AssetModel<T extends NetworkTypes> {
   // identity of an asset, e.g. address of an ERC20
   identity: <X extends FungibleAsset<T>>(asset: X) => string;
   // check an asset is native asset of the network or not
-  isNativeAsset: <X extends AssetLike>(asset: X) => asset is AssetLike<T> & X;
+  isNativeAsset: <X extends AssetLike>(asset: X) => asset is NativeAsset<T> & X;
   // check an asset is derived from an network or not
-  isDerivedAsset: <X extends AssetLike>(asset: X) => asset is AssetLike<T> & X;
+  isDerivedAsset: <X extends AssetLike>(asset: X) => asset is FungibleAsset<T> & X;
 }
 
 export interface Module<M extends ModuleTypes = ModuleTypes> {
