@@ -1,25 +1,36 @@
+import { NervosNetwork, NetworkBase } from '@force-bridge/commons';
 import { TwoWaySigner } from './types';
 import { boom, unimplemented } from 'interfaces/errors';
 
-export abstract class AbstractWalletSigner<Raw = unknown, Signed = unknown> implements TwoWaySigner<Raw, Signed> {
-  async sign(raw: Raw): Promise<Signed> {
+export abstract class AbstractWalletSigner<T extends NetworkBase> implements TwoWaySigner<T> {
+  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identOrigin: T['UserIdent']) {}
+
+  async sign(raw: T['RawTransaction']): Promise<T['SignedTransaction']> {
     if (this._isNervosTransaction(raw)) return this._signNervos(raw);
     if (this._isOriginTransaction(raw)) return this._signOrigin(raw);
 
     boom(unimplemented);
   }
 
+  identNervos(): NervosNetwork['UserIdent'] {
+    return this._identNervos;
+  }
+
+  identOrigin(): T['UserIdent'] {
+    return this._identOrigin;
+  }
+
   // sign for origin network
-  abstract _signOrigin(raw: Raw): Signed;
+  abstract _signOrigin(raw: T['RawTransaction']): T['SignedTransaction'];
 
   // sign for nervos network
-  abstract _signNervos(raw: Raw): Signed;
+  abstract _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'];
 
   // check if this RawTransaction is signed for origin network
-  abstract _isOriginTransaction(raw: Raw): boolean;
+  abstract _isOriginTransaction(raw: unknown): raw is T['RawTransaction'];
 
   // check if this RawTransaction is signed for Nervos
-  abstract _isNervosTransaction(raw: Raw): boolean;
+  abstract _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'];
 
   // current signer identity on Nervos
   abstract identityNervos(): string;

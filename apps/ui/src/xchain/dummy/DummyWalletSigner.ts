@@ -1,34 +1,29 @@
+import { NervosNetwork, NetworkBase } from '@force-bridge/commons';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
+import { unimplemented } from 'interfaces/errors';
 
-export class DummyWalletSigner extends AbstractWalletSigner {
-  private address: string;
-
-  constructor(address: string) {
-    super();
-    this.address = address;
-  }
-
-  _isNervosTransaction(_raw: unknown): boolean {
+export class DummyWalletSigner extends AbstractWalletSigner<NetworkBase> {
+  _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'] {
     return false;
   }
 
-  _isOriginTransaction(_raw: unknown): boolean {
+  _isOriginTransaction(raw: unknown): raw is NetworkBase['RawTransaction'] {
     return false;
   }
 
-  _signNervos(_raw: unknown): unknown {
-    return undefined;
+  _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'] {
+    unimplemented();
   }
 
-  _signOrigin(_raw: unknown): unknown {
-    return undefined;
+  _signOrigin(raw: NetworkBase['RawTransaction']): NetworkBase['SignedTransaction'] {
+    unimplemented();
   }
 
   identityNervos(): string {
-    return 'ckb1address' + Math.random();
+    return 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
   }
 
   identityOrigin(): string {
-    return '0x0000000000000000000000000000000000000000';
+    return '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
   }
 }
