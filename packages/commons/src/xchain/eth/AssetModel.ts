@@ -1,4 +1,4 @@
-import { AssetModel, EthereumNetwork } from '../../types';
+import { AssetModel, EthereumNetwork, FungibleAsset, NativeAsset } from '../../types';
 import { hasProp } from '../../utils';
 import { createAssetPredicate } from '../helper';
 import { ETHEREUM_NETWORK, NATIVE_ETHER_ADDRESS } from './constants';
@@ -22,13 +22,13 @@ export const EthereumAssetModel: AssetModel<EthereumNetwork> = {
   identity(asset) {
     return asset.ident.address;
   },
-  isDerivedAsset: createAssetPredicate<EthereumNetwork>(
+  isDerivedAsset: createAssetPredicate<FungibleAsset<EthereumNetwork>>(
     (asset) =>
       asset.network === ETHEREUM_NETWORK &&
       hasProp(asset.ident, 'address') &&
       asset.ident.address !== NATIVE_ETHER_ADDRESS,
   ),
-  isNativeAsset: createAssetPredicate<EthereumNetwork>(
+  isNativeAsset: createAssetPredicate<NativeAsset<EthereumNetwork>>(
     (asset) =>
       asset.network === ETHEREUM_NETWORK &&
       hasProp(asset.ident, 'address') &&
