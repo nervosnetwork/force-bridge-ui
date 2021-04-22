@@ -1,8 +1,11 @@
-import { Skeleton } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { AssetSelector } from 'components/AssetSelector';
 import { StyledCardWrapper } from 'components/Styled';
+import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
+import { useForceBridge } from 'state';
+import { useAsset } from 'state/assets/useAsset';
 
 const BridgeViewWrapper = styled.div`
   height: calc(100vh - 64px);
@@ -13,11 +16,28 @@ const BridgeViewWrapper = styled.div`
 `;
 
 export const BridgeView: React.FC = () => {
+  const { signer, xchainModule } = useForceBridge();
+  const { query } = useAsset();
+
   return (
     <BridgeViewWrapper>
       <StyledCardWrapper>
         <WalletConnectorButton block type="primary" />
-        <Skeleton loading />
+        <UserInput
+          label={
+            <span>
+              From:&nbsp;
+              <AssetSelector
+                btnProps={{ disabled: query.data == null }}
+                options={query.data?.xchain || []}
+                rowKey={(asset) => xchainModule.assetModel.identity(asset)}
+                onSelect={console.log}
+              />
+            </span>
+          }
+          extra={'world'}
+          disabled={signer == null}
+        />
       </StyledCardWrapper>
     </BridgeViewWrapper>
   );

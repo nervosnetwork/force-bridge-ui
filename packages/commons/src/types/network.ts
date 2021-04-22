@@ -4,17 +4,16 @@
 // XIdent: the ident of the X resource, e.g. type ERC20Ident = { address: '0x...' }
 // XInfo: the ident with network e.g. type type ERC20Info = { network: 'Ethereum', address: '0x...' }
 
+import { NetworkKeyNervos } from '../constatns';
 import { SUDTType, UserLock } from './nervos';
 import '@nervosnetwork/ckb-types';
-
-export type NervosNetworkName = 'Nervos';
 
 // number without decimals, e.g. 0x123aaa(Hex), 12547(Decimal)
 // do NOT use such values like, 1.225, 0.22
 export type AmountWithoutDecimals = string;
 
 export type NetworkBase = {
-  Network?: string;
+  Network: string;
   NativeAssetIdent?: unknown;
   // ident of an fungible derived from this network
   // e.g. Eth -> { address: string } / Nervos -> { type: Script }
@@ -25,14 +24,17 @@ export type NetworkBase = {
   SignedTransaction?: unknown;
 };
 
-type FungibleBaseInfo = { decimals: number; name: string; symbol: string; logoURI: string };
-type XChainShadow<T extends NetworkBase> = T['Network'] extends NervosNetworkName ? unknown : { shadow: SUDTType };
+export type FungibleBaseInfo = { decimals: number; name: string; symbol: string; logoURI: string };
+export type XChainShadow = { shadow?: SUDTType | unknown };
 
-export type FullFungibleAssetTypes<T extends NetworkBase, IdKey extends keyof NetworkBase> = {
+export type FullFungibleAssetTypes<
+  T extends NetworkBase = NetworkBase,
+  IdKey extends keyof NetworkBase = 'FungibleAssetIdent' | 'NativeAssetIdent'
+> = {
   network: T['Network'];
   ident: T[IdKey];
   amount: AmountWithoutDecimals;
-  info: FungibleBaseInfo & XChainShadow<T>;
+  info: FungibleBaseInfo & XChainShadow;
 };
 
 export type ComposeAsset<
@@ -65,7 +67,7 @@ export type NetworkTypes<T extends NetworkBase = NetworkBase> = Required<T> & {
 };
 
 export type NervosNetwork = NetworkTypes<{
-  Network: NervosNetworkName;
+  Network: NetworkKeyNervos;
   NativeAssetIdent: undefined;
   FungibleAssetIdent: SUDTType;
   UserIdent: UserLock;

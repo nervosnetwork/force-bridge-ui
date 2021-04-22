@@ -6,15 +6,14 @@ export interface Signer<Raw, Signed> {
   sign: (raw: Raw) => Promisifiable<Signed>;
 }
 
-export interface ModuleTypes extends NetworkTypes {
-  SerializedData?: unknown;
-}
-
 // prettier-ignore
 export type AssetLike<T extends NetworkTypes = NetworkTypes> = ComposeAsset<T, 'FungibleAssetIdent' | 'NativeAssetIdent'>;
 
 export interface AssetModel<T extends NetworkTypes> {
   network: T['Network'];
+
+  isCurrentNetworkAsset: <X extends AssetLike>(asset: X) => asset is X & AssetLike<T>;
+
   // prettier-ignore
   createFungibleAsset: (options: { amount?: AmountWithoutDecimals; assetIdent: T['FungibleAssetIdent']; }) => T['FungibleAssetWithAmount'];
   //prettier-ignore
@@ -30,7 +29,7 @@ export interface AssetModel<T extends NetworkTypes> {
   isDerivedAsset: <X extends AssetLike>(asset: X) => asset is FungibleAsset<T> & X;
 }
 
-export interface Module<M extends ModuleTypes = ModuleTypes> {
+export interface Module<M extends NetworkTypes = NetworkTypes> {
   network: M['Network'];
   assetModel: AssetModel<M>;
 }

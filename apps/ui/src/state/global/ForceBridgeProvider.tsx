@@ -1,4 +1,4 @@
-import { API, XChainNetwork } from '@force-bridge/commons';
+import { API, EthereumModule, Module, NervosModule, NervosNetwork, XChainNetwork } from '@force-bridge/commons';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { GlobalSetting, useGlobalSetting } from './setting';
 import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector';
@@ -27,6 +27,9 @@ interface ForceBridgeState {
   walletConnectStatus: ConnectStatus;
   wallet: Wallet;
   signer: TwoWaySigner | undefined;
+
+  xchainModule: Module;
+  nervosModule: Module<NervosNetwork>;
 }
 
 const Context = createContext<ForceBridgeState | null>(null);
@@ -43,6 +46,11 @@ export const ForceBridgeProvider: React.FC = (props) => {
   const [signer, setSigner] = useState<TwoWaySigner | undefined>();
   const [walletConnectStatus, setWalletConnectStatus] = useState<ConnectStatus>(ConnectStatus.Disconnected);
 
+  const module = useMemo<Module>(() => {
+    if (network === 'Ethereum') return EthereumModule as Module;
+    throw new Error('unknown network');
+  }, [network]);
+
   useEffect(() => {
     wallet.on('signerChanged', setSigner);
     wallet.on('connectStatusChanged', setWalletConnectStatus);
@@ -58,6 +66,8 @@ export const ForceBridgeProvider: React.FC = (props) => {
     setNetwork,
     network,
     direction,
+    xchainModule: module,
+    nervosModule: NervosModule,
   };
 
   return <Context.Provider value={state}>{props.children}</Context.Provider>;
