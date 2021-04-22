@@ -1,4 +1,4 @@
-import { AllNetworks, EthereumNetwork, NervosNetwork, XChainNetwork } from './network';
+import { AllNetworks, NervosNetwork, NetworkBase, NetworkTypes, XChainNetwork } from './network';
 
 export enum BridgeTransactionStatus {
   Pending = 'Pending',
@@ -23,44 +23,44 @@ export type UnFailedTransactionSummary = TransactionSummary & {
 export type TransactionSummaryWithStatus = UnFailedTransactionSummary | FailedTransactionSummary;
 
 // XChain -> Nervos
-export type GenerateBridgeInTransactionPayload<N extends XChainNetwork> = {
+export type GenerateBridgeInTransactionPayload<N extends NetworkTypes> = {
   asset: N['AssetWithAmount'];
   recipient: NervosNetwork['UserIdent'];
   sender: N['UserIdent'];
 };
 
 // Nervos -> XChain
-export type GenerateBridgeOutNervosTransactionPayload<N extends XChainNetwork> = {
+export type GenerateBridgeOutNervosTransactionPayload<N extends NetworkTypes> = {
   network: N['Network'];
   asset: NervosNetwork['FungibleAssetIdent'];
   recipient: N['UserIdent'];
   sender: NervosNetwork['UserIdent'];
 };
 
-export type GenerateTransactionResponse<N extends AllNetworks> = {
+export type GenerateTransactionResponse<N extends NetworkTypes> = {
   network: N['Network'];
   // TODO
   rawTransaction: N['RawTransaction'];
   bridgeFee: N['AssetWithAmount'];
 };
 
-export type SignedTransactionPayload<N extends AllNetworks> = {
+export type SignedTransactionPayload<N extends NetworkBase> = {
   // TODO
   signedTransaction: N['SignedTransaction'];
   network: N['Network'];
 };
 
-export type GetBalancePayload<N extends AllNetworks> = {
+export type GetBalancePayload<N extends NetworkTypes = NetworkTypes> = Array<{
   network: N['Network'];
   userIdent: N['UserIdent'];
   assetIdent: N['AssetIdent'];
-};
+}>;
 
-export type GetBalanceResponse<N extends AllNetworks> = {
+export type GetBalanceResponse<N extends NetworkTypes = NetworkTypes> = {
   network: N['Network'];
   userIdent: N['UserIdent'];
   asset: N['AssetWithAmount'];
-}[];
+};
 
 export type GetBridgeTransactionStatusPayload<N extends AllNetworks> = {
   network: N['Network'];
@@ -82,12 +82,12 @@ export type GetBridgeTransactionStatusResponse<N extends AllNetworks> = {
 export interface ForceBridgeAPIV1 {
   /* generate transaction */
   // prettier-ignore
-  generateBridgeInNervosTransaction: (payload: GenerateBridgeInTransactionPayload<EthereumNetwork>) => Promise<GenerateTransactionResponse<EthereumNetwork>>
+  generateBridgeInNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeInTransactionPayload<T>) => Promise<GenerateTransactionResponse<T>>
   // prettier-ignore
-  generateBridgeOutNervosTransaction: (payload: GenerateBridgeOutNervosTransactionPayload<EthereumNetwork>) => Promise<GenerateTransactionResponse<EthereumNetwork>>
+  generateBridgeOutNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeOutNervosTransactionPayload<T>) => Promise<GenerateTransactionResponse<T>>
 
   /* send transaction */
-  sendSignedTransaction: (payload: SignedTransactionPayload<EthereumNetwork>) => Promise<TransactionIdent>;
+  sendSignedTransaction: <T extends NetworkBase>(payload: SignedTransactionPayload<T>) => Promise<TransactionIdent>;
 
   /* get transaction summary */
   // prettier-ignore
@@ -99,8 +99,8 @@ export interface ForceBridgeAPIV1 {
   getBridgeTransactionSummaries: (payload: GetBridgeTransactionSummariesPayload) => Promise<TransactionSummaryWithStatus[]>;
 
   // get an asset list, or if no `name` param is passed in, return a default list of whitelisted assets
-  getAssetList: (name?: string) => Promise<XChainNetwork['AssetInfo'][]>;
+  getAssetList: <X extends NetworkTypes>(name?: string) => Promise<X['AssetInfo'][]>;
   // get the user's balance, or if no `assets` param is passed in, return all whitelisted assets
   // prettier-ignore
-  getBalance: (payload: (GetBalancePayload<NervosNetwork> | GetBalancePayload<EthereumNetwork>)[]) => Promise<(GetBalanceResponse<NervosNetwork> | GetBalanceResponse<EthereumNetwork>)[]>;
+  getBalance: <T extends NetworkTypes>(payload: GetBalancePayload<T>) => Promise<(GetBalanceResponse<T>)[]>;
 }
