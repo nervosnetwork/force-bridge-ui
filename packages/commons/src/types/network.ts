@@ -5,6 +5,7 @@
 // XInfo: the ident with network e.g. type type ERC20Info = { network: 'Ethereum', address: '0x...' }
 
 import { SUDTType, UserLock } from './nervos';
+import '@nervosnetwork/ckb-types';
 
 export type NervosNetworkName = 'Nervos';
 
@@ -69,9 +70,9 @@ export type NervosNetwork = NetworkTypes<{
   FungibleAssetIdent: SUDTType;
   UserIdent: UserLock;
   // TODO
-  RawTransaction: unknown;
+  RawTransaction: CKBComponents.RawTransactionToSign;
   // TODO
-  SignedTransaction: unknown;
+  SignedTransaction: CKBComponents.RawTransactionToSign;
 }>;
 
 export type EthereumNetwork = NetworkTypes<{

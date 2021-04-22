@@ -24,7 +24,7 @@ export abstract class AbstractWalletSigner<T extends NetworkBase> implements Two
   abstract _signOrigin(raw: T['RawTransaction']): T['SignedTransaction'];
 
   // sign for nervos network
-  abstract _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'];
+  abstract _signNervos(raw: NervosNetwork['RawTransaction']): Promise<NervosNetwork['SignedTransaction']>;
 
   // check if this RawTransaction is signed for origin network
   abstract _isOriginTransaction(raw: unknown): raw is T['RawTransaction'];

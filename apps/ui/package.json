@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "ckb-js-toolkit": "^0.9.1",
     "@craco/craco": "^6.1.1",
     "@force-bridge/commons": "*",
+    "@lay2/pw-core": "^0.3.22",
     "@rehooks/local-storage": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
