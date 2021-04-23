@@ -4,7 +4,7 @@ test('test eth asset model', () => {
   expect(
     EthereumAssetModel.isNativeAsset({
       network: 'hello',
-      ident: {},
+      ident: '',
     }),
   ).toBe(false);
 });

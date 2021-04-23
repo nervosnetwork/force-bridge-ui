@@ -1,4 +1,4 @@
-import { AmountWithoutDecimals, ComposeAsset, FungibleAsset, NativeAsset, NetworkTypes } from './network';
+import { AssetType, NetworkTypes, RequiredAsset } from './network';
 
 type Promisifiable<T> = Promise<T> | T;
 
@@ -6,27 +6,24 @@ export interface Signer<Raw, Signed> {
   sign: (raw: Raw) => Promisifiable<Signed>;
 }
 
-// prettier-ignore
-export type AssetLike<T extends NetworkTypes = NetworkTypes> = ComposeAsset<T, 'FungibleAssetIdent' | 'NativeAssetIdent'>;
-
 export interface AssetModel<T extends NetworkTypes> {
   network: T['Network'];
 
-  isCurrentNetworkAsset: <X extends AssetLike>(asset: X) => asset is X & AssetLike<T>;
+  isCurrentNetworkAsset: (asset: AssetType) => boolean;
 
   // prettier-ignore
-  createFungibleAsset: (options: { amount?: AmountWithoutDecimals; assetIdent: T['FungibleAssetIdent']; }) => T['FungibleAssetWithAmount'];
+  createFungibleAsset: <X extends AssetType>(options: X) => RequiredAsset<'amount'> & X;
   //prettier-ignore
-  createNativeAsset: (options: { amount?: AmountWithoutDecimals; assetIdent?: T['NativeAssetIdent']; }) => T['NativeAssetWithAmount'];
+  createNativeAsset: <X extends AssetType>(options: X) => RequiredAsset<'amount'> & X;
 
   // check if two assets are the same asset
-  equalsFungibleAsset: <X extends FungibleAsset<T>, Y extends FungibleAsset<T>>(x: X, y: Y) => boolean;
+  equalsFungibleAsset: (x: AssetType, y: AssetType) => boolean;
   // identity of an asset, e.g. address of an ERC20
-  identity: <X extends FungibleAsset<T>>(asset: X) => string;
+  identity: (asset: AssetType) => string;
   // check an asset is native asset of the network or not
-  isNativeAsset: <X extends AssetLike>(asset: X) => asset is NativeAsset<T> & X;
+  isNativeAsset: (asset: AssetType) => boolean;
   // check an asset is derived from an network or not
-  isDerivedAsset: <X extends AssetLike>(asset: X) => asset is FungibleAsset<T> & X;
+  isDerivedAsset: (asset: AssetType) => boolean;
 }
 
 export interface Module<M extends NetworkTypes = NetworkTypes> {
