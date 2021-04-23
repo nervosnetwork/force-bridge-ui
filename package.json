@@ -24,7 +24,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "build:lib": "yarn run build:lib:js && yarn run build:lib:types",
+    "build:lib": "yarn run build:lib:types && yarn run build:lib:js",
     "build:lib:js": "babel --relative packages/**/src -d ../lib --extensions .ts --ignore \"packages/**/*.spec.ts\"",
     "build:lib:types": "tsc -b tsconfig.build.json",
     "clean:lib": "rimraf packages/*/lib packages/*/*.tsbuildinfo",
