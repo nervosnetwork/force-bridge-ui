@@ -6,9 +6,15 @@ import { NetworkDirectionSelector } from './NetworkDirectionSelector';
 import LogoImage from './logo.svg';
 
 const AppHeaderWrapper = styled.header`
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
   padding: 16px 100px;
   height: 64px;
+  background: ${(props) => props.theme.palette.common.white};
 `;
 
 const Logo = styled.img`

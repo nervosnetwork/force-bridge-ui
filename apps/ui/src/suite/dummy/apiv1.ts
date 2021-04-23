@@ -1,4 +1,4 @@
-import { API, NetworkTypes } from '@force-bridge/commons';
+import { API } from '@force-bridge/commons';
 import { unimplemented } from 'interfaces/errors';
 
 let i = 0;
@@ -12,8 +12,8 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
       if (i % 2 !== 0) {
         return [
           {
-            asset: { network: 'Ethereum', ident: { address: '0x1' }, amount: '0' },
-            userIdent: { address: '0x1' },
+            ident: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+            amount: '200000000000000',
             network: 'Ethereum',
           },
         ];
@@ -21,8 +21,8 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
 
       return [
         {
-          asset: { network: 'Nervos', ident: { codeHash: '0x1', hashType: 'data', args: '0x1' }, amount: '0' },
-          userIdent: { codeHash: '0x1', hashType: 'data', args: '0x1' },
+          ident: 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          amount: '200000000000000',
           network: 'Nervos',
         },
       ];
@@ -33,13 +33,13 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
     generateBridgeOutNervosTransaction() {
       unimplemented();
     },
-    getAssetList(): Promise<NetworkTypes['AssetInfo'][]> {
+    getAssetList() {
       return Promise.resolve([
         {
           network: 'Ethereum',
-          ident: { address: '0x1' },
+          ident: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
           info: {
-            shadow: { codeHash: '0x1', hashType: 'data', args: '0x1' },
+            shadow: { network: 'Nervos', ident: 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' },
             decimals: 8,
             name: 'USDT',
             symbol: 'USDT',
@@ -48,12 +48,12 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
         },
         {
           network: 'Nervos',
-          ident: { codeHash: '0x1', hashType: 'data', args: '0x1' },
+          ident: 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
           info: {
-            shadow: null,
+            shadow: { network: 'Ethereum', ident: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' },
             decimals: 8,
-            name: 'USDT',
-            symbol: 'USDT',
+            name: 'ckUSDT',
+            symbol: 'ckUSDT',
             logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.svg?v=010',
           },
         },
@@ -63,7 +63,17 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
       unimplemented();
     },
     getBridgeTransactionSummaries() {
-      unimplemented();
+      const summary0: API.TransactionSummaryWithStatus = {
+        txSummary: {
+          fromTransaction: { txId: '0x', timestamp: Date.now() },
+          toTransaction: { txId: '0x', timestamp: Date.now() },
+          fromAsset: { network: 'Nervos', ident: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', amount: '10000' },
+          toAsset: { network: 'Ethereum', ident: 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', amount: '20000' },
+        },
+        status: API.BridgeTransactionStatus.Successful,
+      };
+
+      return Promise.resolve([summary0]);
     },
     sendSignedTransaction() {
       unimplemented();
