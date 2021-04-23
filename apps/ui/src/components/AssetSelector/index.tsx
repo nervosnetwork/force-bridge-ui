@@ -6,14 +6,14 @@ import { AssetSymbol } from 'components/AssetSymbol';
 
 type AssetWithInfoLike = {
   amount: AmountWithoutDecimals;
-  info: FungibleBaseInfo;
+  info?: FungibleBaseInfo;
 };
 
 interface AssetSelectorProps<T extends AssetWithInfoLike> {
   selected?: string;
   options: T[];
   rowKey: (item: T) => string;
-  onSelect: (key: React.Key, asset: T) => void;
+  onSelect: (key: string, asset: T) => void;
   btnProps?: ButtonProps;
 }
 

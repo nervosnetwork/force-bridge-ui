@@ -2,11 +2,12 @@ import { QuestionOutlined } from '@ant-design/icons';
 import React from 'react';
 import styled from 'styled-components';
 
-type AssetSymbolInfo = {
-  logoURI?: string;
-  symbol?: string;
+type AssetSymbolProps = {
+  info?: {
+    logoURI?: string;
+    symbol?: string;
+  };
 };
-type AssetSymbolProps = AssetSymbolInfo | { info: AssetSymbolInfo };
 
 const AssetSymbolWrapper = styled.span`
   .logo {
@@ -24,9 +25,9 @@ const AssetSymbolWrapper = styled.span`
 `;
 
 export const AssetSymbol: React.FC<React.HTMLAttributes<HTMLSpanElement> & AssetSymbolProps> = (props) => {
-  const { logoURI, symbol = 'Unknown', ...wrapperProps } = 'info' in props ? props.info : props;
+  const { logoURI, symbol = 'Unknown', ...wrapperProps } = props.info ?? {};
 
-  const logo = logoURI ? <img className="logo" alt={symbol} src={logoURI} /> : <QuestionOutlined />;
+  const logo = logoURI ? <img alt={symbol} src={logoURI} /> : <QuestionOutlined />;
 
   return (
     <AssetSymbolWrapper {...wrapperProps}>

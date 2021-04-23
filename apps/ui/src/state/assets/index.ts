@@ -1,1 +1,1 @@
-export * from './useAsset';
+export * from 'state/assets/useAssetQuery';
