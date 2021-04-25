@@ -10,13 +10,13 @@ type AssetSymbolProps = {
 };
 
 const AssetSymbolWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+
   .logo {
     margin: 0 4px;
-
-    img {
-      width: 1em;
-      height: 1em;
-    }
+    width: 1em;
+    height: 1em;
   }
 
   .symbol {
@@ -27,11 +27,11 @@ const AssetSymbolWrapper = styled.span`
 export const AssetSymbol: React.FC<React.HTMLAttributes<HTMLSpanElement> & AssetSymbolProps> = (props) => {
   const { logoURI, symbol = 'Unknown', ...wrapperProps } = props.info ?? {};
 
-  const logo = logoURI ? <img alt={symbol} src={logoURI} /> : <QuestionOutlined />;
+  const logo = logoURI ? <img className="logo" alt={symbol} src={logoURI} /> : <QuestionOutlined className="logo" />;
 
   return (
     <AssetSymbolWrapper {...wrapperProps}>
-      <span className="logo">{logo}</span>
+      {logo}
       <span className="symbol">{symbol}</span>
     </AssetSymbolWrapper>
   );

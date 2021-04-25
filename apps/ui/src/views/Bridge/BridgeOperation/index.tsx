@@ -1,16 +1,16 @@
 import Icon from '@ant-design/icons';
-import { Asset } from '@force-bridge/commons';
 import { Button, Divider, Row } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
+import { useBridge } from './useBridge';
+import { AssetAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
-import { useForceBridge } from 'state';
-import { useAssetQuery } from 'state/assets/useAssetQuery';
+import { useAssetQuery, useForceBridge } from 'state';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
   .label {
@@ -28,13 +28,28 @@ const BridgeViewWrapper = styled(StyledCardWrapper)`
 export const BridgeOperation: React.FC = () => {
   const { signer } = useForceBridge();
   const query = useAssetQuery();
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+
+  const {
+    bridgeOutInputAmount,
+    bridgeInInputAmount,
+    setBridgeInInputAmount,
+    asset: selectedAsset,
+    setAsset: setSelectedAsset,
+    setRecipient,
+    recipient,
+    errors,
+    validateStatus,
+    fee,
+  } = useBridge();
 
   return (
     <BridgeViewWrapper>
       <WalletConnectorButton block type="primary" />
+
       <div className="input-wrapper">
         <UserInput
+          value={bridgeInInputAmount}
+          onChange={(e) => setBridgeInInputAmount(e.target.value)}
           label={
             <span>
               <label className="label">From:</label>&nbsp;
@@ -46,6 +61,14 @@ export const BridgeOperation: React.FC = () => {
                 onSelect={(_id, asset) => setSelectedAsset(asset)}
               />
             </span>
+          }
+          extra={
+            selectedAsset && (
+              <Button type="link" size="small">
+                MAX:&nbsp;
+                <AssetAmount amount={selectedAsset.amount} info={selectedAsset.info} />
+              </Button>
+            )
           }
           placeholder="0.0"
           disabled={signer == null}
@@ -59,19 +82,29 @@ export const BridgeOperation: React.FC = () => {
           label={
             <span>
               <label className="label">To:</label>&nbsp;
-              <AssetSymbol />
+              {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
+            </span>
+          }
+          extra={
+            <span>
+              Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
             </span>
           }
           placeholder="0.0"
           disabled
+          value={bridgeOutInputAmount}
         />
       </div>
       <Divider dashed style={{ margin: 0, padding: 0 }} />
       <div className="input-wrapper">
-        <UserInput label={<span className="label">Recipient</span>} />
+        <UserInput
+          label={<span className="label">Recipient</span>}
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+        />
       </div>
 
-      <Button block type="primary" size="large">
+      <Button disabled={!validateStatus || !!errors} block type="primary" size="large">
         Bridge
       </Button>
     </BridgeViewWrapper>

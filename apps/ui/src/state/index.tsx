@@ -1,2 +1,2 @@
 export * from './global';
-export * from './assets';
+export * from './useAssetQuery';
