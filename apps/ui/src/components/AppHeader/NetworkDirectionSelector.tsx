@@ -1,26 +1,39 @@
+import { NERVOS_NETWORK } from '@force-bridge/commons';
 import { Button, Dropdown, Menu } from 'antd';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NetworkDirection } from 'components/Network';
+import { BridgeDirection } from 'state';
 
 interface NetworkDirectionSelectorProps {
-  directions: { from: string; to: string }[];
-  selectedIndex?: number;
+  networks: string[];
+  network: string;
+  direction: BridgeDirection;
+  onSelect: (config: { network: string; direction: BridgeDirection }) => void;
 }
 
 export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> = (props) => {
-  const { directions, selectedIndex } = props;
+  const { network, direction, networks, onSelect } = props;
+
+  const selected = useMemo(() => {
+    if (direction === BridgeDirection.In) return { from: network, to: NERVOS_NETWORK };
+    return { from: NERVOS_NETWORK, to: network };
+  }, [direction, network]);
+
+  const directionItems = networks.flatMap((network) => [
+    { key: network + '-' + NERVOS_NETWORK, network, direction: BridgeDirection.In, from: network, to: NERVOS_NETWORK },
+    { key: NERVOS_NETWORK + '-' + network, network, direction: BridgeDirection.Out, from: NERVOS_NETWORK, to: network },
+  ]);
 
   const directionsElem = (
     <Menu>
-      {directions.map((direction, i) => (
-        <Menu.Item key={i}>
-          <NetworkDirection from={direction.from} to={direction.to} />
+      {directionItems.map((item) => (
+        <Menu.Item key={item.key} onClick={() => onSelect({ direction: item.direction, network: item.network })}>
+          <NetworkDirection from={item.from} to={item.to} />
         </Menu.Item>
       ))}
     </Menu>
   );
 
-  const selected = directions[selectedIndex ?? 0];
   const selectedItem = selected && <NetworkDirection from={selected.from} to={selected.to} />;
 
   return (

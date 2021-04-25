@@ -15,16 +15,30 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
     const infoList = await api.getAssetList();
 
     // xchain asset info: asset.info
-    const xchainAssetsInfo = infoList.filter(X.isCurrentNetworkAsset).map<Asset>((asset) => {
-      if (asset.network === 'Ethereum') {
-        const ident = asset.ident;
-        const info = asset.info;
-        const sudt = new NervosSUDT(info.shadow);
+    const xchainAssetsInfo = infoList.filter(X.isCurrentNetworkAsset).map<Asset>((assetWithInfo) => {
+      // TODO refactor to ModuleRegistry
+      if (assetWithInfo.network === 'Ethereum') {
+        const ident = assetWithInfo.ident;
+        const info = assetWithInfo.info;
+
+        const sudt = new NervosSUDT({
+          info: {
+            ...assetWithInfo.info,
+            shadow: assetWithInfo,
+            name: `ck${assetWithInfo.info.name}`,
+            symbol: `ck${assetWithInfo.info.symbol}`,
+          },
+          ...info.shadow,
+        });
 
         let xchainAsset: Asset;
-        if (X.isDerivedAsset(asset)) xchainAsset = new EthereumERC20({ ident, info, shadow: sudt });
-        else if (X.isNativeAsset(asset)) xchainAsset = new EthereumEther({ info, shadow: sudt });
-        else boom(`asset is not valid ${JSON.stringify(asset)}`);
+        if (X.isDerivedAsset(assetWithInfo)) {
+          xchainAsset = new EthereumERC20({ ident, info, shadow: sudt });
+        } else if (X.isNativeAsset(assetWithInfo)) {
+          xchainAsset = new EthereumEther({ info, shadow: sudt });
+        } else {
+          boom(`asset is not valid ${JSON.stringify(assetWithInfo)}`);
+        }
 
         sudt.setShadow(xchainAsset);
 

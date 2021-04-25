@@ -4,6 +4,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { NetworkDirectionSelector } from './NetworkDirectionSelector';
 import LogoImage from './logo.svg';
+import { useForceBridge } from 'state';
 
 const AppHeaderWrapper = styled.header`
   z-index: 1;
@@ -22,6 +23,8 @@ const Logo = styled.img`
 `;
 
 export const AppHeader: React.FC = () => {
+  const { network, direction, switchBridgeDirection, switchNetwork, supportedNetworks } = useForceBridge();
+
   const referenceLinks = (
     <Menu>
       <Menu.Item>
@@ -40,10 +43,13 @@ export const AppHeader: React.FC = () => {
         </Col>
         <Col span={18} style={{ textAlign: 'center' }}>
           <NetworkDirectionSelector
-            directions={[
-              { from: 'Ethereum', to: 'Nervos' },
-              { from: 'Nervos', to: 'Ethereum' },
-            ]}
+            networks={supportedNetworks}
+            network={network}
+            direction={direction}
+            onSelect={({ network, direction }) => {
+              switchNetwork(network);
+              switchBridgeDirection(direction);
+            }}
           />
         </Col>
         <Col span={3} style={{ textAlign: 'right' }}>
