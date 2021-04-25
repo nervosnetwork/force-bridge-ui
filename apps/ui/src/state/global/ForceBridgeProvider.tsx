@@ -5,6 +5,8 @@ import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector'
 import { createDummyAPI } from 'suite/dummy/apiv1';
 import { DummyWallet } from 'xchain/dummy/DummyWallet';
 
+const SUPPORTED_NETWORKS = ['Ethereum'];
+
 export enum BridgeDirection {
   // bridge in to nervos
   // XChain -> Nervos
@@ -16,12 +18,13 @@ export enum BridgeDirection {
 
 interface ForceBridgeState {
   globalSetting: GlobalSetting;
+  supportedNetworks: string[];
 
   network: string;
-  setNetwork: (network: string) => void;
+  switchNetwork: (network: string) => void;
 
   direction: BridgeDirection;
-  setDirection: (direction: BridgeDirection) => void;
+  switchBridgeDirection: (direction: BridgeDirection) => void;
 
   api: API.ForceBridgeAPIV1;
   walletConnectStatus: ConnectStatus;
@@ -40,8 +43,8 @@ export const ForceBridgeProvider: React.FC = (props) => {
 
   const [globalSetting] = useGlobalSetting();
 
-  const [network, setNetwork] = useState<string>('Ethereum');
-  const [direction, setDirection] = useState<BridgeDirection>(BridgeDirection.In);
+  const [network, switchNetwork] = useState<string>('Ethereum');
+  const [direction, switchBridgeDirection] = useState<BridgeDirection>(BridgeDirection.Out);
 
   const [signer, setSigner] = useState<TwoWaySigner | undefined>();
   const [walletConnectStatus, setWalletConnectStatus] = useState<ConnectStatus>(ConnectStatus.Disconnected);
@@ -58,13 +61,14 @@ export const ForceBridgeProvider: React.FC = (props) => {
   }, [wallet]);
 
   const state: ForceBridgeState = {
+    supportedNetworks: SUPPORTED_NETWORKS,
     api,
     wallet,
     globalSetting,
     signer,
     walletConnectStatus,
-    setDirection,
-    setNetwork,
+    switchBridgeDirection,
+    switchNetwork,
     network,
     direction,
     xchainModule: module,
