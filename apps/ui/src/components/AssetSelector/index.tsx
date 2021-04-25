@@ -1,6 +1,7 @@
 import { AmountWithoutDecimals, FungibleBaseInfo } from '@force-bridge/commons';
 import { Button, ButtonProps, List, Modal } from 'antd';
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { AssetAmount } from 'components/AssetAmount';
 import { AssetSymbol } from 'components/AssetSymbol';
 
@@ -16,6 +17,27 @@ interface AssetSelectorProps<T extends AssetWithInfoLike> {
   onSelect: (key: string, asset: T) => void;
   btnProps?: ButtonProps;
 }
+
+const StyledModal = styled(Modal)`
+  .ant-modal-close-x {
+    line-height: 48px;
+  }
+`;
+
+const ModalBorderWrapper = styled.div`
+  .ant-list-item {
+    padding: 4px 0;
+    margin: 4px 0;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0);
+
+    &:hover {
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  }
+`;
 
 export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorProps<T>): React.ReactElement {
   const [visible, setModalVisible] = useState(false);
@@ -36,21 +58,29 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
   return (
     <span>
       <Button type="primary" size="small" {...btnProps} onClick={onButtonClick}>
-        {selectedAsset ? <AssetSymbol info={selectedAsset.info} /> : 'Select'}
+        {selectedAsset ? (
+          <div>
+            <AssetSymbol info={selectedAsset.info} />
+          </div>
+        ) : (
+          'Select'
+        )}
       </Button>
-      <Modal width={312} visible={visible} onCancel={() => setModalVisible(false)} footer={null}>
-        <List
-          pagination={false}
-          dataSource={options}
-          rowKey={rowKey}
-          renderItem={(item) => (
-            <List.Item onClick={() => onSelectInternal(item)}>
-              <AssetSymbol info={item.info} />
-              <AssetAmount amount={item.amount} info={item.info} />
-            </List.Item>
-          )}
-        />
-      </Modal>
+      <StyledModal closable width={312} visible={visible} onCancel={() => setModalVisible(false)} footer={null}>
+        <ModalBorderWrapper>
+          <List
+            pagination={false}
+            dataSource={options}
+            rowKey={rowKey}
+            renderItem={(item) => (
+              <List.Item onClick={() => onSelectInternal(item)}>
+                <AssetSymbol info={item.info} />
+                <AssetAmount amount={item.amount} info={item.info} />
+              </List.Item>
+            )}
+          />
+        </ModalBorderWrapper>
+      </StyledModal>
     </span>
   );
 }
