@@ -67,4 +67,6 @@ export abstract class Asset {
   identity(): string {
     return `${this.network}/${this.ident}`;
   }
+
+  abstract copy(): Asset;
 }

@@ -7,6 +7,7 @@ export interface Signer<Raw, Signed> {
 }
 
 export interface AssetModel<T extends NetworkTypes> {
+  // TODO maybe we should remove the unnecessary network?
   network: T['Network'];
 
   isCurrentNetworkAsset: (asset: AssetType) => boolean;
@@ -26,7 +27,20 @@ export interface AssetModel<T extends NetworkTypes> {
   isDerivedAsset: (asset: AssetType) => boolean;
 }
 
+export interface BridgeFeeCalculatorModel<M extends NetworkTypes> {
+  network: M['Network'];
+  // TODO Maybe the bridge fee should be calculated async, change to Promise<Asset>?
+  calcBridgeFee: (bridgeAsset: RequiredAsset<'amount'>) => RequiredAsset<'amount'>;
+}
+
+export interface ValidatorModel<M extends NetworkTypes> {
+  network: M['Network'];
+  validateUserIdent: (userIdent: string) => boolean;
+}
+
 export interface Module<M extends NetworkTypes = NetworkTypes> {
   network: M['Network'];
   assetModel: AssetModel<M>;
+  bridgeFeeModel: BridgeFeeCalculatorModel<M>;
+  validators: ValidatorModel<M>;
 }
