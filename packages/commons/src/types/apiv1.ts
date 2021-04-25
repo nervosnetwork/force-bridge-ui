@@ -70,6 +70,7 @@ export type GetBridgeTransactionStatusPayload = {
 
 export type GetBridgeTransactionSummariesPayload = {
   userIdent: string;
+  assetIdent: string;
   network: string;
 };
 
