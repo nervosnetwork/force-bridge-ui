@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components';
 import { AppHeader } from 'components/AppHeader';
 import { ForceBridgeProvider } from 'state';
 import { defaultTheme } from 'theme';
-import { BridgeView } from 'views';
+import { AppView } from 'views';
 import './App.less';
 
 const App: React.FC = () => {
@@ -15,7 +15,7 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <ForceBridgeProvider>
           <AppHeader />
-          <BridgeView />
+          <AppView />
         </ForceBridgeProvider>
       </QueryClientProvider>
     </ThemeProvider>

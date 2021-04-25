@@ -1,4 +1,4 @@
-import { API, EthereumModule, Module, NervosModule, NervosNetwork, XChainNetwork } from '@force-bridge/commons';
+import { API, EthereumModule, Module, NervosModule, NervosNetwork } from '@force-bridge/commons';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { GlobalSetting, useGlobalSetting } from './setting';
 import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector';
@@ -17,8 +17,8 @@ export enum BridgeDirection {
 interface ForceBridgeState {
   globalSetting: GlobalSetting;
 
-  network: XChainNetwork['Network'];
-  setNetwork: (network: XChainNetwork['Network']) => void;
+  network: string;
+  setNetwork: (network: string) => void;
 
   direction: BridgeDirection;
   setDirection: (direction: BridgeDirection) => void;
@@ -40,12 +40,13 @@ export const ForceBridgeProvider: React.FC = (props) => {
 
   const [globalSetting] = useGlobalSetting();
 
-  const [network, setNetwork] = useState<XChainNetwork['Network']>('Ethereum');
+  const [network, setNetwork] = useState<string>('Ethereum');
   const [direction, setDirection] = useState<BridgeDirection>(BridgeDirection.In);
 
   const [signer, setSigner] = useState<TwoWaySigner | undefined>();
   const [walletConnectStatus, setWalletConnectStatus] = useState<ConnectStatus>(ConnectStatus.Disconnected);
 
+  // TODO replace with ModuleRegistry
   const module = useMemo<Module>(() => {
     if (network === 'Ethereum') return EthereumModule as Module;
     throw new Error('unknown network');
