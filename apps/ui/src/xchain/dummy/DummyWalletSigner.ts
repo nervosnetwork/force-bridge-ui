@@ -11,11 +11,11 @@ export class DummyWalletSigner extends AbstractWalletSigner<NetworkBase> {
     return false;
   }
 
-  _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'] {
+  async _signNervos(raw: NervosNetwork['RawTransaction']): Promise<NervosNetwork['SignedTransaction']> {
     unimplemented();
   }
 
-  _signOrigin(raw: NetworkBase['RawTransaction']): NetworkBase['SignedTransaction'] {
+  async _signOrigin(raw: NetworkBase['RawTransaction']): Promise<NetworkBase['SignedTransaction']> {
     unimplemented();
   }
 

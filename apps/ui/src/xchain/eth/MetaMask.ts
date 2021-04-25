@@ -13,7 +13,7 @@ export class MetaMask extends AbstractWalletConnector<NetworkTypes> {
 
   _connect(): Promise<void> {
     asyncSleep(2000 * Math.random()).then(() =>
-      super.changeSigner(new MetaMaskSigner({ codeHash: '0x', hashType: 'type', args: '0x' }, { address: '0x' })),
+      super.changeSigner(new MetaMaskSigner('0x', '0x')),
     );
     return Promise.resolve(undefined);
   }

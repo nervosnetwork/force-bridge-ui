@@ -1,17 +1,46 @@
-import { NervosNetwork, NetworkBase, utils } from '@force-bridge/commons';
-import { Keccak256Hasher, Blake2bHasher, Builder, ECDSA_WITNESS_LEN } from '@lay2/pw-core';
+import { NervosNetwork, EthereumNetwork, NetworkBase } from '@force-bridge/commons';
+import { Keccak256Hasher, Blake2bHasher, Builder } from '@lay2/pw-core';
 import { normalizers, Reader, transformers } from 'ckb-js-toolkit';
+import { ethers } from 'ethers';
 import { SerializeWitnessArgs, SerializeRawTransaction } from '@ckb-lumos/types/lib/core';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
-import { unimplemented } from 'interfaces/errors';
+import { hasProp } from '@force-bridge/commons/lib/utils';
+import { ExternalProvider } from '@ethersproject/providers/src.ts/web3-provider';
+import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider';
+import { boom, unimplemented } from 'interfaces/errors';
 
-export class MetaMaskSigner extends AbstractWalletSigner<NetworkBase> {
-  _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'] {
-    return false;
+export class MetaMaskSigner extends AbstractWalletSigner<EthereumNetwork> {
+  signer: JsonRpcSigner;
+
+  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identOrigin: EthereumNetwork['UserIdent']) {
+    super(_identNervos, _identOrigin);
+    if (hasProp(window, 'ethereum')) {
+      const ethereum = window.ethereum as ExternalProvider;
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      this.signer = provider.getSigner();
+    } else {
+      boom(unimplemented);
+    }
   }
 
-  _isOriginTransaction(raw: unknown): raw is NetworkBase['RawTransaction'] {
-    return false;
+  _isNervosTransaction(
+    raw: EthereumNetwork['RawTransaction'] | NervosNetwork['RawTransaction'],
+  ): raw is NervosNetwork['RawTransaction'] {
+    return !!(
+      hasProp(raw, 'version') &&
+      hasProp(raw, 'cellDeps') &&
+      hasProp(raw, 'headerDeps') &&
+      hasProp(raw, 'inputs') &&
+      hasProp(raw, 'outputs') &&
+      hasProp(raw, 'outputsData') &&
+      hasProp(raw, 'witnesses')
+    );
+  }
+
+  _isOriginTransaction(
+    raw: EthereumNetwork['RawTransaction'] | NervosNetwork['RawTransaction'],
+  ): raw is EthereumNetwork['RawTransaction'] {
+    return !this._isNervosTransaction(raw);
   }
 
   async _signNervos(raw: NervosNetwork['RawTransaction']): Promise<NervosNetwork['SignedTransaction']> {
@@ -30,19 +59,20 @@ export class MetaMaskSigner extends AbstractWalletSigner<NetworkBase> {
       ),
     ).serializeJson();
     raw.witnesses = witnesses;
-    return raw;
+    return raw as NervosNetwork['SignedTransaction'];
   }
 
-  _signOrigin(raw: NetworkBase['RawTransaction']): NetworkBase['SignedTransaction'] {
+  async _signOrigin(raw: EthereumNetwork['RawTransaction']): Promise<EthereumNetwork['SignedTransaction']> {
+    // let signed = await this.signer.signTransaction(raw);
     unimplemented();
   }
 
   identityNervos(): string {
-    return 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+    return this.identityNervos() as string;
   }
 
   identityOrigin(): string {
-    return (this.identOrigin() as { address: string }).address.toLowerCase();
+    return (this.identityOrigin() as string).toLowerCase();
   }
 
   private async signNervos(message: string): Promise<string> {
@@ -71,8 +101,7 @@ export class MetaMaskSigner extends AbstractWalletSigner<NetworkBase> {
     //   }
     // });
 
-    const from = this.identityOrigin();
-    let result = await window.web3.eth.personal.sign(message, from, null);
+    let result = await this.signer.signMessage(ethers.utils.arrayify(message));
     let v = Number.parseInt(result.slice(-2), 16);
     if (v >= 27) v -= 27;
     result = result.slice(0, -2) + v.toString(16).padStart(2, '0');
