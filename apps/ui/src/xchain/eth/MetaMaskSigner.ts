@@ -12,7 +12,7 @@ import { boom, unimplemented } from 'interfaces/errors';
 export class MetaMaskSigner extends AbstractWalletSigner<EthereumNetwork> {
   signer: JsonRpcSigner;
 
-  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identOrigin: EthereumNetwork['UserIdent']) {
+  constructor(_identNervos: NervosNetwork['UserIdent'], _identOrigin: EthereumNetwork['UserIdent']) {
     super(_identNervos, _identOrigin);
     if (hasProp(window, 'ethereum')) {
       const ethereum = window.ethereum as ExternalProvider;
@@ -63,7 +63,7 @@ export class MetaMaskSigner extends AbstractWalletSigner<EthereumNetwork> {
   }
 
   async _signOrigin(raw: EthereumNetwork['RawTransaction']): Promise<EthereumNetwork['SignedTransaction']> {
-    // let signed = await this.signer.signTransaction(raw);
+    // let signed = await this.signer.sendTransaction(raw);
     unimplemented();
   }
 
