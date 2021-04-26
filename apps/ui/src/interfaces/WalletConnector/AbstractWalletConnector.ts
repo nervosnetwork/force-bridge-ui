@@ -56,12 +56,6 @@ export abstract class AbstractWalletConnector<T extends NetworkBase> extends Eve
   }
 
   /**
-   * `connectSilent` is usually used to try to connect to the wallet when you first enter the page,
-   * but there is no guarantee that the connection will be successful
-   */
-  abstract connectSilent(): void;
-
-  /**
    * impl connect method on the extended class
    * @example
    * ```ts

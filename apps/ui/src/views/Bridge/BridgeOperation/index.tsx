@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons';
 import { Button, Divider, Row } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useBridge } from './useBridge';
@@ -10,7 +10,7 @@ import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
-import { useAssetQuery, useForceBridge } from 'state';
+import { BridgeDirection, useAssetQuery, useForceBridge } from 'state';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
   .label {
@@ -26,7 +26,7 @@ const BridgeViewWrapper = styled(StyledCardWrapper)`
 `;
 
 export const BridgeOperation: React.FC = () => {
-  const { signer } = useForceBridge();
+  const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
 
   const {
@@ -40,7 +40,16 @@ export const BridgeOperation: React.FC = () => {
     errors,
     validateStatus,
     fee,
+    reset,
   } = useBridge();
+
+  useEffect(() => {
+    reset();
+    if (!signer) return;
+
+    if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
+    else setRecipient(signer.identityXChain());
+  }, [direction, reset, setRecipient, signer]);
 
   return (
     <BridgeViewWrapper>
@@ -86,9 +95,11 @@ export const BridgeOperation: React.FC = () => {
             </span>
           }
           extra={
-            <span>
-              Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
-            </span>
+            fee && (
+              <span>
+                Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
+              </span>
+            )
           }
           placeholder="0.0"
           disabled

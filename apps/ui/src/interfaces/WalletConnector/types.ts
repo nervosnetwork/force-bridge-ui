@@ -24,9 +24,6 @@ export interface Wallet<T extends NetworkBase = NetworkBase> {
   // connect to the wallet
   connect(): void;
 
-  // connect silently
-  connectSilent(): void;
-
   // disconnect the wallet
   disconnect(): void;
 
