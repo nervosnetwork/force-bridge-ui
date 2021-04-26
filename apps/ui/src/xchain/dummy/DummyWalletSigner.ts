@@ -7,20 +7,24 @@ export class DummyWalletSigner extends AbstractWalletSigner<NetworkBase> {
     super(nervosIdent, xchainIdent);
   }
 
-  _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'] {
+  _isNervosTransaction(
+    raw: NetworkBase['RawTransaction'] | NervosNetwork['RawTransaction'],
+  ): raw is NervosNetwork['RawTransaction'] {
     return false;
   }
 
-  _isXChainTransaction(raw: unknown): raw is NetworkBase['RawTransaction'] {
+  _isXChainTransaction(
+    raw: NetworkBase['RawTransaction'] | NervosNetwork['RawTransaction'],
+  ): raw is NetworkBase['RawTransaction'] {
     return false;
   }
 
-  _sendToNervos(raw: NervosNetwork['RawTransaction']): { txId: string } {
+  _sendToNervos(raw: NervosNetwork['RawTransaction']): Promise<{ txId: string }> {
     console.log('send transaction to Nervos: ' + this._nervosRPCURL);
     unimplemented();
   }
 
-  _sendToXChain(raw: NetworkBase['RawTransaction']): { txId: string } {
+  _sendToXChain(raw: NetworkBase['RawTransaction']): Promise<{ txId: string }> {
     console.log('send transaction to XChain: ' + this._xchainRPCURL);
     unimplemented();
   }
