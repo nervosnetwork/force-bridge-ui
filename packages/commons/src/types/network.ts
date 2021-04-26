@@ -5,6 +5,8 @@
 // XInfo: the ident with network e.g. type type ERC20Info = { network: 'Ethereum', address: '0x...' }
 
 import { NetworkKeyNervos } from '../constatns';
+import '@nervosnetwork/ckb-types';
+import { ethers } from 'ethers';
 
 // number without decimals, e.g. 0x123aaa(Hex), 12547(Decimal)
 // do NOT use such values like, 1.225, 0.22
@@ -44,10 +46,8 @@ export type NervosNetwork = NetworkTypes<{
   NativeAssetIdent: string;
   DerivedAssetIdent: string;
   UserIdent: string;
-  // TODO
-  RawTransaction: unknown;
-  // TODO
-  SignedTransaction: unknown;
+  RawTransaction: CKBComponents.RawTransactionToSign;
+  SignedTransaction: CKBComponents.RawTransaction;
 }>;
 
 export type EthereumNetwork = NetworkTypes<{
@@ -57,9 +57,8 @@ export type EthereumNetwork = NetworkTypes<{
   DerivedAssetIdent: string;
   // address
   UserIdent: string;
-  // TODO
-  RawTransaction: unknown;
-  // TODO
+  RawTransaction: ethers.PopulatedTransaction;
+  // TODO maybe deprecated the SignedTransaction
   SignedTransaction: unknown;
 }>;
 
