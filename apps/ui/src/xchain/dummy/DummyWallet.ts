@@ -17,6 +17,8 @@ export class DummyWallet extends AbstractWalletConnector<NetworkTypes> {
         new DummyWalletSigner(
           'ckt1ffffffffffffffffffffffffffffffffffffffff',
           '0xffffffffffffffffffffffffffffffffffffffff',
+          'http://nervos-host-path:8114/rpc',
+          'http://dummy-host-path:1111/rpc',
         ),
       ),
     );

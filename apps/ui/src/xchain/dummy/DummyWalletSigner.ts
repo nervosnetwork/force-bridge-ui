@@ -3,27 +3,25 @@ import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletS
 import { unimplemented } from 'interfaces/errors';
 
 export class DummyWalletSigner extends AbstractWalletSigner<NetworkBase> {
+  constructor(nervosIdent: string, xchainIdent: string, private _nervosRPCURL: string, private _xchainRPCURL: string) {
+    super(nervosIdent, xchainIdent);
+  }
+
   _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'] {
     return false;
   }
 
-  _isOriginTransaction(raw: unknown): raw is NetworkBase['RawTransaction'] {
+  _isXChainTransaction(raw: unknown): raw is NetworkBase['RawTransaction'] {
     return false;
   }
 
-  _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'] {
+  _sendToNervos(raw: NervosNetwork['RawTransaction']): { txId: string } {
+    console.log('send transaction to Nervos: ' + this._nervosRPCURL);
     unimplemented();
   }
 
-  _signOrigin(raw: NetworkBase['RawTransaction']): NetworkBase['SignedTransaction'] {
+  _sendToXChain(raw: NetworkBase['RawTransaction']): { txId: string } {
+    console.log('send transaction to XChain: ' + this._xchainRPCURL);
     unimplemented();
-  }
-
-  identityNervos(): string {
-    return 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-  }
-
-  identityOrigin(): string {
-    return '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
   }
 }

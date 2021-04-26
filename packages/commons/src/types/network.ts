@@ -16,6 +16,7 @@ export type NetworkBase = {
   DerivedAssetIdent?: string;
   NativeAssetIdent?: string;
   RawTransaction?: unknown;
+  // TODO maybe deprecated the SignedTransaction
   SignedTransaction?: unknown;
 };
 

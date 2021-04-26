@@ -66,7 +66,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
       const infoToBalancePayload = ({ network, ident }: { network: string; ident: string }) => ({
         network,
         assetIdent: ident,
-        userIdent: signer.identOrigin(),
+        userIdent: signer.identityXChain(),
       });
 
       const xchainBalances = await api.getBalance(infos.xchain.map(infoToBalancePayload));
