@@ -27,7 +27,7 @@
   ],
   "references": [
     {
-      "path": "../../packages/commons/tsconfig.build.json"
+      "path": "../../packages/commons"
     }
   ]
 }

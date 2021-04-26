@@ -4,9 +4,8 @@
 // XIdent: the ident of the X resource, e.g. type ERC20Ident = { address: '0x...' }
 // XInfo: the ident with network e.g. type type ERC20Info = { network: 'Ethereum', address: '0x...' }
 
-import { NetworkKeyNervos } from '../constatns';
-import '@nervosnetwork/ckb-types';
 import { ethers } from 'ethers';
+import { NetworkKeyNervos } from '../constatns';
 
 // number without decimals, e.g. 0x123aaa(Hex), 12547(Decimal)
 // do NOT use such values like, 1.225, 0.22
