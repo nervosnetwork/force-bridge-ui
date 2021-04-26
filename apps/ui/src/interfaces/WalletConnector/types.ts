@@ -7,24 +7,17 @@ export enum ConnectStatus {
 }
 
 export interface TwoWayIdentity<T extends NetworkBase> {
-  identOrigin(): T['UserIdent'];
-
-  identNervos(): NervosNetwork['UserIdent'];
-
   // get the signer identity, maybe an address of Ethereum or an account name of EOS
-  identityOrigin(): string;
+  identityXChain(): T['UserIdent'];
 
   // get the signer identity of Nervos, e.g. ckt....
-  identityNervos(): string;
+  identityNervos(): NervosNetwork['UserIdent'];
 }
 
 // Since Nervos supports multiple signatures,
 // a TwoWaySigner is able to sign Nervos transactions as well as transactions from the other network
 export interface TwoWaySigner<T extends NetworkBase = NetworkBase>
-  extends Signer<
-      T['RawTransaction'] | NervosNetwork['RawTransaction'],
-      T['SignedTransaction'] | NervosNetwork['SignedTransaction']
-    >,
+  extends Signer<T['RawTransaction'] | NervosNetwork['RawTransaction']>,
     TwoWayIdentity<T> {}
 
 export interface Wallet<T extends NetworkBase = NetworkBase> {

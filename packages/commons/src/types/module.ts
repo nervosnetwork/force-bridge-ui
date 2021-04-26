@@ -2,8 +2,8 @@ import { AssetType, NetworkTypes, RequiredAsset } from './network';
 
 type Promisifiable<T> = Promise<T> | T;
 
-export interface Signer<Raw, Signed> {
-  sign: (raw: Raw) => Promisifiable<Signed>;
+export interface Signer<Raw> {
+  sendTransaction: (raw: Raw) => Promisifiable<{ txId: string }>;
 }
 
 export interface AssetModel<T extends NetworkTypes> {

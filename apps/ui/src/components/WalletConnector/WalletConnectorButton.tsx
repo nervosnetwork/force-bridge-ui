@@ -49,7 +49,7 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
 
     if (userIdentityMode === 'alwaysNervos') return truncateMiddle(signer.identityNervos(), 10);
 
-    return signer.identityOrigin();
+    return signer.identityXChain();
   }, [walletConnectStatus, disconnectedContent, signer, connectingContent, userIdentityMode]);
 
   function onClick() {

@@ -46,7 +46,7 @@ export function useBridge(): BridgeState {
 
   useEffect(() => {
     if (!signer) return;
-    if (direction === BridgeDirection.In) setRecipient(signer.identOrigin());
+    if (direction === BridgeDirection.In) setRecipient(signer.identityXChain());
     if (direction === BridgeDirection.Out) setRecipient(signer.identityNervos());
   }, [signer, direction]);
 
