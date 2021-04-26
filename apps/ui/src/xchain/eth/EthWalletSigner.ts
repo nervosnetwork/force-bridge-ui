@@ -1,11 +1,11 @@
-import { ExternalProvider } from '@ethersproject/providers/src.ts/web3-provider';
+import { SerializeRawTransaction, SerializeWitnessArgs } from '@ckb-lumos/types/lib/core';
 import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider';
-import { SerializeWitnessArgs, SerializeRawTransaction } from '@ckb-lumos/types/lib/core';
-import { Keccak256Hasher, Blake2bHasher, Builder } from '@lay2/pw-core';
-import { normalizers, Reader, transformers } from 'ckb-js-toolkit';
-import { hasProp } from '@force-bridge/commons/lib/utils';
-import { ethers } from 'ethers';
+import { ExternalProvider } from '@ethersproject/providers/src.ts/web3-provider';
 import { EthereumNetwork, NervosNetwork } from '@force-bridge/commons';
+import { hasProp } from '@force-bridge/commons/lib/utils';
+import { Blake2bHasher, Builder, Keccak256Hasher } from '@lay2/pw-core';
+import { normalizers, Reader, transformers } from 'ckb-js-toolkit';
+import { ethers } from 'ethers';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 import { boom, unimplemented } from 'interfaces/errors';
 
@@ -45,7 +45,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
   async _sendToNervos(raw: NervosNetwork['RawTransaction']): Promise<{ txId: string }> {
     console.log('send transaction to Nervos: ' + this._nervosRPCURL);
-    const signedTransaction = await this.signNervos(raw);
+    // const signedTransaction = await this.signNervos(raw);
     // TODO send signedTransaction through RPC
     unimplemented();
   }
