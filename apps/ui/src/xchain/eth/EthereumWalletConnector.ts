@@ -1,15 +1,14 @@
 import { EthereumNetwork } from '@force-bridge/commons';
-import { Address, AddressType, ChainID, default as PWCore, PwCollector, Web3ModalProvider } from '@lay2/pw-core';
+import PWCore, { Address, AddressType, CHAIN_SPECS, ChainID, Config } from '@lay2/pw-core';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
 import warning from 'tiny-warning';
-import { default as Web3 } from 'web3';
+import { EthWalletSigner } from './EthWalletSigner';
 import { AbstractWalletConnector, ConnectStatus } from 'interfaces/WalletConnector';
 import { unimplemented } from 'interfaces/errors';
-import { EthWalletSigner } from 'xchain/eth/EthWalletSigner';
 
 export interface ConnectorConfig {
-  ckbChainID?:
+  ckbChainID:
     | 0 // mainnet
     | 1 // testnet
     | 2; // devnet
@@ -17,19 +16,18 @@ export interface ConnectorConfig {
 
 export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNetwork> {
   private provider: MetaMaskInpageProvider | undefined;
-  private config: ConnectorConfig;
+  private readonly config: ConnectorConfig;
 
-  constructor(config?: ConnectorConfig) {
+  constructor(config?: Partial<ConnectorConfig>) {
     super();
-    this.config = Object.assign({}, config || {}, { ckbChainId: ChainID.ckb_testnet });
+    this.config = Object.assign({}, { ckbChainID: ChainID.ckb_testnet }, config || {}) as ConnectorConfig;
     this.init();
   }
 
   async init(): Promise<void> {
     if (!window.ethereum) return;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await new PWCore('').init(new Web3ModalProvider(new Web3(window.ethereum)), new PwCollector(''), 1);
+    PWCore.config = this.getPWConfig();
+
     const provider = (await detectEthereumProvider()) as MetaMaskInpageProvider;
     if (!provider) throw new Error('Metamask is required');
 
@@ -52,9 +50,12 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
     unimplemented();
   }
 
+  private getPWConfig(): Config {
+    return [CHAIN_SPECS.Lina, CHAIN_SPECS.Aggron, CHAIN_SPECS.Lay2][this.config.ckbChainID];
+  }
+
   private onSignerChanged(accounts: unknown): void {
     warning(typeof accounts === 'string' || Array.isArray(accounts), `unknown account type: ${accounts}`);
-
     if (!accounts) return super.changeSigner(undefined);
 
     const address = Array.isArray(accounts) ? accounts[0] : accounts;
