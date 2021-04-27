@@ -22,7 +22,7 @@ export function createDummyAPI(): API.ForceBridgeAPIV1 {
       return [
         {
           ident: 'ckt1eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
-          amount: '200000000000000',
+          amount: '123123123123',
           network: 'Nervos',
         },
       ];

@@ -1,9 +1,10 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row } from 'antd';
-import React, { useEffect } from 'react';
+import { Button, Divider, Row, Typography } from 'antd';
+import { useFormik } from 'formik';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
-import { useBridge } from './useBridge';
+import { useBridge, ValidationResult } from './useBridge';
 import { AssetAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
@@ -21,13 +22,29 @@ const BridgeViewWrapper = styled(StyledCardWrapper)`
   }
 
   .input-wrapper {
-    padding: 24px 0;
+    padding: 28px 0;
   }
 `;
+
+const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
+  if (validateStatus !== 'error') return null;
+  return (
+    <Typography.Text type="danger" style={{ position: 'absolute' }}>
+      {help}
+    </Typography.Text>
+  );
+};
 
 export const BridgeOperation: React.FC = () => {
   const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
+  const formik = useFormik<ValidationResult>({
+    initialValues: {},
+    onSubmit: () => {
+      // TODO Signer send transaction
+    },
+    validate: () => errors,
+  });
 
   const {
     bridgeOutInputAmount,
@@ -51,12 +68,34 @@ export const BridgeOperation: React.FC = () => {
     else setRecipient(signer.identityXChain());
   }, [direction, reset, setRecipient, signer]);
 
+  // useEffect(() => {
+  //   formik.setValues({ recipient, bridgeOutInputAmount, bridgeInInputAmount });
+  // }, [formik, recipient, bridgeInInputAmount, bridgeOutInputAmount]);
+
+  const list = useMemo(() => {
+    if (!query.data) return [];
+    if (direction === BridgeDirection.In) return query.data.xchain;
+    return query.data.nervos;
+  }, [direction, query.data]);
+
+  const statusOf = (name: keyof ValidationResult) => {
+    const touched = formik.touched[name];
+    const message = errors?.[name];
+
+    const status = (touched && message ? 'error' : '') as 'error' | '';
+    const help = status === 'error' ? message : '';
+    return { help, validateStatus: status };
+  };
+
   return (
     <BridgeViewWrapper>
       <WalletConnectorButton block type="primary" />
 
       <div className="input-wrapper">
         <UserInput
+          id="bridgeInInputAmount"
+          name="bridgeInInputAmount"
+          onBlur={formik.handleBlur}
           value={bridgeInInputAmount}
           onChange={(e) => setBridgeInInputAmount(e.target.value)}
           label={
@@ -64,7 +103,7 @@ export const BridgeOperation: React.FC = () => {
               <label className="label">From:</label>&nbsp;
               <AssetSelector
                 btnProps={{ disabled: query.data == null }}
-                options={query.data?.xchain || []}
+                options={list}
                 rowKey={(asset) => asset.identity()}
                 selected={selectedAsset?.identity()}
                 onSelect={(_id, asset) => setSelectedAsset(asset)}
@@ -80,12 +119,15 @@ export const BridgeOperation: React.FC = () => {
             )
           }
           placeholder="0.0"
-          disabled={signer == null}
+          disabled={selectedAsset == null || signer == null}
         />
+        <Help {...statusOf('bridgeInInputAmount')} />
       </div>
+
       <Row justify="center" align="middle">
         <Icon style={{ fontSize: '24px' }} component={BridgeDirectionIcon} />
       </Row>
+
       <div className="input-wrapper">
         <UserInput
           label={
@@ -106,16 +148,22 @@ export const BridgeOperation: React.FC = () => {
           value={bridgeOutInputAmount}
         />
       </div>
+
       <Divider dashed style={{ margin: 0, padding: 0 }} />
+
       <div className="input-wrapper">
         <UserInput
+          id="recipient"
+          name="recipient"
+          onBlur={formik.handleBlur}
           label={<span className="label">Recipient</span>}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />
+        <Help {...statusOf('recipient')} />
       </div>
 
-      <Button disabled={!validateStatus || !!errors} block type="primary" size="large">
+      <Button disabled={validateStatus !== 'success'} block type="primary" size="large">
         Bridge
       </Button>
     </BridgeViewWrapper>

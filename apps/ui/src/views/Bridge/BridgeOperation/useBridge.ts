@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BridgeDirection, useForceBridge } from 'state';
 import { BeautyAmount } from 'suite';
 
-type ValidationResult = {
+export type ValidationResult = {
   bridgeInInputAmount?: string;
   bridgeOutInputAmount?: string;
   recipient?: string;
@@ -77,29 +77,29 @@ export function useBridge(): BridgeState {
   }, [asset, bridgeFeeModel]);
 
   const errors = useMemo<ValidationResult | undefined>(() => {
-    if (!asset || !asset.info) {
-      return { bridgeInInputAmount: 'bridge in asset is not loaded' };
-    }
-    if (signer == null) {
-      return { bridgeInInputAmount: 'signer is not found, maybe wallet is disconnected' };
-    }
+    const result: ValidationResult = {};
 
-    const balanceLessThanInput = BeautyAmount.from(asset).val.lt(
-      BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val,
-    );
-    if (balanceLessThanInput) {
-      return { bridgeInInputAmount: `the balance is not enough` };
+    if (!asset || !asset.info) {
+      result.bridgeInInputAmount = 'bridge in asset is not loaded';
+    } else if (signer == null) {
+      result.bridgeInInputAmount = 'signer is not found, maybe wallet is disconnected';
+    } else {
+      const balanceLessThanInput = BeautyAmount.from(asset).val.lt(
+        BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val,
+      );
+      if (balanceLessThanInput) {
+        result.bridgeInInputAmount = `the balance is not enough`;
+      }
     }
 
     if (!recipient || !validators.validateUserIdent(recipient)) {
-      return { recipient: 'recipient is not valid' };
+      result.recipient = 'recipient is not valid';
     }
 
-    return;
+    return Object.keys(result).length === 0 ? undefined : result;
   }, [asset, signer, bridgeInInputAmount, recipient, validators]);
 
-  const validateStatus =
-    !errors && !!bridgeInInputAmount && !!bridgeOutInputAmount && !!recipient ? 'success' : 'failed';
+  const validateStatus = !errors && bridgeInInputAmount && bridgeOutInputAmount && recipient ? 'success' : 'failed';
 
   const reset = useCallback(() => {
     setInputAmount('', '');

@@ -7,12 +7,12 @@ type Options = {
   info?: FungibleBaseInfo;
 };
 
-export class EthereumEther extends Asset {
+export class Ether extends Asset {
   constructor(options: Options) {
     super({ ...options, ident: '0x0000000000000000000000000000000000000000', isNative: true, network: 'Ethereum' });
   }
 
-  copy(): EthereumEther {
-    return new EthereumEther({ ...this });
+  copy(): Ether {
+    return new Ether({ ...this });
   }
 }
