@@ -4,15 +4,17 @@ import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
+import { useBridgeInput, ValidationResult } from './useBridgeInput';
+import { useBridgeTransaction } from './useBridgeTransaction';
 import { AssetAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
+import { boom } from 'interfaces/errors';
 import { BridgeDirection, useAssetQuery, useForceBridge } from 'state';
-import { useBridgeInput, ValidationResult } from 'views/Bridge/BridgeOperation/useBridgeInput';
-import { useBridgeTransaction } from 'views/Bridge/BridgeOperation/useBridgeTransaction';
+import { BeautyAmount } from 'suite';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
   .label {
@@ -70,9 +72,13 @@ export const BridgeOperation: React.FC = () => {
   }, [direction, reset, setRecipient, signer]);
 
   function onSubmit() {
-    console.log(selectedAsset, recipient);
     if (!selectedAsset || !recipient) return;
-    sendBridgeTransaction({ asset: selectedAsset, recipient });
+
+    const asset = selectedAsset.copy();
+    if (asset.info?.decimals == null) boom('asset info is not loaded');
+
+    asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
+    sendBridgeTransaction({ asset, recipient });
   }
 
   useEffect(() => {
