@@ -52,19 +52,54 @@ async function burn() {
 
   const ckb = new CKB(CKB_NODE_URL);
   const signedTx = ckb.signTransaction(CKB_PRI_KEY)(<CKBComponents.RawTransactionToSign>burnTx.rawTransaction);
-
-  const sendPayload = {
-    network: 'Nervos',
-    signedTransaction: signedTx,
-  };
-  const burnTxHash = await client.sendSignedTransaction(sendPayload);
+  const burnTxHash = await ckb.rpc.sendTransaction(signedTx);
   console.log('burn tx hash', burnTxHash);
   return burnTxHash;
 }
 
+async function getTransaction() {
+  const getTxPayload = {
+    network: 'Ethereum',
+    userIdent: 'ckt1qyqyph8v9mclls35p6snlaxajeca97tc062sa5gahk',
+    assetIdent: '0x0000000000000000000000000000000000000000',
+  };
+
+  const txs = await client.getBridgeTransactionSummaries(getTxPayload);
+  console.log('txs', JSON.stringify(txs));
+  return txs;
+}
+
+async function checkTransaction(txId: string) {
+  let find = false;
+  for (let i = 0; i < 100; i++) {
+    await asyncSleep(3000);
+    const txs = await getTransaction();
+    for (const tx of txs) {
+      if (tx.status == 'Successful' && tx.txSummary.fromTransaction.txId == txId) {
+        console.log(tx);
+        find = true;
+        break;
+      }
+    }
+    if (find) {
+      break;
+    }
+  }
+  if (!find) {
+    throw new Error(`rpc test failed, can not find record ${txId}`);
+  }
+}
+
+function asyncSleep(ms = 0) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 async function main() {
-  await mint();
-  await burn();
+  const mintTxId = await mint();
+  await checkTransaction(mintTxId);
+
+  const burnTxId = await burn();
+  await checkTransaction(burnTxId);
 }
 
 main();
