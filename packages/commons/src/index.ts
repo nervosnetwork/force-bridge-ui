@@ -6,3 +6,4 @@ export * as API from './types/apiv1';
 export { ModuleRegistry } from './ModuleRegistry';
 export * from './constatns';
 export * from './modules';
+export * from './client/client';

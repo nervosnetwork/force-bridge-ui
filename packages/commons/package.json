@@ -6,7 +6,13 @@
     "@nervosnetwork/ckb-sdk-utils": "^0.40.0",
     "@nervosnetwork/ckb-types": "^0.39.0",
     "@types/lodash.isequal": "^4.5.5",
+    "@types/node-fetch": "^2.5.10",
+    "node-fetch": "^2.5.10",
     "lodash.isequal": "^4.5.0",
+    "json-rpc-2.0": "^0.2.16",
     "ethers": "^5.0.32"
+  },
+  "devDependencies": {
+    "@nervosnetwork/ckb-sdk-core": "^0.39.0"
   }
 }
