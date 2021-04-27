@@ -30,7 +30,7 @@ interface BridgeState {
   validateStatus: ValidateStatus;
 }
 
-export function useBridge(): BridgeState {
+export function useBridgeInput(): BridgeState {
   const [asset, setAsset] = useState<Asset | undefined>();
   const [bridgeInInputAmount, setBridgeInInputAmount] = useState<string>('');
   const [bridgeOutInputAmount, setBridgeOutInputAmount] = useState<string>('');

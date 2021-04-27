@@ -1,10 +1,9 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row, Typography } from 'antd';
+import { Button, Divider, Modal, Row, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
-import { useBridge, ValidationResult } from './useBridge';
 import { AssetAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
@@ -12,6 +11,8 @@ import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
 import { BridgeDirection, useAssetQuery, useForceBridge } from 'state';
+import { useBridgeInput, ValidationResult } from 'views/Bridge/BridgeOperation/useBridgeInput';
+import { useBridgeTransaction } from 'views/Bridge/BridgeOperation/useBridgeTransaction';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
   .label {
@@ -39,10 +40,8 @@ export const BridgeOperation: React.FC = () => {
   const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
   const formik = useFormik<ValidationResult>({
+    onSubmit,
     initialValues: {},
-    onSubmit: () => {
-      // TODO Signer send transaction
-    },
     validate: () => errors,
   });
 
@@ -56,9 +55,11 @@ export const BridgeOperation: React.FC = () => {
     recipient,
     errors,
     validateStatus,
-    fee,
+    // fee,
     reset,
-  } = useBridge();
+  } = useBridgeInput();
+
+  const { mutate: sendBridgeTransaction, error, isLoading } = useBridgeTransaction();
 
   useEffect(() => {
     reset();
@@ -68,9 +69,18 @@ export const BridgeOperation: React.FC = () => {
     else setRecipient(signer.identityXChain());
   }, [direction, reset, setRecipient, signer]);
 
-  // useEffect(() => {
-  //   formik.setValues({ recipient, bridgeOutInputAmount, bridgeInInputAmount });
-  // }, [formik, recipient, bridgeInInputAmount, bridgeOutInputAmount]);
+  function onSubmit() {
+    console.log(selectedAsset, recipient);
+    if (!selectedAsset || !recipient) return;
+    sendBridgeTransaction({ asset: selectedAsset, recipient });
+  }
+
+  useEffect(() => {
+    if (!error) return;
+
+    const errorMsg: string = error instanceof Error ? error.message : 'Unknown error';
+    Modal.error({ content: errorMsg, width: 360 });
+  }, [error]);
 
   const list = useMemo(() => {
     if (!query.data) return [];
@@ -136,13 +146,13 @@ export const BridgeOperation: React.FC = () => {
               {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
             </span>
           }
-          extra={
-            fee && (
-              <span>
-                Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
-              </span>
-            )
-          }
+          // extra={
+          //   fee && (
+          //     <span>
+          //       Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
+          //     </span>
+          //   )
+          // }
           placeholder="0.0"
           disabled
           value={bridgeOutInputAmount}
@@ -163,7 +173,14 @@ export const BridgeOperation: React.FC = () => {
         <Help {...statusOf('recipient')} />
       </div>
 
-      <Button disabled={validateStatus !== 'success'} block type="primary" size="large">
+      <Button
+        disabled={validateStatus !== 'success'}
+        block
+        type="primary"
+        size="large"
+        onClick={formik.submitForm}
+        loading={isLoading}
+      >
         Bridge
       </Button>
     </BridgeViewWrapper>
