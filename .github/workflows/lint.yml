@@ -1,0 +1,15 @@
+name: Lint
+
+on: [pull_request, push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: yarn install
+      - name: Build commons libraries
+        run: yarn build:lib
+      - name: Lint
+        run: yarn lint && yarn workspace @force-bridge/ui run lint
