@@ -1,11 +1,11 @@
 import { Asset, AssetPayload } from '../../base';
 
-export class NervosSUDT extends Asset {
+export class SUDT extends Asset {
   constructor(options: AssetPayload) {
     super({ ...options, network: 'Nervos' });
   }
 
   copy(): Asset {
-    return new NervosSUDT({ ...this });
+    return new SUDT({ ...this });
   }
 }

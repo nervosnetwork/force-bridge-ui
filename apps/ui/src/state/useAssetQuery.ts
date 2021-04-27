@@ -1,10 +1,10 @@
-import { Asset, EthereumERC20, EthereumEther, NervosSUDT } from '@force-bridge/commons';
+import { Asset, eth, nervos } from '@force-bridge/commons';
 import { QueryObserverResult, useQuery } from 'react-query';
 import { boom } from 'interfaces/errors';
 import { useForceBridge } from 'state/global';
 import { asserts } from 'utils';
 
-type Assets = { xchain: Asset[]; nervos: NervosSUDT[] };
+type Assets = { xchain: Asset[]; nervos: nervos.SUDT[] };
 
 export function useAssetQuery(): QueryObserverResult<Assets> {
   const { api, direction, network, signer, xchainModule } = useForceBridge();
@@ -21,7 +21,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
         const ident = assetWithInfo.ident;
         const info = assetWithInfo.info;
 
-        const sudt = new NervosSUDT({
+        const sudt = new nervos.SUDT({
           info: {
             ...assetWithInfo.info,
             shadow: assetWithInfo,
@@ -33,9 +33,9 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
 
         let xchainAsset: Asset;
         if (X.isDerivedAsset(assetWithInfo)) {
-          xchainAsset = new EthereumERC20({ ident, info, shadow: sudt });
+          xchainAsset = new eth.ERC20({ ident, info, shadow: sudt });
         } else if (X.isNativeAsset(assetWithInfo)) {
-          xchainAsset = new EthereumEther({ info, shadow: sudt });
+          xchainAsset = new eth.Ether({ info, shadow: sudt });
         } else {
           boom(`asset is not valid ${JSON.stringify(assetWithInfo)}`);
         }
@@ -49,7 +49,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
     });
 
     // xchain asset.shadow
-    const nervosAssetsInfo = xchainAssetsInfo.map<NervosSUDT>((xchainAsset) => {
+    const nervosAssetsInfo = xchainAssetsInfo.map<nervos.SUDT>((xchainAsset) => {
       asserts(xchainAsset.shadow != null);
       return xchainAsset.shadow;
     });
@@ -78,7 +78,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
           asset.setAmount(balance.amount);
           return asset;
         }),
-        nervos: nervosBalances.map<NervosSUDT>((balance, i) => {
+        nervos: nervosBalances.map<nervos.SUDT>((balance, i) => {
           const asset = infos.nervos[i];
           asset.setAmount(balance.amount);
           return asset;

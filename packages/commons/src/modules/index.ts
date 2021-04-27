@@ -1,8 +1,5 @@
-export * from './nervos/module';
-export * from './nervos/models/NervosSUDT';
+import * as eth from './eth';
+import * as nervos from './nervos';
 
-export * from './eth/module';
-export * from './eth/models/EthereumEther';
-export * from './eth/models/EthereumERC20';
-
-export * from './base/Asset';
+export { nervos, eth };
+export * from './base';

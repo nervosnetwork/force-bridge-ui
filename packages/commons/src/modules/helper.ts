@@ -4,7 +4,9 @@ import { AssetType, NetworkTypes, RequiredAsset } from '../types';
 import { AssetModel } from '../types/module';
 
 // typescript helper function
-export function createAssetPredicate<T>(pred: (x: AssetType) => boolean): <X>(asset: X) => asset is T & X {
+export function createAssetPredicate<T>(
+  pred: (x: AssetType) => boolean,
+): <X extends AssetType>(asset: X) => asset is X & T {
   if (typeof pred !== 'function') boom('param of `createAssetPredicate` must be a function');
   return pred as <X>(asset: X) => asset is T & X;
 }
@@ -52,9 +54,9 @@ export function createAssetModel<T extends NetworkTypes>(options: Options<T>): A
     identity,
     equalsFungibleAsset,
 
-    isCurrentNetworkAsset,
-    isNativeAsset,
-    isDerivedAsset,
+    isCurrentNetworkAsset: createAssetPredicate<AssetType<T>>(isCurrentNetworkAsset),
+    isNativeAsset: createAssetPredicate<AssetType<T>>(isNativeAsset),
+    isDerivedAsset: createAssetPredicate<AssetType<T>>(isDerivedAsset),
   };
 }
 
