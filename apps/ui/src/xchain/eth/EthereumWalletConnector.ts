@@ -25,11 +25,9 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
   }
 
   async init(): Promise<void> {
-    if (!window.ethereum) return;
-    PWCore.config = this.getPWConfig();
-
     const provider = (await detectEthereumProvider()) as MetaMaskInpageProvider;
     if (!provider) throw new Error('Metamask is required');
+    PWCore.config = this.getPWConfig();
 
     provider.on('accountsChanged', (accounts) => this.onSignerChanged(accounts));
     this.provider = provider;
