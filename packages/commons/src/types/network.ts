@@ -58,7 +58,7 @@ export type EthereumNetwork = NetworkTypes<{
   UserIdent: string;
   RawTransaction: ethers.PopulatedTransaction;
   // TODO maybe deprecated the SignedTransaction
-  SignedTransaction: unknown;
+  SignedTransaction: string;
 }>;
 
 // export type AllNetworks = NervosNetwork | EthereumNetwork;
