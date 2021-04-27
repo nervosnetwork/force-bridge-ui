@@ -1,34 +1,52 @@
 import { API, RequiredAsset, NetworkBase, NetworkTypes } from '../types';
-import { JSONRPCClient } from 'json-rpc-2.0';
+import { JSONRPCClient, JSONRPCRequest } from 'json-rpc-2.0';
+import { ethers } from 'ethers';
+import fetch from 'node-fetch';
 
 // TODO use setting config url
 const FORCE_BRIDGE_URL = 'http://localhost:8080/force-bridge/api/v1';
 
+const client: JSONRPCClient = new JSONRPCClient((jsonRPCRequest: JSONRPCRequest) =>
+  fetch(FORCE_BRIDGE_URL, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(jsonRPCRequest),
+  }).then((response) => {
+    if (response.status === 200) {
+      // Use client.receive when you received a JSON-RPC response.
+      return response.json().then((jsonRPCResponse) => client.receive(jsonRPCResponse));
+    } else if (jsonRPCRequest.id !== undefined) {
+      return Promise.reject(new Error(response.statusText));
+    } else {
+      return Promise.reject(new Error(response.statusText));
+    }
+  }),
+);
+
 export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   client: JSONRPCClient;
   constructor() {
-    this.client = new JSONRPCClient((jsonRPCRequest) =>
-      fetch(FORCE_BRIDGE_URL, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify(jsonRPCRequest),
-      }).then((response) => {
-        if (response.status === 200) {
-          // Use client.receive when you received a JSON-RPC response.
-          return response.json().then((jsonRPCResponse) => this.client.receive(jsonRPCResponse));
-        } else if (jsonRPCRequest.id !== undefined) {
-          return Promise.reject(new Error(response.statusText));
-        }
-      }),
-    );
+    this.client = client;
   }
   async generateBridgeInNervosTransaction<T extends NetworkTypes>(
     payload: API.GenerateBridgeInTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {
-    return await this.client.request('generateBridgeInNervosTransaction', payload);
+    const result = await this.client.request('generateBridgeInNervosTransaction', payload);
+    switch (result.network) {
+      case 'Ethereum':
+        const rawTx = result.rawTransaction;
+        rawTx.value = ethers.BigNumber.from(rawTx.value.hex);
+        result.rawTransaction = rawTx;
+        break;
+      default:
+        //TODO add other chains
+        Promise.reject(new Error('not yet'));
+    }
+    return result;
   }
+
   async generateBridgeOutNervosTransaction<T extends NetworkTypes>(
     payload: API.GenerateBridgeOutNervosTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {
