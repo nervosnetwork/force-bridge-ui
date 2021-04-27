@@ -3,38 +3,36 @@ import { TwoWaySigner } from './types';
 import { boom, unimplemented } from 'interfaces/errors';
 
 export abstract class AbstractWalletSigner<T extends NetworkBase> implements TwoWaySigner<T> {
-  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identOrigin: T['UserIdent']) {}
+  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identXChain: T['UserIdent']) {}
 
-  async sign(raw: T['RawTransaction']): Promise<T['SignedTransaction']> {
-    if (this._isNervosTransaction(raw)) return this._signNervos(raw);
-    if (this._isOriginTransaction(raw)) return this._signOrigin(raw);
+  async sendTransaction(raw: T['RawTransaction'] | NervosNetwork['RawTransaction']): Promise<{ txId: string }> {
+    if (this._isNervosTransaction(raw)) return this._sendToNervos(raw);
+    if (this._isXChainTransaction(raw)) return this._sendToXChain(raw);
 
     boom(unimplemented);
   }
 
-  identNervos(): NervosNetwork['UserIdent'] {
+  // current signer identity on Nervos
+  identityNervos(): string {
     return this._identNervos;
   }
 
-  identOrigin(): T['UserIdent'] {
-    return this._identOrigin;
+  // current signer identity on origin network
+  identityXChain(): string {
+    return this._identXChain;
   }
 
   // sign for origin network
-  abstract _signOrigin(raw: T['RawTransaction']): T['SignedTransaction'];
+  abstract _sendToXChain(raw: T['RawTransaction']): Promise<{ txId: string }>;
 
   // sign for nervos network
-  abstract _signNervos(raw: NervosNetwork['RawTransaction']): NervosNetwork['SignedTransaction'];
+  abstract _sendToNervos(raw: NervosNetwork['RawTransaction']): Promise<{ txId: string }>;
 
   // check if this RawTransaction is signed for origin network
-  abstract _isOriginTransaction(raw: unknown): raw is T['RawTransaction'];
+  abstract _isXChainTransaction(raw: T['RawTransaction'] | NervosNetwork['RawTransaction']): raw is T['RawTransaction'];
 
   // check if this RawTransaction is signed for Nervos
-  abstract _isNervosTransaction(raw: unknown): raw is NervosNetwork['RawTransaction'];
-
-  // current signer identity on Nervos
-  abstract identityNervos(): string;
-
-  // current signer identity on origin network
-  abstract identityOrigin(): string;
+  abstract _isNervosTransaction(
+    raw: T['RawTransaction'] | NervosNetwork['RawTransaction'],
+  ): raw is NervosNetwork['RawTransaction'];
 }

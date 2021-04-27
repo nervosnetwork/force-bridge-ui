@@ -1,5 +1,5 @@
 import { Asset } from '@force-bridge/commons';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BridgeDirection, useForceBridge } from 'state';
 import { BeautyAmount } from 'suite';
 
@@ -25,6 +25,7 @@ interface BridgeState {
 
   fee: Asset | undefined;
 
+  reset: () => void;
   errors: ValidationResult | undefined;
   validateStatus: ValidateStatus;
 }
@@ -37,7 +38,11 @@ export function useBridge(): BridgeState {
 
   const { direction, signer, nervosModule, xchainModule } = useForceBridge();
 
-  const { bridgeFeeModel, validators } = direction === BridgeDirection.In ? xchainModule : nervosModule;
+  const bridgeFeeModel = direction === BridgeDirection.In ? xchainModule.bridgeFeeModel : nervosModule.bridgeFeeModel;
+
+  // XChain -> Nervos, validate nervos module
+  // Nervos -> XChain, validate with xchain module
+  const validators = direction === BridgeDirection.In ? nervosModule.validators : xchainModule.validators;
 
   function setInputAmount(bridgeIn: string, bridgeOut: string) {
     setBridgeInInputAmount(bridgeIn);
@@ -46,20 +51,23 @@ export function useBridge(): BridgeState {
 
   useEffect(() => {
     if (!signer) return;
-    if (direction === BridgeDirection.In) setRecipient(signer.identOrigin());
-    if (direction === BridgeDirection.Out) setRecipient(signer.identityNervos());
+    if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
+    if (direction === BridgeDirection.Out) setRecipient(signer.identityXChain());
   }, [signer, direction]);
 
   useEffect(() => {
     setInputAmount('', '');
   }, [asset]);
 
-  function validateAndSetBridgeInInput(input: string) {
-    if (asset == null) return;
-    if (!isValidAmountInput(input)) return;
+  const validateAndSetBridgeInInput = useCallback(
+    function validateAndSetBridgeInInput(input: string) {
+      if (asset == null) return;
+      if (!isValidAmountInput(input)) return;
 
-    setInputAmount(input, input);
-  }
+      setInputAmount(input, input);
+    },
+    [asset],
+  );
 
   const fee = useMemo<Asset | undefined>(() => {
     if (!asset) return undefined;
@@ -93,6 +101,12 @@ export function useBridge(): BridgeState {
   const validateStatus =
     !errors && !!bridgeInInputAmount && !!bridgeOutInputAmount && !!recipient ? 'success' : 'failed';
 
+  const reset = useCallback(() => {
+    setInputAmount('', '');
+    setRecipient('');
+    setAsset(undefined);
+  }, []);
+
   return {
     asset,
     setAsset,
@@ -109,6 +123,7 @@ export function useBridge(): BridgeState {
 
     validateStatus,
     errors,
+    reset,
   };
 }
 

@@ -1,4 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "include": ["src"],
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "typeRoots": ["node_modules/@types", "node_modules"],
+    "types": ["@nervosnetwork/ckb-types"]
+  }
 }

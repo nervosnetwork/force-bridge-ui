@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { GlobalSetting, useGlobalSetting } from './setting';
 import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector';
 import { createDummyAPI } from 'suite/dummy/apiv1';
-import { DummyWallet } from 'xchain/dummy/DummyWallet';
+import { EthereumWalletConnector } from 'xchain/eth/EthereumWalletConnector';
 
 const SUPPORTED_NETWORKS = ['Ethereum'];
 
@@ -39,7 +39,8 @@ const Context = createContext<ForceBridgeState | null>(null);
 
 export const ForceBridgeProvider: React.FC = (props) => {
   const api = useMemo<API.ForceBridgeAPIV1>(() => createDummyAPI(), []);
-  const wallet = useMemo<Wallet>(() => new DummyWallet(), []);
+  // TODO refactor with MultiChainWalletConnector
+  const wallet = useMemo<Wallet>(() => new EthereumWalletConnector(), []);
 
   const [globalSetting] = useGlobalSetting();
 

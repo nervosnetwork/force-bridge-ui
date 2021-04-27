@@ -4,6 +4,7 @@
   "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": ["@nervosnetwork/ckb-types"]
   }
 }
