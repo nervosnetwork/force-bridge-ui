@@ -53,26 +53,26 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   async sendSignedTransaction<T extends NetworkBase>(
     payload: API.SignedTransactionPayload<T>,
   ): Promise<API.TransactionIdent> {
-    return await this.client.request('sendSignedTransaction', payload);
+    return this.client.request('sendSignedTransaction', payload);
   }
   async getBridgeTransactionStatus(
     payload: API.GetBridgeTransactionStatusPayload,
   ): Promise<API.GetBridgeTransactionStatusResponse> {
-    return await this.client.request('getBridgeTransactionStatus', payload);
+    return this.client.request('getBridgeTransactionStatus', payload);
   }
   async getBridgeTransactionSummaries(
     payload: API.GetBridgeTransactionSummariesPayload,
   ): Promise<API.TransactionSummaryWithStatus[]> {
-    return await this.client.request('getBridgeTransactionSummaries', payload);
+    return this.client.request('getBridgeTransactionSummaries', payload);
   }
   async getAssetList(name?: string): Promise<RequiredAsset<'info'>[]> {
     let param = { asset: name };
     if (name == undefined) {
       param = { asset: 'all' };
     }
-    return await this.client.request('getAssetList', param);
+    return this.client.request('getAssetList', param);
   }
   async getBalance(payload: API.GetBalancePayload): Promise<API.GetBalanceResponse> {
-    return await this.client.request('getBalance', payload);
+    return this.client.request('getBalance', payload);
   }
 }
