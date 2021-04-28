@@ -4,4 +4,4 @@ export { utils };
 export * from './types';
 export * from './constatns';
 export * from './modules';
-export * from './client/client';
+export * from './rpc/client';

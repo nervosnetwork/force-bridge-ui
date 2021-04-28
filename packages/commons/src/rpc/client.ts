@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { JSONRPCClient, JSONRPCRequest } from 'json-rpc-2.0';
 import fetch from 'node-fetch';
 import { API, RequiredAsset, NetworkBase, NetworkTypes } from '../types';
+import * as shim from './shim';
 
 export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   client: JSONRPCClient;
@@ -65,12 +66,13 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   ): Promise<API.TransactionSummaryWithStatus[]> {
     return this.client.request('getBridgeTransactionSummaries', payload);
   }
-  async getAssetList(name?: string): Promise<RequiredAsset<'info'>[]> {
-    let param = { asset: name };
-    if (name == undefined) {
-      param = { asset: 'all' };
-    }
-    return this.client.request('getAssetList', param);
+  async getAssetList(_name?: string): Promise<RequiredAsset<'info'>[]> {
+    return shim.assetList;
+    // let param = { asset: name };
+    // if (name == undefined) {
+    //   param = { asset: 'all' };
+    // }
+    // return this.client.request('getAssetList', param);
   }
   async getBalance(payload: API.GetBalancePayload): Promise<API.GetBalanceResponse> {
     return this.client.request('getBalance', payload);

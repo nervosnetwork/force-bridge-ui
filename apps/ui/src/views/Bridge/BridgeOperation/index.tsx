@@ -1,4 +1,5 @@
 import Icon from '@ant-design/icons';
+import { utils } from '@force-bridge/commons';
 import { Button, Divider, Modal, Row, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -84,7 +85,7 @@ export const BridgeOperation: React.FC = () => {
   useEffect(() => {
     if (!error) return;
 
-    const errorMsg: string = error instanceof Error ? error.message : 'Unknown error';
+    const errorMsg: string = utils.hasProp(error, 'message') ? String(error.message) : 'Unknown error';
     Modal.error({ content: errorMsg, width: 360 });
   }, [error]);
 
