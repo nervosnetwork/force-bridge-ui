@@ -9,19 +9,20 @@ export interface BridgeInputValues {
 }
 
 export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
-  const { api, signer, direction } = useForceBridge();
+  const { api, signer, direction, network } = useForceBridge();
 
   return useMutation(['sendTransaction'], async (input: BridgeInputValues) => {
     if (!signer) boom('signer is not load');
 
     const generated = await (direction === BridgeDirection.In
       ? api.generateBridgeInNervosTransaction({
-          asset: input.asset,
+          asset: { network: input.asset.network, ident: input.asset.ident, amount: input.asset.amount },
           recipient: input.recipient,
           sender: signer.identityXChain(),
         })
-      : api.generateBridgeInNervosTransaction({
-          asset: input.asset,
+      : api.generateBridgeOutNervosTransaction({
+          network,
+          asset: input.asset.ident,
           recipient: input.recipient,
           sender: signer.identityNervos(),
         }));

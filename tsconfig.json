@@ -22,5 +22,5 @@
       "@force-bridge/*": ["./packages/*/src"]
     }
   },
-  "references": [{ "path": "tsconfig.build.json"}, { "path": "packages/commons" }]
+  "references": [{ "path": "packages/commons" }]
 }

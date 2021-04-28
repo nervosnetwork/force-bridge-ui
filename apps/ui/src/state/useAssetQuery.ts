@@ -63,14 +63,14 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
       if (!signer) boom('signer is not found when fetching balance');
       if (!infos) boom('asset list is not loaded');
 
-      const infoToBalancePayload = ({ network, ident }: { network: string; ident: string }) => ({
+      const infoToBalancePayload = (userIdent: string) => ({ network, ident }: { network: string; ident: string }) => ({
         network,
+        userIdent,
         assetIdent: ident,
-        userIdent: signer.identityXChain(),
       });
 
-      const xchainBalances = await api.getBalance(infos.xchain.map(infoToBalancePayload));
-      const nervosBalances = await api.getBalance(infos.nervos.map(infoToBalancePayload));
+      const xchainBalances = await api.getBalance(infos.xchain.map(infoToBalancePayload(signer.identityXChain())));
+      const nervosBalances = await api.getBalance(infos.nervos.map(infoToBalancePayload(signer.identityNervos())));
 
       return {
         xchain: xchainBalances.map<Asset>((balance, i) => {
