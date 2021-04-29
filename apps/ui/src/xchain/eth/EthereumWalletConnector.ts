@@ -59,7 +59,7 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
     const address = Array.isArray(accounts) ? accounts[0] : accounts;
     if (typeof address !== 'string') return super.changeSigner(undefined);
 
-    const signer = new EthWalletSigner(new Address(address, AddressType.eth).toCKBAddress(), address, '', '');
+    const signer = new EthWalletSigner(new Address(address, AddressType.eth).toCKBAddress(), address, this.config);
     super.changeSigner(signer);
   }
 }

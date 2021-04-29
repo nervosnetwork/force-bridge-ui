@@ -16,9 +16,11 @@ import PWCore, {
   Transaction,
   EthProvider,
   PwCollector,
+  CHAIN_SPECS,
 } from '@lay2/pw-core';
 import { RPC } from 'ckb-js-toolkit';
 import { BigNumber, ethers } from 'ethers';
+import { ConnectorConfig } from './EthereumWalletConnector';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 import { boom, unimplemented } from 'interfaces/errors';
 
@@ -31,15 +33,22 @@ const LockerContractAddress = '0xcd5a0974eb6ea507eebd627646f216a98d7cb879';
 export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   signer: JsonRpcSigner;
   pwCore: PWCore;
+  pwLockCellDep: CellDep;
 
-  constructor(nervosIdent: string, xchainIdent: string, private _nervosRPCURL: string, private _xchainRPCURL: string) {
+  constructor(
+    nervosIdent: string,
+    xchainIdent: string,
+    _config: ConnectorConfig,
+    private _nervosRPCURL: string = 'http://121.196.29.165:8114/rpc',
+    private _xchainRPCURL: string = '',
+  ) {
     super(nervosIdent, xchainIdent);
     if (hasProp(window, 'ethereum')) {
       const ethereum = window.ethereum as ExternalProvider;
       const provider = new ethers.providers.Web3Provider(ethereum);
       this.signer = provider.getSigner();
-      this._nervosRPCURL = 'http://121.196.29.165:8114/rpc';
       this.pwCore = new PWCore(this._nervosRPCURL);
+      this.pwLockCellDep = this.getPWLockCellDep(_config);
       this.init();
     } else {
       boom(unimplemented);
@@ -47,10 +56,16 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   }
 
   async init() {
-    this.pwCore = await this.pwCore.init(
-      new EthProvider(), // a built-in Provider for Ethereum env.
-      new PwCollector(this._nervosRPCURL), // a custom Collector to retrive cells from cache server.
-    );
+    this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._nervosRPCURL));
+  }
+
+  getPWLockCellDep(config: ConnectorConfig): CellDep {
+    if (0 === config.ckbChainID) {
+      return CHAIN_SPECS.Lina.pwLock.cellDep;
+    } else if (1 === config.ckbChainID) {
+      return CHAIN_SPECS.Aggron.pwLock.cellDep;
+    }
+    boom(unimplemented);
   }
 
   _isNervosTransaction(
@@ -130,13 +145,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     const cellDeps = rawTx.cellDeps.map(
       (c) => new CellDep(toPWDepType(c.depType), new OutPoint(c.outPoint!.txHash, c.outPoint!.index)),
     );
-    const pwLockCellDeps = [
-      new CellDep(
-        DepType.code,
-        new OutPoint('0x57a62003daeab9d54aa29b944fc3b451213a5ebdf2e232216a3cfed0dde61b38', '0x0'),
-      ),
-    ];
-    cellDeps.push(...pwLockCellDeps);
+    cellDeps.push(this.pwLockCellDep);
     return new Transaction(new RawTransaction(inputs, outputs, cellDeps, rawTx.headerDeps, rawTx.version), [
       Builder.WITNESS_ARGS.Secp256k1,
     ]);

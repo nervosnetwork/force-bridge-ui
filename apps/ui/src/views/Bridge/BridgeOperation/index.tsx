@@ -86,7 +86,7 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   function onSubmit() {
     if (!selectedAsset || !recipient || !selectedAsset.shadow) return;
 
-    const asset = selectedAsset.shadow.copy();
+    const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
     if (asset.info?.decimals == null) boom('asset info is not loaded');
 
     asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
