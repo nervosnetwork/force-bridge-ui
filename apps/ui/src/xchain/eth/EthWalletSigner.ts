@@ -1,26 +1,71 @@
-import { SerializeRawTransaction, SerializeWitnessArgs } from '@ckb-lumos/types/lib/core';
 import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider';
 import { ExternalProvider } from '@ethersproject/providers/src.ts/web3-provider';
 import { EthereumNetwork, NervosNetwork } from '@force-bridge/commons';
 import { hasProp } from '@force-bridge/commons/lib/utils';
-import { Blake2bHasher, Builder, Keccak256Hasher } from '@lay2/pw-core';
-import { normalizers, Reader, transformers } from 'ckb-js-toolkit';
-import { ethers } from 'ethers';
+import PWCore, {
+  Amount,
+  AmountUnit,
+  Builder,
+  Cell,
+  CellDep,
+  DepType,
+  HashType,
+  OutPoint,
+  RawTransaction,
+  Script,
+  Transaction,
+  EthProvider,
+  PwCollector,
+  CHAIN_SPECS,
+} from '@lay2/pw-core';
+import { RPC } from 'ckb-js-toolkit';
+import { BigNumber, ethers } from 'ethers';
+import { ConnectorConfig } from './EthereumWalletConnector';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 import { boom, unimplemented } from 'interfaces/errors';
 
+const Erc20ABI = [
+  'function allowance(address owner, address spender) view returns (uint256)',
+  'function approve(address spender, uint256 value) returns (boolean)',
+];
+const LockerContractAddress = '0xcd5a0974eb6ea507eebd627646f216a98d7cb879';
+
 export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   signer: JsonRpcSigner;
+  pwCore: PWCore;
+  pwLockCellDep: CellDep;
 
-  constructor(nervosIdent: string, xchainIdent: string, private _nervosRPCURL: string, private _xchainRPCURL: string) {
+  constructor(
+    nervosIdent: string,
+    xchainIdent: string,
+    _config: ConnectorConfig,
+    private _nervosRPCURL: string = 'http://121.196.29.165:8114/rpc',
+    private _xchainRPCURL: string = '',
+  ) {
     super(nervosIdent, xchainIdent);
     if (hasProp(window, 'ethereum')) {
       const ethereum = window.ethereum as ExternalProvider;
       const provider = new ethers.providers.Web3Provider(ethereum);
       this.signer = provider.getSigner();
+      this.pwCore = new PWCore(this._nervosRPCURL);
+      this.pwLockCellDep = this.getPWLockCellDep(_config);
+      this.init();
     } else {
       boom(unimplemented);
     }
+  }
+
+  async init() {
+    this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._nervosRPCURL));
+  }
+
+  getPWLockCellDep(config: ConnectorConfig): CellDep {
+    if (0 === config.ckbChainID) {
+      return CHAIN_SPECS.Lina.pwLock.cellDep;
+    } else if (1 === config.ckbChainID) {
+      return CHAIN_SPECS.Aggron.pwLock.cellDep;
+    }
+    boom(unimplemented);
   }
 
   _isNervosTransaction(
@@ -44,60 +89,65 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   }
 
   async _sendToNervos(raw: NervosNetwork['RawTransaction']): Promise<{ txId: string }> {
-    console.log('send transaction to Nervos: ' + this._nervosRPCURL);
-    // const signedTransaction = await this.signNervos(raw);
-    // TODO send signedTransaction through RPC
-    unimplemented();
+    const pwTransaction = await this.toPWTransaction(raw);
+    pwTransaction.validate();
+    const txHash = await this.pwCore.sendTransaction(pwTransaction);
+    return { txId: txHash };
   }
 
   async _sendToXChain(raw: EthereumNetwork['RawTransaction']): Promise<{ txId: string }> {
-    console.log('send transaction to XChain: ' + this._xchainRPCURL);
     const transactionResponse = await this.signer.sendTransaction(raw);
     return { txId: transactionResponse.hash };
   }
 
-  async signNervos(raw: NervosNetwork['RawTransaction']): Promise<NervosNetwork['SignedTransaction']> {
-    const witnesses = raw.inputs.map((_) => '0x');
-    witnesses[0] = new Reader(
-      SerializeWitnessArgs(normalizers.NormalizeWitnessArgs(Builder.WITNESS_ARGS.Secp256k1)),
-    ).serializeJson();
-    const message = toNervosMessage(raw, witnesses);
-    const result = await this.signer.signMessage(ethers.utils.arrayify(message));
-    let v = Number.parseInt(result.slice(-2), 16);
-    if (v >= 27) v -= 27;
-    const signature = result.slice(0, -2) + v.toString(16).padStart(2, '0');
-    witnesses[0] = new Reader(
-      SerializeWitnessArgs(
-        normalizers.NormalizeWitnessArgs({
-          ...Builder.WITNESS_ARGS.Secp256k1,
-          lock: signature,
-        }),
+  async approve(asset: EthereumNetwork['DerivedAssetIdent']): Promise<{ txId: string }> {
+    const erc20 = new ethers.Contract(asset, Erc20ABI, this.signer);
+    const transactionResponse = await erc20.approve(LockerContractAddress, ethers.constants.MaxUint256);
+    return { txId: transactionResponse.hash };
+  }
+
+  async getAllowance(asset: EthereumNetwork['DerivedAssetIdent']): Promise<BigNumber> {
+    const erc20 = new ethers.Contract(asset, Erc20ABI, this.signer);
+    return erc20.allowance(await this.signer.getAddress(), LockerContractAddress);
+  }
+
+  async toPWTransaction(rawTx: NervosNetwork['RawTransaction']): Promise<Transaction> {
+    function toPWHashType(hashType: CKBComponents.ScriptHashType): HashType {
+      if (hashType === 'data') {
+        return HashType.data;
+      }
+      return HashType.type;
+    }
+
+    function toPWDepType(depType: CKBComponents.DepType): DepType {
+      if (depType === 'code') {
+        return DepType.code;
+      }
+      return DepType.depGroup;
+    }
+
+    const ckbRPC = new RPC(this._nervosRPCURL);
+    const inputs = await Promise.all(
+      rawTx.inputs.map((i: CKBComponents.CellInput) =>
+        Cell.loadFromBlockchain(ckbRPC, new OutPoint(i.previousOutput!.txHash, i.previousOutput!.index)),
       ),
-    ).serializeJson();
-    raw.witnesses = witnesses;
-    return raw as NervosNetwork['SignedTransaction'];
+    );
+    const outputs = rawTx.outputs.map(
+      (o, index) =>
+        new Cell(
+          new Amount(o.capacity, AmountUnit.shannon),
+          new Script(o.lock.codeHash, o.lock.args, toPWHashType(o.lock.hashType)),
+          o.type ? new Script(o.type.codeHash, o.type.args, toPWHashType(o.type.hashType)) : undefined,
+          undefined,
+          rawTx.outputsData[index],
+        ),
+    );
+    const cellDeps = rawTx.cellDeps.map(
+      (c) => new CellDep(toPWDepType(c.depType), new OutPoint(c.outPoint!.txHash, c.outPoint!.index)),
+    );
+    cellDeps.push(this.pwLockCellDep);
+    return new Transaction(new RawTransaction(inputs, outputs, cellDeps, rawTx.headerDeps, rawTx.version), [
+      Builder.WITNESS_ARGS.Secp256k1,
+    ]);
   }
-}
-
-function toNervosMessage(raw: NervosNetwork['RawTransaction'], witnesses: string[]): string {
-  const hasher = new Keccak256Hasher();
-  const txHash = new Blake2bHasher().hash(
-    new Reader(SerializeRawTransaction(normalizers.NormalizeRawTransaction(transformers.TransformRawTransaction(raw)))),
-  );
-  hasher.update(txHash);
-  const firstWitness = new Reader(witnesses[0]);
-  hasher.update(serializeBigInt(firstWitness.length()));
-  hasher.update(firstWitness);
-  for (let i = 1; i < witnesses.length; i++) {
-    const currentWitness = new Reader(witnesses[i]);
-    hasher.update(serializeBigInt(currentWitness.length()));
-    hasher.update(currentWitness);
-  }
-  return hasher.digest().serializeJson();
-}
-
-function serializeBigInt(i: number) {
-  const view = new DataView(new ArrayBuffer(8));
-  view.setUint32(0, i, true);
-  return view.buffer;
 }
