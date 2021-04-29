@@ -22,6 +22,7 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
         })
       : api.generateBridgeOutNervosTransaction({
           network,
+          amount: input.asset.amount,
           asset: input.asset.ident,
           recipient: input.recipient,
           sender: signer.identityNervos(),
