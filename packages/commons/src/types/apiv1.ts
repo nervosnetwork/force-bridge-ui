@@ -36,7 +36,10 @@ export type GenerateBridgeInTransactionPayload = {
 export type GenerateBridgeOutNervosTransactionPayload = {
   // XChain network name
   network: string;
-  asset: NervosNetwork['DerivedAssetIdent'];
+  // XChain asset id
+  // TODO refactor key to assetIdent
+  asset: string;
+  amount: string;
   // XChain User ident
   recipient: string;
   sender: NervosNetwork['UserIdent'];

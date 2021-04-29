@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 import { JSONRPCClient, JSONRPCRequest } from 'json-rpc-2.0';
 import fetch from 'node-fetch';
-import { API, RequiredAsset, NetworkBase, NetworkTypes } from '../types';
-import * as shim from './shim';
+import { API, NetworkBase, NetworkTypes, RequiredAsset } from '../types';
 
 export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   client: JSONRPCClient;
+
   constructor(forceBridgeUrl: string) {
     this.client = new JSONRPCClient((jsonRPCRequest: JSONRPCRequest) =>
       fetch(forceBridgeUrl, {
@@ -35,7 +35,7 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
       case 'Ethereum':
         {
           const rawTx = result.rawTransaction;
-          rawTx.value = ethers.BigNumber.from(rawTx.value.hex);
+          rawTx.value = ethers.BigNumber.from(rawTx.value?.hex ?? 0);
           result.rawTransaction = rawTx;
         }
         break;
@@ -51,29 +51,33 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   ): Promise<API.GenerateTransactionResponse<T>> {
     return this.client.request('generateBridgeOutNervosTransaction', payload);
   }
+
   async sendSignedTransaction<T extends NetworkBase>(
     payload: API.SignedTransactionPayload<T>,
   ): Promise<API.TransactionIdent> {
     return this.client.request('sendSignedTransaction', payload);
   }
+
   async getBridgeTransactionStatus(
     payload: API.GetBridgeTransactionStatusPayload,
   ): Promise<API.GetBridgeTransactionStatusResponse> {
     return this.client.request('getBridgeTransactionStatus', payload);
   }
+
   async getBridgeTransactionSummaries(
     payload: API.GetBridgeTransactionSummariesPayload,
   ): Promise<API.TransactionSummaryWithStatus[]> {
     return this.client.request('getBridgeTransactionSummaries', payload);
   }
-  async getAssetList(_name?: string): Promise<RequiredAsset<'info'>[]> {
-    return shim.assetList;
-    // let param = { asset: name };
-    // if (name == undefined) {
-    //   param = { asset: 'all' };
-    // }
-    // return this.client.request('getAssetList', param);
+
+  async getAssetList(name?: string): Promise<RequiredAsset<'info'>[]> {
+    let param = { asset: name };
+    if (name == undefined) {
+      param = { asset: 'all' };
+    }
+    return this.client.request('getAssetList', param);
   }
+
   async getBalance(payload: API.GetBalancePayload): Promise<API.GetBalanceResponse> {
     return this.client.request('getBalance', payload);
   }
