@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons';
-import { utils } from '@force-bridge/commons';
+import { Asset, utils } from '@force-bridge/commons';
 import { Button, Divider, Modal, Row, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useBridgeInput, ValidationResult } from './useBridgeInput';
 import { useBridgeTransaction } from './useBridgeTransaction';
-import { AssetAmount } from 'components/AssetAmount';
+import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
@@ -39,7 +39,11 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
   );
 };
 
-export const BridgeOperation: React.FC = () => {
+interface BridgeOperationProps {
+  onAssetSelected: (asset: Asset) => void;
+}
+
+export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
   const formik = useFormik<ValidationResult>({
@@ -62,34 +66,60 @@ export const BridgeOperation: React.FC = () => {
     reset,
   } = useBridgeInput();
 
-  const { mutate: sendBridgeTransaction, error, isLoading } = useBridgeTransaction();
+  const {
+    mutateAsync: sendBridgeTransaction,
+    data: bridgeTxData,
+    error: bridgeTxError,
+    isLoading,
+  } = useBridgeTransaction();
 
-  useEffect(() => {
+  function resetForm() {
     reset();
     if (!signer) return;
 
     if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
     else setRecipient(signer.identityXChain());
-  }, [direction, reset, setRecipient, signer]);
+  }
+
+  useEffect(resetForm, [direction, reset, setRecipient, signer]);
 
   function onSubmit() {
-    if (!selectedAsset || !recipient) return;
+    if (!selectedAsset || !recipient || !selectedAsset.shadow) return;
 
-    const asset = selectedAsset.copy();
+    const asset = selectedAsset.shadow.copy();
     if (asset.info?.decimals == null) boom('asset info is not loaded');
 
     asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
-    sendBridgeTransaction({ asset, recipient });
+    sendBridgeTransaction({ asset, recipient }).then(resetForm);
   }
 
-  useEffect(() => {
-    if (!error) return;
+  useEffect(
+    function popupWhenSendTxFailed() {
+      if (!bridgeTxError) return;
 
-    const errorMsg: string = utils.hasProp(error, 'message') ? String(error.message) : 'Unknown error';
-    Modal.error({ content: errorMsg, width: 360 });
-  }, [error]);
+      const errorMsg: string = utils.hasProp(bridgeTxError, 'message')
+        ? String(bridgeTxError.message)
+        : 'Unknown error';
+      Modal.error({ content: errorMsg, width: 360 });
+    },
+    [bridgeTxError],
+  );
 
-  const list = useMemo(() => {
+  useEffect(
+    function popupWhenSendTxSuccess() {
+      if (!bridgeTxData) return;
+
+      Modal.success({ content: `The transaction was sent, ${bridgeTxData.txId}` });
+    },
+    [bridgeTxData],
+  );
+
+  function onSelect(asset: Asset) {
+    setSelectedAsset(asset);
+    props.onAssetSelected(asset);
+  }
+
+  const assetList = useMemo(() => {
     if (!query.data) return [];
     if (direction === BridgeDirection.In) return query.data.xchain;
     return query.data.nervos;
@@ -119,11 +149,11 @@ export const BridgeOperation: React.FC = () => {
             <span>
               <label className="label">From:</label>&nbsp;
               <AssetSelector
-                btnProps={{ disabled: query.data == null }}
-                options={list}
+                btnProps={{ disabled: query.data == null, loading: query.isLoading }}
+                options={assetList}
                 rowKey={(asset) => asset.identity()}
                 selected={selectedAsset?.identity()}
-                onSelect={(_id, asset) => setSelectedAsset(asset)}
+                onSelect={(_id, asset) => onSelect(asset)}
               />
             </span>
           }
@@ -131,7 +161,7 @@ export const BridgeOperation: React.FC = () => {
             selectedAsset && (
               <Button type="link" size="small">
                 MAX:&nbsp;
-                <AssetAmount amount={selectedAsset.amount} info={selectedAsset.info} />
+                <HumanizeAmount asset={selectedAsset} />
               </Button>
             )
           }

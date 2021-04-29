@@ -2,7 +2,7 @@ import { AmountWithoutDecimals, FungibleBaseInfo } from '@force-bridge/commons';
 import { Button, ButtonProps, List, Modal } from 'antd';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { AssetAmount } from 'components/AssetAmount';
+import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSymbol } from 'components/AssetSymbol';
 
 type AssetWithInfoLike = {
@@ -75,7 +75,7 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
             renderItem={(item) => (
               <List.Item onClick={() => onSelectInternal(item)}>
                 <AssetSymbol info={item.info} />
-                <AssetAmount amount={item.amount} info={item.info} />
+                <HumanizeAmount asset={item} />
               </List.Item>
             )}
           />

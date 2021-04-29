@@ -1,61 +1,20 @@
-import { Asset, eth, nervos } from '@force-bridge/commons';
+import { Asset, nervos } from '@force-bridge/commons';
+import { useMemo } from 'react';
 import { QueryObserverResult, useQuery } from 'react-query';
 import { boom } from 'interfaces/errors';
 import { useForceBridge } from 'state/global';
-import { asserts } from 'utils';
+import { useAssetInfo } from 'state/useAssetInfo';
 
 type Assets = { xchain: Asset[]; nervos: nervos.SUDT[] };
 
 export function useAssetQuery(): QueryObserverResult<Assets> {
-  const { api, direction, network, signer, xchainModule } = useForceBridge();
+  const { api, direction, network, signer } = useForceBridge();
+  const { query } = useAssetInfo();
 
-  const X = xchainModule.assetModel;
-
-  const { data: infos } = useQuery(['getAssetAssetWithInfo', { network }], async () => {
-    const infoList = await api.getAssetList();
-
-    // xchain asset info: asset.info
-    const xchainAssetsInfo = infoList.filter(X.isCurrentNetworkAsset).map<Asset>((assetWithInfo) => {
-      // TODO refactor to ModuleRegistry
-      if (assetWithInfo.network === 'Ethereum') {
-        const ident = assetWithInfo.ident;
-        const info = assetWithInfo.info;
-
-        const sudt = new nervos.SUDT({
-          info: {
-            ...assetWithInfo.info,
-            shadow: assetWithInfo,
-            name: `ck${assetWithInfo.info.name}`,
-            symbol: `ck${assetWithInfo.info.symbol}`,
-          },
-          ...info.shadow,
-        });
-
-        let xchainAsset: Asset;
-        if (X.isDerivedAsset(assetWithInfo)) {
-          xchainAsset = new eth.ERC20({ ident, info, shadow: sudt });
-        } else if (X.isNativeAsset(assetWithInfo)) {
-          xchainAsset = new eth.Ether({ info, shadow: sudt });
-        } else {
-          boom(`asset is not valid ${JSON.stringify(assetWithInfo)}`);
-        }
-
-        sudt.setShadow(xchainAsset);
-
-        return xchainAsset;
-      }
-
-      return boom('');
-    });
-
-    // xchain asset.shadow
-    const nervosAssetsInfo = xchainAssetsInfo.map<nervos.SUDT>((xchainAsset) => {
-      asserts(xchainAsset.shadow != null);
-      return xchainAsset.shadow;
-    });
-
-    return { xchain: xchainAssetsInfo, nervos: nervosAssetsInfo };
-  });
+  const infos = useMemo(() => {
+    if (!query.data) return;
+    return { xchain: Object.values(query.data.xchain), nervos: Object.values(query.data.nervos) };
+  }, [query.data]);
 
   return useQuery(
     ['getAssetBalance', { network, direction }],
