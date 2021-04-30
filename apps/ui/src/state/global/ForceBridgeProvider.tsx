@@ -41,8 +41,13 @@ export const ForceBridgeProvider: React.FC = (props) => {
     () => new ForceBridgeAPIV1Handler(process.env.REACT_APP_BRIDGE_RPC_URL),
     [],
   );
-  // TODO refactor with MultiChainWalletConnector
-  const wallet = useMemo<Wallet>(() => new EthereumWalletConnector(), []);
+
+  const wallet = useMemo<Wallet>(
+    // TODO refactor with MultiChainWalletConnector
+    // TODO extract ckbChainId to env config
+    () => new EthereumWalletConnector({ ckbRpcUrl: process.env.REACT_APP_CKB_RPC_URL, ckbChainID: 1 }),
+    [],
+  );
 
   const [globalSetting] = useGlobalSetting();
 

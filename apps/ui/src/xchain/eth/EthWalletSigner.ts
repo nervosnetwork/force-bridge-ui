@@ -35,19 +35,13 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   pwCore: PWCore;
   pwLockCellDep: CellDep;
 
-  constructor(
-    nervosIdent: string,
-    xchainIdent: string,
-    _config: ConnectorConfig,
-    private _nervosRPCURL: string = 'http://121.196.29.165:8114/rpc',
-    private _xchainRPCURL: string = '',
-  ) {
+  constructor(nervosIdent: string, xchainIdent: string, private _config: ConnectorConfig) {
     super(nervosIdent, xchainIdent);
     if (hasProp(window, 'ethereum')) {
       const ethereum = window.ethereum as ExternalProvider;
       const provider = new ethers.providers.Web3Provider(ethereum);
       this.signer = provider.getSigner();
-      this.pwCore = new PWCore(this._nervosRPCURL);
+      this.pwCore = new PWCore(_config.ckbRpcUrl);
       this.pwLockCellDep = this.getPWLockCellDep(_config);
       this.init();
     } else {
@@ -56,7 +50,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   }
 
   async init(): Promise<void> {
-    this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._nervosRPCURL));
+    this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._config.ckbRpcUrl));
   }
 
   getPWLockCellDep(config: ConnectorConfig): CellDep {
@@ -126,7 +120,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
       return DepType.depGroup;
     }
 
-    const ckbRPC = new RPC(this._nervosRPCURL);
+    const ckbRPC = new RPC(this._config.ckbRpcUrl);
     const inputs = await Promise.all(
       rawTx.inputs.map((i: CKBComponents.CellInput) =>
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
