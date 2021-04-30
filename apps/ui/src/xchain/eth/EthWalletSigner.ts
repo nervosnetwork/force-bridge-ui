@@ -55,7 +55,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     }
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._nervosRPCURL));
   }
 
@@ -129,6 +129,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     const ckbRPC = new RPC(this._nervosRPCURL);
     const inputs = await Promise.all(
       rawTx.inputs.map((i: CKBComponents.CellInput) =>
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         Cell.loadFromBlockchain(ckbRPC, new OutPoint(i.previousOutput!.txHash, i.previousOutput!.index)),
       ),
     );
@@ -143,6 +144,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
         ),
     );
     const cellDeps = rawTx.cellDeps.map(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (c) => new CellDep(toPWDepType(c.depType), new OutPoint(c.outPoint!.txHash, c.outPoint!.index)),
     );
     cellDeps.push(this.pwLockCellDep);
