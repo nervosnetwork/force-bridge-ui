@@ -51,7 +51,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
     enabled: filter != null,
-    refetchInterval: 3000,
+    refetchInterval: 5000,
   });
 
   const columns: ColumnsType<API.TransactionSummaryWithStatus> = [
