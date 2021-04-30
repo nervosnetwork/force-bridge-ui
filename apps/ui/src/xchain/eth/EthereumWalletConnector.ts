@@ -12,13 +12,14 @@ export interface ConnectorConfig {
     | 0 // mainnet
     | 1 // testnet
     | 2; // devnet
+  ckbRpcUrl: string;
 }
 
 export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNetwork> {
   private provider: MetaMaskInpageProvider | undefined;
   private readonly config: ConnectorConfig;
 
-  constructor(config?: Partial<ConnectorConfig>) {
+  constructor(config: Partial<ConnectorConfig>) {
     super();
     this.config = Object.assign({}, { ckbChainID: ChainID.ckb_testnet }, config || {}) as ConnectorConfig;
     this.init();

@@ -21,6 +21,7 @@ interface AssetSelectorProps<T extends AssetWithInfoLike> {
 const StyledModal = styled(Modal)`
   .ant-modal-close-x {
     line-height: 48px;
+    height: 0;
   }
 `;
 
