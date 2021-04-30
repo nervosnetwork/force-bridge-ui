@@ -1,4 +1,4 @@
-import { Asset } from '@force-bridge/commons';
+import { Asset, eth } from '@force-bridge/commons';
 import { useMutation, UseMutationResult } from 'react-query';
 import { boom } from 'interfaces/errors';
 import { BridgeDirection, useForceBridge } from 'state';
@@ -7,6 +7,26 @@ import { EthWalletSigner } from 'xchain/eth/EthWalletSigner';
 export interface BridgeInputValues {
   asset: Asset;
   recipient: string;
+}
+
+async function checkAllowance(signer: EthWalletSigner, input: BridgeInputValues) {
+  const ethSigner = signer;
+
+  const isAllowanceEnough = await ethSigner
+    .getAllowance(input.asset.ident)
+    .then((allowance) => allowance.gte(input.asset.amount));
+
+  if (!isAllowanceEnough) {
+    const confirmed = window.confirm(
+      'The allowance is not enough for bridging, we need to approve before we can execute the Bridge operation',
+    );
+    if (!confirmed) {
+      boom('Not yet approved, we need to approve before we can execute the Bridge operation');
+    }
+
+    await ethSigner.approve(input.asset.ident);
+    boom('Waiting for the approving successfully');
+  }
 }
 
 export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
@@ -18,24 +38,8 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
     let generated;
     if (direction === BridgeDirection.In) {
       // TODO refactor to life-time style? beforeTransactionSending / afterTransactionSending
-      if (network === 'Ethereum') {
-        const ethSigner = signer as EthWalletSigner;
-        console.log(input.asset.ident);
-        const isAllowanceEnough = await ethSigner
-          .getAllowance(input.asset.ident)
-          .then((allowance) => allowance.gte(input.asset.amount));
-
-        if (!isAllowanceEnough) {
-          const confirmed = window.confirm(
-            'The allowance is not enough for bridging, we need to approve before we can execute the Bridge operation',
-          );
-          if (!confirmed) {
-            boom('Not yet approved, we need to approve before we can execute the Bridge operation');
-          }
-
-          await ethSigner.approve(input.asset.ident);
-          boom('Waiting for the approving successfully');
-        }
+      if (network === 'Ethereum' && eth.module.assetModel.isDerivedAsset(input.asset)) {
+        await checkAllowance(signer as EthWalletSigner, input);
       }
 
       generated = await api.generateBridgeInNervosTransaction({
