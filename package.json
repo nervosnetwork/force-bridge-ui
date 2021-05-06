@@ -11,6 +11,7 @@
     "@babel/core": "^7.13.15",
     "@babel/preset-env": "^7.13.15",
     "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.23",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "eslint": "^7.24.0",
     "eslint-formatter-pretty": "^4.0.0",
