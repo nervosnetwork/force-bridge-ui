@@ -1,9 +1,9 @@
 import { Button, ButtonProps } from 'antd';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
+import { UserIdent } from 'components/UserIdent';
 import { ConnectStatus } from 'interfaces/WalletConnector';
-import { useForceBridge } from 'state/global';
-import { truncateMiddle } from 'utils';
+import { BridgeDirection, useForceBridge } from 'state/global';
 
 const StyledWalletConnectButton = styled(Button)`
   border: none;
@@ -38,7 +38,7 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
     connectingContent = 'Connecting...',
     ...buttonProps
   } = props;
-  const { signer, walletConnectStatus, globalSetting, wallet } = useForceBridge();
+  const { signer, walletConnectStatus, globalSetting, wallet, direction } = useForceBridge();
 
   const userIdentityMode = globalSetting.userIdentityMode;
 
@@ -47,10 +47,12 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
     if (walletConnectStatus === ConnectStatus.Connecting) return connectingContent;
     if (!signer) return connectingContent;
 
-    if (userIdentityMode === 'alwaysNervos') return truncateMiddle(signer.identityNervos(), 10);
+    if (userIdentityMode === 'alwaysXChain') return <UserIdent ident={signer.identityXChain()} />;
+    if (userIdentityMode === 'alwaysNervos') return <UserIdent ident={signer.identityNervos()} />;
 
-    return signer.identityXChain();
-  }, [walletConnectStatus, disconnectedContent, signer, connectingContent, userIdentityMode]);
+    if (direction === BridgeDirection.In) return <UserIdent ident={signer.identityXChain()} />;
+    return <UserIdent ident={signer.identityNervos()} />;
+  }, [walletConnectStatus, disconnectedContent, signer, connectingContent, userIdentityMode, direction]);
 
   function onClick() {
     wallet.connect();
