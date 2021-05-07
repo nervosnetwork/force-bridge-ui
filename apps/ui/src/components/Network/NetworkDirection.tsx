@@ -11,6 +11,7 @@ export interface NetworkDirectionProps {
 
 const NetworkText = styled.strong`
   margin-left: 8px;
+  color: ${(props) => props.theme.palette.common.black};
 `;
 
 export const NetworkDirection: React.FC<NetworkDirectionProps> = React.forwardRef((props) => {
