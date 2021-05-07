@@ -1,8 +1,9 @@
 import Icon from '@ant-design/icons';
-import { Asset, utils } from '@force-bridge/commons';
-import { Button, Divider, Modal, Row, Typography } from 'antd';
+import { Asset } from '@force-bridge/commons';
+import { Button, Divider, Row, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useBridgeInput, ValidationResult } from './useBridgeInput';
@@ -13,6 +14,7 @@ import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
+import { useSearchParams } from 'hooks/useSearchParams';
 import { boom } from 'interfaces/errors';
 import { BridgeDirection, useAssetQuery, useForceBridge } from 'state';
 import { BeautyAmount } from 'suite';
@@ -46,10 +48,14 @@ interface BridgeOperationProps {
 export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
+  const history = useHistory();
+  const location = useLocation();
+  const searchParams = useSearchParams();
   const formik = useFormik<ValidationResult>({
     onSubmit,
     initialValues: {},
     validate: () => errors,
+    initialTouched: { bridgeInInputAmount: !!searchParams.get('amount'), recipient: !!searchParams.get('recipient') },
   });
 
   const {
@@ -66,12 +72,7 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     reset,
   } = useBridgeInput();
 
-  const {
-    mutateAsync: sendBridgeTransaction,
-    data: bridgeTxData,
-    error: bridgeTxError,
-    isLoading,
-  } = useBridgeTransaction();
+  const { mutateAsync: sendBridgeTransaction, isLoading } = useBridgeTransaction();
 
   function resetForm() {
     reset();
@@ -93,27 +94,6 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     sendBridgeTransaction({ asset, recipient }).then(resetForm);
   }
 
-  useEffect(
-    function popupWhenSendTxFailed() {
-      if (!bridgeTxError) return;
-
-      const errorMsg: string = utils.hasProp(bridgeTxError, 'message')
-        ? String(bridgeTxError.message)
-        : 'Unknown error';
-      Modal.error({ content: errorMsg, width: 360 });
-    },
-    [bridgeTxError],
-  );
-
-  useEffect(
-    function popupWhenSendTxSuccess() {
-      if (!bridgeTxData) return;
-
-      Modal.success({ content: `The transaction was sent, ${bridgeTxData.txId}` });
-    },
-    [bridgeTxData],
-  );
-
   function onSelect(asset: Asset) {
     setSelectedAsset(asset);
     props.onAssetSelected(asset);
@@ -124,6 +104,69 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     if (direction === BridgeDirection.In) return query.data.xchain;
     return query.data.nervos;
   }, [direction, query.data]);
+
+  const defaultSelectedXChainAssetIdent = searchParams.get('xchain-asset');
+  // set default selected asset from url `?xchain-asset=...`
+  useEffect(() => {
+    if (selectedAsset) return;
+    if (!assetList.length || !defaultSelectedXChainAssetIdent) return;
+
+    if (direction === BridgeDirection.In) {
+      const found = assetList.find((item) => item.ident === defaultSelectedXChainAssetIdent);
+      found && onSelect(found);
+    }
+
+    if (direction === BridgeDirection.Out) {
+      const found = assetList.find(
+        (item) => item.shadow?.ident && item.shadow.ident === defaultSelectedXChainAssetIdent,
+      );
+      found && onSelect(found);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetList, selectedAsset, direction, defaultSelectedXChainAssetIdent]);
+
+  // bind url query with the input
+  useEffect(() => {
+    if (!assetList.length) return;
+
+    const defaultRecipient = searchParams.get('recipient');
+    const defaultAmount = searchParams.get('amount');
+
+    if (!defaultRecipient && !defaultAmount) return;
+
+    setRecipient(defaultRecipient ?? '');
+    setBridgeInInputAmount(defaultAmount ?? '');
+
+    searchParams.delete('recipient');
+    searchParams.delete('amount');
+
+    history.replace({
+      ...location,
+      search: searchParams.toString(),
+    });
+  }, [history, location, searchParams, setBridgeInInputAmount, setRecipient, assetList]);
+
+  // clear the selected asset when direction was changed
+  useEffect(() => {
+    setSelectedAsset(undefined);
+  }, [direction, setSelectedAsset]);
+
+  // bind the url asset type with selected asset
+  useEffect(() => {
+    if (!selectedAsset) return;
+
+    const xchainAssetIdent = direction === BridgeDirection.In ? selectedAsset.ident : selectedAsset.shadow?.ident;
+    if (!xchainAssetIdent) return;
+
+    const params = new URLSearchParams(location.search);
+    params.set('xchain-asset', xchainAssetIdent);
+
+    history.replace({
+      ...location,
+      search: params.toString(),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [direction, selectedAsset]);
 
   const statusOf = (name: keyof ValidationResult) => {
     const touched = formik.touched[name];
@@ -183,13 +226,6 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
               {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
             </span>
           }
-          // extra={
-          //   fee && (
-          //     <span>
-          //       Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
-          //     </span>
-          //   )
-          // }
           placeholder="0.0"
           disabled
           value={bridgeOutInputAmount}

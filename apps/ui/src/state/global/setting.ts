@@ -10,5 +10,5 @@ export interface GlobalSetting {
 }
 
 export function useGlobalSetting(): [GlobalSetting, (newValue: GlobalSetting) => void, () => void] {
-  return useLocalStorage<GlobalSetting>('globalSetting', { userIdentityMode: 'alwaysNervos' });
+  return useLocalStorage<GlobalSetting>('globalSetting', { userIdentityMode: 'auto' });
 }

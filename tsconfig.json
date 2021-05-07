@@ -18,6 +18,7 @@
     "preserveWatchOutput": true,
     "composite": true,
     "baseUrl": ".",
+    "types": ["jest"],
     "paths": {
       "@force-bridge/*": ["./packages/*/src"]
     }

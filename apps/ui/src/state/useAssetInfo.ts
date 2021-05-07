@@ -25,13 +25,13 @@ export function useAssetInfo(): UseAssetInfoState {
         const info = assetWithInfo.info;
 
         const sudt = new nervos.SUDT({
+          ...info.shadow,
           info: {
             ...assetWithInfo.info,
             shadow: assetWithInfo,
             name: `ck${assetWithInfo.info.name}`,
             symbol: `ck${assetWithInfo.info.symbol}`,
           },
-          ...info.shadow,
         });
 
         let xchainAsset: Asset;
@@ -48,7 +48,7 @@ export function useAssetInfo(): UseAssetInfoState {
         return xchainAsset;
       }
 
-      return boom('');
+      return boom(`Unknown network asset with ${JSON.stringify(assetWithInfo)}`);
     });
 
     // xchain asset.shadow
