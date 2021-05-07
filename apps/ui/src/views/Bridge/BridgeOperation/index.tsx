@@ -48,15 +48,15 @@ interface BridgeOperationProps {
 export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   const { signer, direction } = useForceBridge();
   const query = useAssetQuery();
+  const history = useHistory();
+  const location = useLocation();
+  const searchParams = useSearchParams();
   const formik = useFormik<ValidationResult>({
     onSubmit,
     initialValues: {},
     validate: () => errors,
+    initialTouched: { bridgeInInputAmount: !!searchParams.get('amount'), recipient: !!searchParams.get('recipient') },
   });
-  const history = useHistory();
-  const location = useLocation();
-  const searchParams = useSearchParams();
-  const defaultSelectedXChainAssetIdent = searchParams.get('xchain-asset');
 
   const {
     bridgeOutInputAmount,
@@ -105,9 +105,11 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     return query.data.nervos;
   }, [direction, query.data]);
 
+  const defaultSelectedXChainAssetIdent = searchParams.get('xchain-asset');
   // set default selected asset from url `?xchain-asset=...`
   useEffect(() => {
-    if (!assetList || selectedAsset || !defaultSelectedXChainAssetIdent) return;
+    if (selectedAsset) return;
+    if (!assetList.length || !defaultSelectedXChainAssetIdent) return;
 
     if (direction === BridgeDirection.In) {
       const found = assetList.find((item) => item.ident === defaultSelectedXChainAssetIdent);
@@ -123,6 +125,33 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetList, selectedAsset, direction, defaultSelectedXChainAssetIdent]);
 
+  // bind url query with the input
+  useEffect(() => {
+    if (!assetList.length) return;
+
+    const defaultRecipient = searchParams.get('recipient');
+    const defaultAmount = searchParams.get('amount');
+
+    if (!defaultRecipient && !defaultAmount) return;
+
+    setRecipient(defaultRecipient ?? '');
+    setBridgeInInputAmount(defaultAmount ?? '');
+
+    searchParams.delete('recipient');
+    searchParams.delete('amount');
+
+    history.replace({
+      ...location,
+      search: searchParams.toString(),
+    });
+  }, [history, location, searchParams, setBridgeInInputAmount, setRecipient, assetList]);
+
+  // clear the selected asset when direction was changed
+  useEffect(() => {
+    setSelectedAsset(undefined);
+  }, [direction, setSelectedAsset]);
+
+  // bind the url asset type with selected asset
   useEffect(() => {
     if (!selectedAsset) return;
 
@@ -197,13 +226,6 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
               {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
             </span>
           }
-          // extra={
-          //   fee && (
-          //     <span>
-          //       Fee: <AssetAmount amount={fee?.amount ?? '0'} info={fee?.info} />
-          //     </span>
-          //   )
-          // }
           placeholder="0.0"
           disabled
           value={bridgeOutInputAmount}
