@@ -1,5 +1,6 @@
 import { Asset, eth, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Modal } from 'antd';
+import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
 import { TransactionLink } from 'components/TransactionLink';
 import { boom } from 'interfaces/errors';
@@ -68,19 +69,24 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
         const fromNetwork = direction === BridgeDirection.In ? network : NERVOS_NETWORK;
 
         Modal.success({
+          title: 'Tx sent',
           content: (
-            <div>
+            <p>
+              The transaction was sent, check it in&nbsp;
               <TransactionLink network={fromNetwork} txId={txId}>
-                The transaction was sent, check it in explorer
+                explorer
               </TransactionLink>
-              {txId}
-            </div>
+              <details>
+                <summary>transaction id</summary>
+                {txId}
+              </details>
+            </p>
           ),
         });
       },
       onError(error) {
         const errorMsg: string = utils.hasProp(error, 'message') ? String(error.message) : 'Unknown error';
-        Modal.error({ content: errorMsg, width: 360 });
+        Modal.error({ title: 'Tx failed', content: errorMsg, width: 360 });
       },
     },
   );
