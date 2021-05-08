@@ -1,5 +1,6 @@
 import { API, Asset } from '@force-bridge/commons';
-import { Button, Col, Row, Table, Tooltip } from 'antd';
+import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
@@ -9,6 +10,8 @@ import { TransactionLink } from '../../../components/TransactionLink';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
 import { useForceBridge } from 'state';
+
+type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
 
 const BridgeHistoryWrapper = styled(StyledCardWrapper)`
   .ant-table-thead > tr > th,
@@ -55,9 +58,10 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     refetchInterval: 5000,
   });
 
-  const columns: ColumnsType<API.TransactionSummaryWithStatus> = [
+  const columns: ColumnsType<TransactionWithDetail> = [
     {
       title: 'From',
+      dataIndex: '',
       render: (value, record) => (
         <div>
           <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
@@ -66,40 +70,16 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     },
     {
       title: 'To',
+      dataIndex: '',
       render: (value, record) => (
         <div>
           <div>
             <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
           </div>
           <div className="date">
-            <Tooltip
-              title={
-                <div>
-                  <div>
-                    <TransactionLink
-                      network={record.txSummary.fromAsset.network}
-                      txId={record.txSummary.fromTransaction.txId}
-                    >
-                      Explore {record.txSummary.fromAsset.network} Tx
-                    </TransactionLink>
-                  </div>
-                  {record.txSummary?.toTransaction?.txId && (
-                    <div>
-                      <TransactionLink
-                        network={record.txSummary.toAsset.network}
-                        txId={record.txSummary.toTransaction.txId}
-                      >
-                        Explore {record.txSummary.toAsset.network} Tx
-                      </TransactionLink>
-                    </div>
-                  )}
-                </div>
-              }
-            >
-              {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
-                'YYYY-MM-DD HH:mm:ss',
-              )}
-            </Tooltip>
+            {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
+              'YYYY-MM-DD HH:mm:ss',
+            )}
           </div>
         </div>
       ),
@@ -107,11 +87,30 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   ];
 
   const [historyKind, setHistoryKind] = useState<'Pending' | 'Successful'>('Pending');
-  const historyData = useMemo(() => {
+  const historyData = useMemo<TransactionWithDetail[]>(() => {
     if (!query.data) return [];
-    return query.data.filter((item) => {
-      return item.status === historyKind;
-    });
+    return query.data
+      .filter((item) => {
+        return item.status === historyKind;
+      })
+      .map((item, index) => {
+        const from = item.txSummary.fromAsset.network === 'Nervos' ? '1. burn asset on ' : '1. lock asset on ';
+        let to;
+        if (!item.txSummary?.toTransaction?.txId) {
+          to = '';
+        } else {
+          to = item.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ';
+        }
+        const itemWithKey: TransactionWithDetail = {
+          txSummary: item.txSummary,
+          status: item.status,
+          message: '',
+          key: index,
+          fromDetail: from,
+          toDetail: to,
+        };
+        return itemWithKey;
+      });
   }, [query, historyKind]);
 
   return (
@@ -154,7 +153,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                   network={record.txSummary.fromAsset.network}
                   txId={record.txSummary.fromTransaction.txId}
                 >
-                  Explore {record.txSummary.fromAsset.network} Tx
+                  {record.fromDetail + record.txSummary.fromAsset.network}
                 </TransactionLink>
               </div>
               {record.txSummary?.toTransaction?.txId && (
@@ -163,7 +162,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                     network={record.txSummary.toAsset.network}
                     txId={record.txSummary.toTransaction.txId}
                   >
-                    Explore {record.txSummary.toAsset.network} Tx
+                    {record.toDetail + record.txSummary.toAsset.network}
                   </TransactionLink>
                 </div>
               )}
