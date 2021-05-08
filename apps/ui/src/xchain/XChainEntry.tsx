@@ -1,3 +1,4 @@
+import { Modal } from 'antd';
 import { providers } from 'ethers';
 import React from 'react';
 import { EthereumProviderProvider } from './eth';
@@ -7,7 +8,20 @@ import { useForceBridge } from 'state';
 // TODO multi ethereum provider, e.g. WalletConnectProvider
 const EthereumEntry: React.FC = ({ children }) => {
   const ethereum = window.ethereum;
-  if (!ethereum) return null;
+
+  if (!ethereum) {
+    Modal.warning({
+      content: (
+        <div>
+          <a href="https://metamask.io/" target="_blank" rel="noreferrer">
+            MetaMask
+          </a>
+          &nbsp;is required when doing the bridge of Ethereum
+        </div>
+      ),
+    });
+    return null;
+  }
 
   const provider = new providers.Web3Provider(ethereum);
   return (
