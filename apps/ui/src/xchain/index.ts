@@ -1,1 +1,2 @@
-export * from './eth/EthereumWalletConnector';
+export { XChainEntry } from './XChainEntry';
+export * from './eth';
