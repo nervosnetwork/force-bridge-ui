@@ -11,9 +11,11 @@ export const BridgeView: React.FC = () => {
 
   return (
     <XChainEntry>
-      <BridgeOperation onAssetSelected={setSelectedAsset} />
-      <div style={{ padding: '8px' }} />
-      {selectedAsset && <BridgeHistory asset={selectedAsset} />}
+      <div>
+        <BridgeOperation onAssetSelected={setSelectedAsset} />
+        <div style={{ padding: '8px' }} />
+        {selectedAsset && <BridgeHistory asset={selectedAsset} />}
+      </div>
     </XChainEntry>
   );
 };
