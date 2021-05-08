@@ -8,5 +8,7 @@ declare namespace NodeJS {
 
     REACT_APP_TX_EXPLORER_NERVOS: string;
     REACT_APP_TX_EXPLORER_ETHEREUM: string;
+    REACT_APP_ETHEREUM_ENABLE_CHAIN_ID: string;
+    REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME: string;
   }
 }
