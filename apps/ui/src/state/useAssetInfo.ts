@@ -72,7 +72,7 @@ export function useAssetInfo(): UseAssetInfoState {
   const infoOf = useCallback(
     (asset: { network: string; ident: string }) => {
       if (!query.data) return;
-      if (asset.ident === NERVOS_NETWORK) return query.data.nervos[asset.ident]?.info;
+      if (asset.network === NERVOS_NETWORK) return query.data.nervos[asset.ident]?.info;
       return query.data.xchain[asset.ident]?.info;
     },
     [query],
