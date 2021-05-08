@@ -21,7 +21,8 @@ export function useChainId(): number | null {
 
     detectEthereumProvider().then((provider) => {
       if (utils.propEq(provider, 'isMetaMask', true)) {
-        (provider as MetaMaskInpageProvider).on('chainChanged', chainIdListener);
+        inpageProvider = provider as MetaMaskInpageProvider;
+        inpageProvider.on('chainChanged', chainIdListener);
       }
     });
 
