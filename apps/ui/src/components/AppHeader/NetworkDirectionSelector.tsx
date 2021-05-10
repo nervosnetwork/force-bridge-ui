@@ -1,7 +1,8 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import { Button, Dropdown, Menu } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import React, { useMemo } from 'react';
 import { NetworkDirection } from 'components/Network';
+import { LinearGradientButton } from 'components/Styled';
 import { BridgeDirection } from 'state';
 
 interface NetworkDirectionSelectorProps {
@@ -38,7 +39,9 @@ export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> =
 
   return (
     <Dropdown trigger={['click']} overlay={directionsElem}>
-      <Button type="primary">{selectedItem}</Button>
+      <LinearGradientButton block type="primary">
+        {selectedItem}
+      </LinearGradientButton>
     </Dropdown>
   );
 };

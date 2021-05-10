@@ -1,4 +1,9 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const LinkWrapper = styled.a`
+  text-decoration: underline;
+`;
 
 interface TransactionLinkProps {
   network: string;
@@ -13,8 +18,8 @@ export const TransactionLink: React.FC<TransactionLinkProps> = (props) => {
   if (network === 'Ethereum') href = process.env.REACT_APP_TX_EXPLORER_ETHEREUM + `${txId}`;
 
   return (
-    <a href={href} target="_blank" rel="noreferrer">
+    <LinkWrapper href={href} target="_blank" rel="noreferrer">
       {props.children}
-    </a>
+    </LinkWrapper>
   );
 };

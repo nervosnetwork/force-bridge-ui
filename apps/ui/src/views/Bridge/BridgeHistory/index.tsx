@@ -6,9 +6,9 @@ import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
-import { TransactionLink } from '../../../components/TransactionLink';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
+import { TransactionLink } from 'components/TransactionLink';
 import { useForceBridge } from 'state';
 
 type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };

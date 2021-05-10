@@ -9,33 +9,33 @@ export interface NetworkDirectionProps {
   to: string;
 }
 
-const NetworkText = styled.strong`
-  margin-left: 8px;
+const StyledCol = styled(Col)`
   color: ${(props) => props.theme.palette.common.black};
+  font-weight: bold;
+
+  .name {
+    margin-left: 8px;
+  }
 `;
 
 export const NetworkDirection: React.FC<NetworkDirectionProps> = React.forwardRef((props) => {
   const { from, to } = props;
 
   return (
-    <Row justify="center" align="middle">
-      <Col span={10}>
-        <span>
-          <NetworkIcon network={from} />
-          <NetworkText style={{ marginLeft: '8px' }}>{from}</NetworkText>
-        </span>
-      </Col>
+    <Row justify="center" align="middle" gutter={8}>
+      <StyledCol span={10}>
+        <NetworkIcon network={from} />
+        <span className="name">{from}</span>
+      </StyledCol>
 
-      <Col span={4}>
-        <ArrowRightOutlined style={{ margin: '0 8px' }} />
-      </Col>
+      <StyledCol span={4}>
+        <ArrowRightOutlined />
+      </StyledCol>
 
-      <Col span={10}>
-        <span>
-          <NetworkIcon network={to} />
-          <NetworkText>{to}</NetworkText>
-        </span>
-      </Col>
+      <StyledCol span={10}>
+        <NetworkIcon network={to} />
+        <span className="name">{to}</span>
+      </StyledCol>
     </Row>
   );
 });
