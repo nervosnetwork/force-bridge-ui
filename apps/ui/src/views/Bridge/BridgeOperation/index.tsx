@@ -32,13 +32,13 @@ const BridgeViewWrapper = styled(StyledCardWrapper)`
   }
 `;
 
+const HelpWrapper = styled(Typography.Text)`
+  padding-left: 8px;
+`;
+
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
-  return (
-    <Typography.Text type="danger" style={{ position: 'absolute' }}>
-      {help}
-    </Typography.Text>
-  );
+  return <HelpWrapper type="danger">{help}</HelpWrapper>;
 };
 
 interface BridgeOperationProps {
@@ -46,7 +46,7 @@ interface BridgeOperationProps {
 }
 
 export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
-  const { signer, direction } = useForceBridge();
+  const { signer, direction, switchBridgeDirection } = useForceBridge();
   const query = useAssetQuery();
   const history = useHistory();
   const location = useLocation();
@@ -202,7 +202,11 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
           }
           extra={
             selectedAsset && (
-              <Button type="link" size="small">
+              <Button
+                type="link"
+                size="small"
+                onClick={() => setBridgeInInputAmount(BeautyAmount.from(selectedAsset).humanize())}
+              >
                 MAX:&nbsp;
                 <HumanizeAmount asset={selectedAsset} />
               </Button>
@@ -215,7 +219,7 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
       </div>
 
       <Row justify="center" align="middle">
-        <Icon style={{ fontSize: '24px' }} component={BridgeDirectionIcon} />
+        <Icon style={{ fontSize: '24px' }} component={BridgeDirectionIcon} onClick={() => switchBridgeDirection()} />
       </Row>
 
       <div className="input-wrapper">

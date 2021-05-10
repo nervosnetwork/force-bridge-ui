@@ -1,3 +1,4 @@
+import { parseAddress } from '@nervosnetwork/ckb-sdk-utils';
 import { NERVOS_NETWORK } from '../../constatns';
 import { Module, NervosNetwork } from '../../types';
 import { NervosAssetModel } from './AssetModel';
@@ -15,9 +16,13 @@ export const NervosModule: Module<NervosNetwork> = {
 
   validators: {
     network: NERVOS_NETWORK,
-    validateUserIdent: (assetIdent) => {
-      // TODO config by mainnet or testnet, and check the bech32
-      return typeof assetIdent === 'string' && assetIdent.startsWith('ckt1');
+    validateUserIdent: (address) => {
+      try {
+        parseAddress(address);
+        return true;
+      } catch {
+        return false;
+      }
     },
   },
 };

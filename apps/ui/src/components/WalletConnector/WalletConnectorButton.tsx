@@ -1,30 +1,14 @@
-import { Button, ButtonProps } from 'antd';
+import { ButtonProps } from 'antd';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
+import { LinearGradientButton } from 'components/Styled';
 import { UserIdent } from 'components/UserIdent';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { BridgeDirection, useForceBridge } from 'state/global';
 
-const StyledWalletConnectButton = styled(Button)`
-  border: none;
+const StyledWalletConnectButton = styled(LinearGradientButton)`
   color: ${(props) => props.theme.palette.common.black};
   font-weight: 700;
-  background: linear-gradient(93.35deg, #b8f0d5 3.85%, #b8f0ed 100%);
-
-  :hover {
-    color: ${(props) => props.theme.palette.common.black};
-    background: linear-gradient(93.35deg, #b8f0d5 3.85%, #b8f0ed 100%);
-  }
-
-  :active {
-    color: ${(props) => props.theme.palette.common.black};
-    background: linear-gradient(93.35deg, #b8f0d5 3.85%, #b8f0ed 100%);
-  }
-
-  :focus {
-    color: ${(props) => props.theme.palette.common.black};
-    background: linear-gradient(93.35deg, #b8f0d5 3.85%, #b8f0ed 100%);
-  }
 `;
 
 export interface WalletConnectorButtonProps extends ButtonProps {

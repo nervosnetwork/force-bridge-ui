@@ -83,7 +83,7 @@ export function useBridgeInput(options?: Options): BridgeState {
       const userAmount = BeautyAmount.from(asset);
       const balanceLessThanInput = userAmount.val.lt(inputAmount.val);
       if (balanceLessThanInput) {
-        result.bridgeInInputAmount = `the balance is not enough`;
+        result.bridgeInInputAmount = `balance is insufficient`;
       }
     }
 
