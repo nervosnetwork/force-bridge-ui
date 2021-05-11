@@ -15,6 +15,13 @@ export interface ConnectorConfig {
   ckbRpcUrl: string;
 }
 
+function retrySync(retry: () => boolean, options: { times: number; interval: number }): void {
+  if (!options.times || retry()) return;
+  setTimeout(() => {
+    retrySync(retry, { times: options.times - 1, interval: options.interval });
+  }, options.interval);
+}
+
 export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNetwork> {
   private provider: MetaMaskInpageProvider | undefined;
   private readonly config: ConnectorConfig;
@@ -32,10 +39,17 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
 
     provider.on('accountsChanged', (accounts) => this.onSignerChanged(accounts));
     this.provider = provider;
-    if (provider.selectedAddress) {
-      super.changeStatus(ConnectStatus.Connected);
-      this.onSignerChanged(provider.selectedAddress);
-    }
+    retrySync(
+      () => {
+        const selectedAddress = provider.selectedAddress;
+        if (!selectedAddress) return false;
+
+        super.changeStatus(ConnectStatus.Connected);
+        this.onSignerChanged(selectedAddress);
+        return true;
+      },
+      { times: 5, interval: 100 },
+    );
   }
 
   protected async _connect(): Promise<void> {
