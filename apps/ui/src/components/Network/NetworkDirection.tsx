@@ -18,7 +18,7 @@ const StyledCol = styled(Col)`
   }
 `;
 
-export const NetworkDirection: React.FC<NetworkDirectionProps> = React.forwardRef((props) => {
+export const NetworkDirection: React.FC<NetworkDirectionProps> = (props) => {
   const { from, to } = props;
 
   return (
@@ -38,4 +38,4 @@ export const NetworkDirection: React.FC<NetworkDirectionProps> = React.forwardRe
       </StyledCol>
     </Row>
   );
-});
+};
