@@ -28,7 +28,6 @@ const Erc20ABI = [
   'function allowance(address owner, address spender) view returns (uint256)',
   'function approve(address spender, uint256 value) returns (boolean)',
 ];
-const LockerContractAddress = '0xcd5a0974eb6ea507eebd627646f216a98d7cb879';
 
 export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
   signer: JsonRpcSigner;
@@ -96,13 +95,16 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
   async approve(asset: EthereumNetwork['DerivedAssetIdent']): Promise<{ txId: string }> {
     const erc20 = new ethers.Contract(asset, Erc20ABI, this.signer);
-    const transactionResponse = await erc20.approve(LockerContractAddress, ethers.constants.MaxUint256);
+    const transactionResponse = await erc20.approve(
+      process.env.REACT_APP_ETHEREUM_LOCKER_CONTRACT,
+      ethers.constants.MaxUint256,
+    );
     return { txId: transactionResponse.hash };
   }
 
   async getAllowance(asset: EthereumNetwork['DerivedAssetIdent']): Promise<BigNumber> {
     const erc20 = new ethers.Contract(asset, Erc20ABI, this.signer);
-    return erc20.allowance(await this.signer.getAddress(), LockerContractAddress);
+    return erc20.allowance(await this.signer.getAddress(), process.env.REACT_APP_ETHEREUM_LOCKER_CONTRACT);
   }
 
   async toPWTransaction(rawTx: NervosNetwork['RawTransaction']): Promise<Transaction> {
