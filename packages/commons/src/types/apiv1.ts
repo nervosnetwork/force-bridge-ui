@@ -72,9 +72,12 @@ export type GetBridgeTransactionStatusPayload = {
 };
 
 export type GetBridgeTransactionSummariesPayload = {
-  userIdent: string;
-  assetIdent: string;
   network: string;
+  xchainAssetIdent: string;
+  user: {
+    network: string;
+    ident: string;
+  };
 };
 
 export type GetBridgeTransactionStatusResponse = {
