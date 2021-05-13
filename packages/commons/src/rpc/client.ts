@@ -67,18 +67,7 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   async getBridgeTransactionSummaries(
     payload: API.GetBridgeTransactionSummariesPayload,
   ): Promise<API.TransactionSummaryWithStatus[]> {
-    let summaries: API.TransactionSummaryWithStatus[] = await this.client.request(
-      'getBridgeTransactionSummaries',
-      payload,
-    );
-
-    summaries = summaries.sort(
-      (s1, s2) =>
-        +new Date(s2.txSummary.toTransaction?.timestamp || s2.txSummary.fromTransaction.timestamp) -
-        +new Date(s1.txSummary.toTransaction?.timestamp || s1.txSummary.fromTransaction.timestamp),
-    );
-
-    return summaries;
+    return await this.client.request('getBridgeTransactionSummaries', payload);
   }
 
   async getAssetList(name?: string): Promise<RequiredAsset<'info'>[]> {
