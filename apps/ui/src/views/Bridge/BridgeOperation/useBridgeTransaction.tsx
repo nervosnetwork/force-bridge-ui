@@ -39,7 +39,6 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
     ['sendTransaction'],
     async (input: BridgeInputValues) => {
       if (!signer) boom('signer is not load');
-
       let generated;
       if (direction === BridgeDirection.In) {
         // TODO refactor to life-time style? beforeTransactionSending / afterTransactionSending
