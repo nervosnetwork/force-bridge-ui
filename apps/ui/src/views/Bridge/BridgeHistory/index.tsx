@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
 import { TransactionLink } from 'components/TransactionLink';
-import { useForceBridge } from 'state';
+import { BridgeDirection, useForceBridge } from 'state';
 
 type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
 
@@ -39,7 +39,7 @@ interface BridgeHistoryProps {
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { nervosModule, signer, api } = useForceBridge();
+  const { network, direction, nervosModule, signer, api } = useForceBridge();
 
   const asset = useMemo(() => {
     const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(props.asset);
@@ -49,8 +49,10 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
 
   const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
     if (!asset || !signer) return undefined;
-    return { userIdent: signer.identityNervos(), network: asset.network, assetIdent: asset.ident };
-  }, [asset, signer]);
+    const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
+    const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
+    return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
+  }, [asset, signer, direction, network, nervosModule.network]);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {

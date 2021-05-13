@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 import { JSONRPCClient, JSONRPCRequest } from 'json-rpc-2.0';
-import isEquals from 'lodash.isequal';
 import fetch from 'node-fetch';
 import { API, NetworkBase, NetworkTypes, RequiredAsset } from '../types';
 
@@ -73,23 +72,11 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
       payload,
     );
 
-    summaries = summaries
-      .filter(
-        (item) =>
-          isEquals(
-            { network: payload.network, ident: payload.assetIdent },
-            { network: item.txSummary.fromAsset.network, ident: item.txSummary.fromAsset.ident },
-          ) ||
-          isEquals(
-            { network: payload.network, ident: payload.assetIdent },
-            { network: item.txSummary.toAsset.network, ident: item.txSummary.toAsset.ident },
-          ),
-      )
-      .sort(
-        (s1, s2) =>
-          +new Date(s2.txSummary.toTransaction?.timestamp || s2.txSummary.fromTransaction.timestamp) -
-          +new Date(s1.txSummary.toTransaction?.timestamp || s1.txSummary.fromTransaction.timestamp),
-      );
+    summaries = summaries.sort(
+      (s1, s2) =>
+        +new Date(s2.txSummary.toTransaction?.timestamp || s2.txSummary.fromTransaction.timestamp) -
+        +new Date(s1.txSummary.toTransaction?.timestamp || s1.txSummary.fromTransaction.timestamp),
+    );
 
     return summaries;
   }

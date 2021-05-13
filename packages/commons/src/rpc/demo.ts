@@ -60,8 +60,11 @@ async function burn() {
 async function getTransaction() {
   const getTxPayload = {
     network: 'Ethereum',
-    userIdent: 'ckt1qyqyph8v9mclls35p6snlaxajeca97tc062sa5gahk',
-    assetIdent: '0x0000000000000000000000000000000000000000',
+    xchainAssetIdent: '0x0000000000000000000000000000000000000000',
+    user: {
+      network: 'Nervos',
+      ident: 'ckt1q3vvtay34wndv9nckl8hah6fzzcltcqwcrx79apwp2a5lkd07fdx87332akjsjjw4j5ez3rsh0gt6gp2skq86ga0nqt',
+    },
   };
 
   const txs = await client.getBridgeTransactionSummaries(getTxPayload);
