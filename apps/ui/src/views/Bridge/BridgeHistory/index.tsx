@@ -1,16 +1,15 @@
-import { API, Asset } from '@force-bridge/commons';
+import { Asset } from '@force-bridge/commons';
 import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
 import { TransactionLink } from 'components/TransactionLink';
-import { BridgeDirection, useForceBridge } from 'state';
-import { useQueryWithCache } from './useQueryWithCache';
+import { useForceBridge } from 'state';
 
 type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
 
@@ -40,26 +39,13 @@ interface BridgeHistoryProps {
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { network, direction, nervosModule, signer, api } = useForceBridge();
+  const { nervosModule } = useForceBridge();
 
   const asset = useMemo(() => {
     const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(props.asset);
     if (isNervosAsset) return props.asset.shadow;
     return props.asset;
   }, [nervosModule.assetModel, props.asset]);
-
-  // const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
-  //   if (!asset || !signer) return undefined;
-  //   const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
-  //   const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
-  //   return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
-  // }, [asset, signer, direction, network, nervosModule.network]);
-  //
-  // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  // const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
-  //   enabled: filter != null,
-  //   refetchInterval: 5000,
-  // });
 
   const transactions = useQueryWithCache(asset);
 

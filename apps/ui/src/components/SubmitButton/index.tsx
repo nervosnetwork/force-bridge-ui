@@ -18,7 +18,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   }
 
   let isLoading = false;
-  let content = '';
+  let content;
   if (allowanceStatus.status === 'Querying' || allowanceStatus.status === 'Approving' || isloading) {
     isLoading = true;
   }

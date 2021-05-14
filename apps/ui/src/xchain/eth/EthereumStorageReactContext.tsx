@@ -1,16 +1,19 @@
 import { RequiredAsset } from '@force-bridge/commons';
-import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { BridgeTransactionStatus, UnFailedTransactionSummary } from '@force-bridge/commons/lib/types/apiv1';
 import { useLocalStorage } from '@rehooks/local-storage';
 import React, { createContext, useContext } from 'react';
 
 export interface EthereumStorage {
-  transactions: TransactionSummaryWithStatus[] | null;
+  transactions: TransactionSummaryWithSender[] | null;
   addTransaction: (tx: EthereumTransaction) => void;
 }
+
+export type TransactionSummaryWithSender = UnFailedTransactionSummary & { sender: string };
 
 export interface EthereumTransaction {
   txId: string;
   timestamp: number;
+  sender: string;
   fromAsset: RequiredAsset<'amount'>;
   toAsset: RequiredAsset<'amount'>;
 }
@@ -18,10 +21,11 @@ export interface EthereumTransaction {
 const EthereumStorageContext = createContext<EthereumStorage | null>(null);
 
 export const EthereumStorageProvider: React.FC = (props) => {
-  const [transactions, setTransactions] = useLocalStorage<TransactionSummaryWithStatus[]>('EthereumStorage');
+  const [transactions, setTransactions] = useLocalStorage<TransactionSummaryWithSender[]>('EthereumStorage');
   const addTransaction = (tx: EthereumTransaction) => {
-    const txSummary: TransactionSummaryWithStatus = {
+    const txSummary: TransactionSummaryWithSender = {
       status: BridgeTransactionStatus.Pending,
+      sender: tx.sender,
       txSummary: {
         fromAsset: tx.fromAsset,
         toAsset: tx.toAsset,

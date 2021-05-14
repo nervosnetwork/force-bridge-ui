@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { BridgeDirection, useForceBridge } from '../../../state';
 import { useEthereumStorage } from '../../../xchain';
 
-export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null {
+export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null | undefined {
   const { signer, direction, network, nervosModule, api } = useForceBridge();
   const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
     if (!asset || !signer) return undefined;
@@ -20,13 +20,26 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
     enabled: filter != null,
     refetchInterval: 5000,
   });
-
   const { transactions: cachedTransactions } = useEthereumStorage();
-  if (!query.data || !cachedTransactions) return cachedTransactions;
-  const filteredTransactions = cachedTransactions.filter((cachedItem) => {
+  if (!signer || !asset) return null;
+  if (!cachedTransactions) return query.data;
+  const filteredTransactions = cachedTransactions.filter(
+    (item) =>
+      item.sender === signer.identityNervos() &&
+      (item.txSummary.fromAsset.ident === asset.ident || item.txSummary.toAsset.ident === asset.ident),
+  );
+
+  if (!query.data) return filteredTransactions as TransactionSummaryWithStatus[] | null | undefined;
+  const transactions = filteredTransactions.filter((cachedItem) => {
     return !query.data.find(
       (item) => item.txSummary.fromTransaction.txId === cachedItem.txSummary.fromTransaction.txId,
     );
   });
-  return query.data.concat(filteredTransactions);
+  return query.data
+    .concat(transactions)
+    .sort(
+      (s1, s2) =>
+        +new Date(s2.txSummary.toTransaction?.timestamp || s2.txSummary.fromTransaction.timestamp) -
+        +new Date(s1.txSummary.toTransaction?.timestamp || s1.txSummary.fromTransaction.timestamp),
+    );
 }

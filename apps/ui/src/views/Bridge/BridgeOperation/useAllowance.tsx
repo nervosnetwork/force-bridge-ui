@@ -1,8 +1,7 @@
 import { Asset, eth } from '@force-bridge/commons';
-import { boom } from '@force-bridge/commons/lib/errors';
 import { useLocalStorage } from '@rehooks/local-storage';
 import { useQuery } from 'react-query';
-import { useForceBridge } from '../../../state';
+import { BridgeDirection, useForceBridge } from '../../../state';
 import { EthWalletSigner } from '../../../xchain';
 
 export interface AllowanceState {
@@ -17,7 +16,7 @@ export interface ApproveInfo {
 }
 
 export function useAllowance(asset: Asset | undefined): AllowanceState | undefined {
-  const { signer, network } = useForceBridge();
+  const { signer, network, direction } = useForceBridge();
   // if (!signer) boom('signer is not load');
   const [approveList, setApproveList] = useLocalStorage<ApproveInfo[]>('approveList');
   const addApprove = (approve: ApproveInfo) => {
@@ -25,12 +24,25 @@ export function useAllowance(asset: Asset | undefined): AllowanceState | undefin
     approveList.push(approve);
     setApproveList(approveList);
   };
+  const disableApprove =
+    !signer ||
+    !asset ||
+    network !== 'Ethereum' ||
+    direction === BridgeDirection.Out ||
+    !eth.module.assetModel.isDerivedAsset(asset);
 
-  const query = useQuery([signer?.identityXChain(), asset?.ident], async () => {
-    if (!asset || !signer) return;
-    return await (signer as EthWalletSigner).getAllowance(asset.ident);
-  });
-  if (!signer || !asset || network !== 'Ethereum' || !eth.module.assetModel.isDerivedAsset(asset)) return;
+  const query = useQuery(
+    [signer?.identityXChain(), asset?.ident],
+    async () => {
+      if (!asset || !signer) return;
+      return await (signer as EthWalletSigner).getAllowance(asset.ident);
+    },
+    {
+      enabled: !disableApprove,
+      refetchInterval: 5000,
+    },
+  );
+  if (disableApprove || !signer || !asset) return;
   if (!query.data) return { status: 'Querying', addApprove };
   if (query.data.gte(asset.amount)) return { status: 'Approved', addApprove };
   if (

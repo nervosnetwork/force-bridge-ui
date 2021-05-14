@@ -76,6 +76,7 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   } = useBridgeInput();
 
   const allowance = useAllowance(selectedAsset);
+  const enableApproveButton = allowance && allowance.status === 'NeedApprove';
 
   const { mutateAsync: sendBridgeTransaction, isLoading: isBridgeLoading } = useBridgeTransaction();
   const { mutateAsync: sendApproveTransaction, isLoading: isApproveLoading } = useApproveTransaction();
@@ -262,7 +263,7 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
       </div>
 
       <SubmitButton
-        disabled={validateStatus !== 'success'}
+        disabled={validateStatus !== 'success' && !enableApproveButton}
         block
         type="primary"
         size="large"
