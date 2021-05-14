@@ -1,41 +1,37 @@
-import { TransactionSummary } from '@force-bridge/commons/lib/types/apiv1';
+import { RequiredAsset } from '@force-bridge/commons';
+import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { useLocalStorage } from '@rehooks/local-storage';
 import React, { createContext, useContext } from 'react';
 
 export interface EthereumStorage {
-  transactions: EthereumTransaction[] | null;
+  transactions: TransactionSummaryWithStatus[] | null;
   addTransaction: (tx: EthereumTransaction) => void;
 }
 
 export interface EthereumTransaction {
-  txHash: string;
-  timestamp: string;
-  status: 'Pending' | 'Failed' | 'Succeed';
-  info: ApproveInfo | BridgeInfo;
-}
-
-export interface ApproveInfo {
-  kind: 'approve';
-  user: string;
-  asset: string;
-}
-
-export interface BridgeInfo {
-  kind: 'bridge';
-  summary: TransactionSummary['txSummary'];
+  txId: string;
+  timestamp: number;
+  fromAsset: RequiredAsset<'amount'>;
+  toAsset: RequiredAsset<'amount'>;
 }
 
 const EthereumStorageContext = createContext<EthereumStorage | null>(null);
 
 export const EthereumStorageProvider: React.FC = (props) => {
-  // eslint-disable-next-line prefer-const
-  let [transactions, setTransactions] = useLocalStorage<EthereumTransaction[]>('EthereumStorage');
+  const [transactions, setTransactions] = useLocalStorage<TransactionSummaryWithStatus[]>('EthereumStorage');
   const addTransaction = (tx: EthereumTransaction) => {
-    if (transactions) {
-      transactions.push(tx);
-    } else {
-      transactions = [tx];
+    const txSummary: TransactionSummaryWithStatus = {
+      status: BridgeTransactionStatus.Pending,
+      txSummary: {
+        fromAsset: tx.fromAsset,
+        toAsset: tx.toAsset,
+        fromTransaction: { txId: tx.txId, timestamp: tx.timestamp },
+      },
+    };
+    if (!transactions) {
+      return setTransactions([txSummary]);
     }
+    transactions.push(txSummary);
     setTransactions(transactions);
   };
   const ethereumStorage: EthereumStorage = {
@@ -45,6 +41,9 @@ export const EthereumStorageProvider: React.FC = (props) => {
   return <EthereumStorageContext.Provider value={ethereumStorage}>{props.children}</EthereumStorageContext.Provider>;
 };
 
-export function useEthereumStorage(): EthereumStorage | null {
-  return useContext(EthereumStorageContext);
+export function useEthereumStorage(): EthereumStorage {
+  const context = useContext(EthereumStorageContext);
+  if (!context)
+    throw new Error('useEthereumStorage must be used in component which wrapped by <EthereumStorageProvider>');
+  return context;
 }

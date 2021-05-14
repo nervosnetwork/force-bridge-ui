@@ -10,6 +10,7 @@ import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, useForceBridge } from 'state';
+import { useQueryWithCache } from './useQueryWithCache';
 
 type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
 
@@ -47,18 +48,20 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     return props.asset;
   }, [nervosModule.assetModel, props.asset]);
 
-  const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
-    if (!asset || !signer) return undefined;
-    const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
-    const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
-    return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
-  }, [asset, signer, direction, network, nervosModule.network]);
+  // const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
+  //   if (!asset || !signer) return undefined;
+  //   const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
+  //   const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
+  //   return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
+  // }, [asset, signer, direction, network, nervosModule.network]);
+  //
+  // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  // const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
+  //   enabled: filter != null,
+  //   refetchInterval: 5000,
+  // });
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
-    enabled: filter != null,
-    refetchInterval: 5000,
-  });
+  const transactions = useQueryWithCache(asset);
 
   const columns: ColumnsType<TransactionWithDetail> = [
     {
@@ -90,8 +93,8 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
 
   const [historyKind, setHistoryKind] = useState<'Pending' | 'Successful'>('Pending');
   const historyData = useMemo<TransactionWithDetail[]>(() => {
-    if (!query.data) return [];
-    return query.data
+    if (!transactions) return [];
+    return transactions
       .filter((item) => {
         return item.status === historyKind;
       })
@@ -113,7 +116,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
         };
         return itemWithKey;
       });
-  }, [query, historyKind]);
+  }, [transactions, historyKind]);
 
   return (
     <BridgeHistoryWrapper>
