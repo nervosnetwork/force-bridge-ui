@@ -6,12 +6,15 @@ import React, { useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
+import { useAllowance } from './useAllowance';
+import { useApproveTransaction } from './useApproveTransaction';
 import { useBridgeInput, ValidationResult } from './useBridgeInput';
 import { useBridgeTransaction } from './useBridgeTransaction';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
+import { SubmitButton } from 'components/SubmitButton';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
 import { useSearchParams } from 'hooks/useSearchParams';
@@ -72,7 +75,11 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
     reset,
   } = useBridgeInput();
 
-  const { mutateAsync: sendBridgeTransaction, isLoading } = useBridgeTransaction();
+  const allowance = useAllowance(selectedAsset);
+
+  const { mutateAsync: sendBridgeTransaction, isLoading: isBridgeLoading } = useBridgeTransaction();
+  const { mutateAsync: sendApproveTransaction, isLoading: isApproveLoading } = useApproveTransaction();
+  const isLoading = isBridgeLoading || isApproveLoading;
 
   function resetForm() {
     reset();
@@ -87,11 +94,15 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
   function onSubmit() {
     if (!selectedAsset || !recipient || !selectedAsset.shadow) return;
 
-    const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
-    if (asset.info?.decimals == null) boom('asset info is not loaded');
+    if (allowance && allowance.status === 'NeedApprove') {
+      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(resetForm);
+    } else {
+      const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
+      if (asset.info?.decimals == null) boom('asset info is not loaded');
 
-    asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
-    sendBridgeTransaction({ asset, recipient }).then(resetForm);
+      asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
+      sendBridgeTransaction({ asset, recipient }).then(resetForm);
+    }
   }
 
   function onSelect(asset: Asset) {
@@ -250,16 +261,15 @@ export const BridgeOperation: React.FC<BridgeOperationProps> = (props) => {
         <Help {...statusOf('recipient')} />
       </div>
 
-      <Button
+      <SubmitButton
         disabled={validateStatus !== 'success'}
         block
         type="primary"
         size="large"
         onClick={formik.submitForm}
-        loading={isLoading}
-      >
-        Bridge
-      </Button>
+        allowanceStatus={allowance}
+        isloading={isLoading}
+      />
     </BridgeViewWrapper>
   );
 };
