@@ -17,7 +17,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
   }, [query.data]);
 
   return useQuery(
-    ['getAssetBalance', { network, direction }],
+    ['getAssetBalance', { network, direction, signer }],
     async (): Promise<Assets> => {
       if (!signer) boom('signer is not found when fetching balance');
       if (!infos) boom('asset list is not loaded');

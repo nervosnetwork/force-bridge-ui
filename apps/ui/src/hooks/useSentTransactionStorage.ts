@@ -32,8 +32,7 @@ export function useSentTransactionStorage(): SentTransactionStorage {
     if (!transactions) {
       return setTransactions([txSummary]);
     }
-    transactions.push(txSummary);
-    setTransactions(transactions);
+    setTransactions(transactions.concat(txSummary));
   };
   return { transactions: transactions, addTransaction: addTransaction };
 }

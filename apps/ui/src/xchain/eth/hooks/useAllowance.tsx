@@ -21,8 +21,7 @@ export function useAllowance(asset: Asset | undefined): AllowanceState | undefin
   const [approveList, setApproveList] = useLocalStorage<ApproveInfo[]>('approveList');
   const addApprove = (approve: ApproveInfo) => {
     if (!approveList) return setApproveList([approve]);
-    approveList.push(approve);
-    setApproveList(approveList);
+    setApproveList(approveList.concat(approve));
   };
   const disableApprove =
     !signer ||
