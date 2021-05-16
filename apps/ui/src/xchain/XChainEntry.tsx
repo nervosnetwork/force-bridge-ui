@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import { providers } from 'ethers';
 import React from 'react';
-import { EthereumProviderProvider, EthereumStorageProvider } from './eth';
+import { EthereumProviderProvider } from './eth';
 import { ChainIdWarning } from './eth/components/ChainIdWarning';
 import { useForceBridge } from 'state';
 
@@ -25,15 +25,13 @@ const EthereumEntry: React.FC = ({ children }) => {
 
   const provider = new providers.Web3Provider(ethereum);
   return (
-    <EthereumStorageProvider>
-      <EthereumProviderProvider provider={provider}>
-        <ChainIdWarning
-          chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
-          chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
-        />
-        {children}
-      </EthereumProviderProvider>
-    </EthereumStorageProvider>
+    <EthereumProviderProvider provider={provider}>
+      <ChainIdWarning
+        chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
+        chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
+      />
+      {children}
+    </EthereumProviderProvider>
   );
 };
 

@@ -3,8 +3,8 @@ import { API } from '@force-bridge/commons/lib/types';
 import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
+import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 import { BridgeDirection, useForceBridge } from 'state';
-import { useEthereumStorage } from 'xchain';
 
 export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null | undefined {
   const { signer, direction, network, nervosModule, api } = useForceBridge();
@@ -20,7 +20,7 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
     enabled: filter != null,
     refetchInterval: 5000,
   });
-  const { transactions: cachedTransactions } = useEthereumStorage();
+  const { transactions: cachedTransactions } = useSentTransactionStorage();
   if (!signer || !asset) return null;
   if (!cachedTransactions) return query.data;
   const relatedTransactions = cachedTransactions.filter(

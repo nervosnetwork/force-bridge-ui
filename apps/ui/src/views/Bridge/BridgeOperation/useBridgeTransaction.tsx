@@ -2,8 +2,8 @@ import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Modal } from 'antd';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
-import { useEthereumStorage } from '../../../xchain';
 import { TransactionLink } from 'components/TransactionLink';
+import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 import { boom } from 'interfaces/errors';
 import { BridgeDirection, useForceBridge } from 'state';
 
@@ -14,7 +14,7 @@ export interface BridgeInputValues {
 
 export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
   const { api, signer, direction, network } = useForceBridge();
-  const { addTransaction } = useEthereumStorage();
+  const { addTransaction } = useSentTransactionStorage();
 
   return useMutation(
     ['sendTransaction'],
