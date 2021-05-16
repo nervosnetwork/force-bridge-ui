@@ -2,7 +2,7 @@ import { Asset, eth } from '@force-bridge/commons';
 import { useLocalStorage } from '@rehooks/local-storage';
 import { useQuery } from 'react-query';
 import { BridgeDirection, useForceBridge } from '../../../state';
-import { EthWalletSigner } from '../../../xchain';
+import { EthWalletSigner } from '../../index';
 
 export interface AllowanceState {
   status: 'Querying' | 'NeedApprove' | 'Approving' | 'Approved';

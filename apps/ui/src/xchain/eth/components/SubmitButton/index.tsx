@@ -1,6 +1,6 @@
 import { Button, ButtonProps } from 'antd';
 import React from 'react';
-import { AllowanceState } from '../../views/Bridge/BridgeOperation/useAllowance';
+import { AllowanceState } from '../../hooks/useAllowance';
 
 interface SubmitButtonProps extends ButtonProps {
   isloading: boolean;

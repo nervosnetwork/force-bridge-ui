@@ -47,7 +47,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     return props.asset;
   }, [nervosModule.assetModel, props.asset]);
 
-  const transactions = useQueryWithCache(asset);
+  const transactionSummaries = useQueryWithCache(asset);
 
   const columns: ColumnsType<TransactionWithDetail> = [
     {
@@ -79,8 +79,8 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
 
   const [historyKind, setHistoryKind] = useState<'Pending' | 'Successful'>('Pending');
   const historyData = useMemo<TransactionWithDetail[]>(() => {
-    if (!transactions) return [];
-    return transactions
+    if (!transactionSummaries) return [];
+    return transactionSummaries
       .filter((item) => {
         return item.status === historyKind;
       })
@@ -102,7 +102,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
         };
         return itemWithKey;
       });
-  }, [transactions, historyKind]);
+  }, [transactionSummaries, historyKind]);
 
   return (
     <BridgeHistoryWrapper>

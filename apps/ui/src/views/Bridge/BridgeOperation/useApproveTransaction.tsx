@@ -2,7 +2,7 @@ import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Modal } from 'antd';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
-import { ApproveInfo } from './useAllowance';
+import { ApproveInfo } from '../../../xchain/eth/hooks/useAllowance';
 import { TransactionLink } from 'components/TransactionLink';
 import { boom } from 'interfaces/errors';
 import { BridgeDirection, useForceBridge } from 'state';
