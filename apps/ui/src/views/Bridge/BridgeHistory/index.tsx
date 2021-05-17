@@ -171,7 +171,6 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
               )}
             </div>
           ),
-          // defaultExpandedRowKeys: [],
           expandedRowKeys: expandedRowKeys,
           onExpand: (expanded, record) => {
             if (expanded) {
