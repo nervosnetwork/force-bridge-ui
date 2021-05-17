@@ -14,6 +14,10 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
     const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
     return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
   }, [asset, signer, direction, network, nervosModule.network]);
+  const signerIdent = useMemo(
+    () => (direction === BridgeDirection.In ? signer?.identityXChain() : signer?.identityNervos()),
+    [direction, signer],
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
@@ -25,7 +29,7 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
   if (!cachedTransactions) return query.data;
   const relatedTransactions = cachedTransactions.filter(
     (item) =>
-      item.sender === signer.identityNervos() &&
+      item.sender === signerIdent &&
       (item.txSummary.fromAsset.ident === asset.ident || item.txSummary.toAsset.ident === asset.ident),
   );
 

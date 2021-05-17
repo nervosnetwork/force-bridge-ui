@@ -31,7 +31,7 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
         });
         txSummary = {
           txId: '',
-          sender: signer.identityNervos(),
+          sender: signer.identityXChain(),
           timestamp: new Date().getTime(),
           fromAsset: { network: input.asset.network, ident: input.asset.ident, amount: input.asset.amount },
           toAsset: {
