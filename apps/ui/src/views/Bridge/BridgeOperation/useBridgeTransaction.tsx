@@ -1,56 +1,47 @@
-import { Asset, eth, NERVOS_NETWORK, utils } from '@force-bridge/commons';
+import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Modal } from 'antd';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
 import { TransactionLink } from 'components/TransactionLink';
+import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 import { boom } from 'interfaces/errors';
 import { BridgeDirection, useForceBridge } from 'state';
-import { EthWalletSigner } from 'xchain/eth/EthWalletSigner';
 
 export interface BridgeInputValues {
   asset: Asset;
   recipient: string;
 }
 
-async function checkAllowance(signer: EthWalletSigner, input: BridgeInputValues) {
-  const ethSigner = signer;
-
-  const isAllowanceEnough = await ethSigner
-    .getAllowance(input.asset.ident)
-    .then((allowance) => allowance.gte(input.asset.amount));
-
-  if (!isAllowanceEnough) {
-    const confirmed = window.confirm(
-      'The allowance is not enough for bridging, we need to approve before we can execute the Bridge operation',
-    );
-    if (!confirmed) {
-      boom('Not yet approved, we need to approve before we can execute the Bridge operation');
-    }
-
-    await ethSigner.approve(input.asset.ident);
-    boom('Waiting for the approving successfully');
-  }
-}
-
 export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
   const { api, signer, direction, network } = useForceBridge();
+  const { addTransaction } = useSentTransactionStorage();
 
   return useMutation(
     ['sendTransaction'],
     async (input: BridgeInputValues) => {
       if (!signer) boom('signer is not load');
       let generated;
+      let txSummary;
       if (direction === BridgeDirection.In) {
         // TODO refactor to life-time style? beforeTransactionSending / afterTransactionSending
-        if (network === 'Ethereum' && eth.module.assetModel.isDerivedAsset(input.asset)) {
-          await checkAllowance(signer as EthWalletSigner, input);
-        }
-
         generated = await api.generateBridgeInNervosTransaction({
           asset: { network: input.asset.network, ident: input.asset.ident, amount: input.asset.amount },
           recipient: input.recipient,
           sender: signer.identityXChain(),
         });
+        txSummary = {
+          txId: '',
+          sender: signer.identityNervos(),
+          timestamp: new Date().getTime(),
+          fromAsset: { network: input.asset.network, ident: input.asset.ident, amount: input.asset.amount },
+          toAsset: {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            network: input.asset!.shadow!.network,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            ident: input.asset!.shadow!.ident,
+            amount: input.asset.amount,
+          },
+        };
       } else {
         generated = await api.generateBridgeOutNervosTransaction({
           network,
@@ -59,16 +50,32 @@ export function useBridgeTransaction(): UseMutationResult<{ txId: string }, unkn
           recipient: input.recipient,
           sender: signer.identityNervos(),
         });
+        txSummary = {
+          txId: '',
+          sender: signer.identityNervos(),
+          timestamp: new Date().getTime(),
+          toAsset: { network: input.asset.network, ident: input.asset.ident, amount: input.asset.amount },
+          fromAsset: {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            network: input.asset!.shadow!.network,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            ident: input.asset!.shadow!.ident,
+            amount: input.asset.amount,
+          },
+        };
       }
 
-      return signer.sendTransaction(generated.rawTransaction);
+      const { txId } = await signer.sendTransaction(generated.rawTransaction);
+      txSummary.txId = txId;
+      addTransaction(txSummary);
+      return { txId: txId };
     },
     {
       onSuccess({ txId }) {
         const fromNetwork = direction === BridgeDirection.In ? network : NERVOS_NETWORK;
 
         Modal.success({
-          title: 'Tx sent',
+          title: 'Bridge Tx sent',
           content: (
             <p>
               The transaction was sent, check it in&nbsp;

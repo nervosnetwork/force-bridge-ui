@@ -1,17 +1,17 @@
-import { API, Asset } from '@force-bridge/commons';
+import { Asset } from '@force-bridge/commons';
 import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
-import React, { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
 import { TransactionLink } from 'components/TransactionLink';
-import { BridgeDirection, useForceBridge } from 'state';
+import { useForceBridge } from 'state';
 
-type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
+type TransactionWithDetail = TransactionSummaryWithStatus & { key: string; fromDetail: string; toDetail: string };
 
 const BridgeHistoryWrapper = styled(StyledCardWrapper)`
   .ant-table-thead > tr > th,
@@ -39,7 +39,7 @@ interface BridgeHistoryProps {
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { network, direction, nervosModule, signer, api } = useForceBridge();
+  const { nervosModule } = useForceBridge();
 
   const asset = useMemo(() => {
     const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(props.asset);
@@ -47,18 +47,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     return props.asset;
   }, [nervosModule.assetModel, props.asset]);
 
-  const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
-    if (!asset || !signer) return undefined;
-    const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
-    const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
-    return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
-  }, [asset, signer, direction, network, nervosModule.network]);
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
-    enabled: filter != null,
-    refetchInterval: 5000,
-  });
+  const transactionSummaries = useQueryWithCache(asset);
 
   const columns: ColumnsType<TransactionWithDetail> = [
     {
@@ -90,8 +79,8 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
 
   const [historyKind, setHistoryKind] = useState<'Pending' | 'Successful'>('Pending');
   const historyData = useMemo<TransactionWithDetail[]>(() => {
-    if (!query.data) return [];
-    return query.data
+    if (!transactionSummaries) return [];
+    return transactionSummaries
       .filter((item) => {
         return item.status === historyKind;
       })
@@ -107,14 +96,25 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
           txSummary: item.txSummary,
           status: item.status,
           message: '',
-          key: index,
+          key: item.txSummary.fromTransaction.txId,
           fromDetail: from,
           toDetail: to,
         };
         return itemWithKey;
       });
-  }, [query, historyKind]);
+  }, [transactionSummaries, historyKind]);
 
+  const [pendingExpandedRowKeys, setPendingExpandedRowKeys] = useState<string[]>();
+  const [successExpandedRowKeys, setSuccessExpandedRowKeys] = useState<string[]>();
+  useEffect(() => {
+    setPendingExpandedRowKeys([]);
+    setSuccessExpandedRowKeys([]);
+  }, [asset?.ident]);
+  const expandedRowKeys = useMemo(() => (historyKind === 'Pending' ? pendingExpandedRowKeys : successExpandedRowKeys), [
+    historyKind,
+    pendingExpandedRowKeys,
+    successExpandedRowKeys,
+  ]);
   return (
     <BridgeHistoryWrapper>
       <header>
@@ -147,6 +147,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       <Table
         size="small"
         columns={columns}
+        rowKey={(record) => record.txSummary.fromTransaction.txId}
         expandable={{
           expandedRowRender: (record) => (
             <div>
@@ -170,6 +171,30 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
               )}
             </div>
           ),
+          expandedRowKeys: expandedRowKeys,
+          onExpand: (expanded, record) => {
+            if (expanded) {
+              if (historyKind === 'Pending') {
+                setPendingExpandedRowKeys(
+                  pendingExpandedRowKeys
+                    ? pendingExpandedRowKeys.concat([record.key.toString()])
+                    : [record.key.toString()],
+                );
+              } else {
+                setSuccessExpandedRowKeys(
+                  successExpandedRowKeys
+                    ? successExpandedRowKeys.concat([record.key.toString()])
+                    : [record.key.toString()],
+                );
+              }
+            } else {
+              if (pendingExpandedRowKeys && historyKind === 'Pending') {
+                setPendingExpandedRowKeys(pendingExpandedRowKeys.filter((item) => item !== record.key.toString()));
+              } else if (successExpandedRowKeys && historyKind === 'Successful') {
+                setSuccessExpandedRowKeys(successExpandedRowKeys.filter((item) => item !== record.key.toString()));
+              }
+            }
+          },
         }}
         dataSource={historyData}
         pagination={{ pageSize: 5 }}
