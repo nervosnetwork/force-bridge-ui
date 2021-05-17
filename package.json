@@ -13,6 +13,7 @@
     "@babel/preset-typescript": "^7.13.0",
     "@types/jest": "^26.0.23",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "cross-env": "^7.0.3",
     "eslint": "^7.24.0",
     "eslint-formatter-pretty": "^4.0.0",
     "eslint-import-resolver-typescript": "^2.4.0",
