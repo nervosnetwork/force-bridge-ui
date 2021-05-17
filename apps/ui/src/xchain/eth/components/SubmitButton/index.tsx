@@ -33,7 +33,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
       content = 'Bridge';
       break;
     default:
-      content = '';
+      content = ' ';
   }
 
   return (

@@ -3,7 +3,7 @@ import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/ap
 import { Button, Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
@@ -11,7 +11,7 @@ import { StyledCardWrapper } from 'components/Styled';
 import { TransactionLink } from 'components/TransactionLink';
 import { useForceBridge } from 'state';
 
-type TransactionWithDetail = TransactionSummaryWithStatus & { key: number; fromDetail: string; toDetail: string };
+type TransactionWithDetail = TransactionSummaryWithStatus & { key: string; fromDetail: string; toDetail: string };
 
 const BridgeHistoryWrapper = styled(StyledCardWrapper)`
   .ant-table-thead > tr > th,
@@ -96,7 +96,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
           txSummary: item.txSummary,
           status: item.status,
           message: '',
-          key: index,
+          key: item.txSummary.fromTransaction.txId,
           fromDetail: from,
           toDetail: to,
         };
@@ -104,6 +104,17 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       });
   }, [transactionSummaries, historyKind]);
 
+  const [pendingExpandedRowKeys, setPendingExpandedRowKeys] = useState<string[]>();
+  const [successExpandedRowKeys, setSuccessExpandedRowKeys] = useState<string[]>();
+  useEffect(() => {
+    setPendingExpandedRowKeys([]);
+    setSuccessExpandedRowKeys([]);
+  }, [asset?.ident]);
+  const expandedRowKeys = useMemo(() => (historyKind === 'Pending' ? pendingExpandedRowKeys : successExpandedRowKeys), [
+    historyKind,
+    pendingExpandedRowKeys,
+    successExpandedRowKeys,
+  ]);
   return (
     <BridgeHistoryWrapper>
       <header>
@@ -136,6 +147,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       <Table
         size="small"
         columns={columns}
+        rowKey={(record) => record.txSummary.fromTransaction.txId}
         expandable={{
           expandedRowRender: (record) => (
             <div>
@@ -159,6 +171,31 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
               )}
             </div>
           ),
+          // defaultExpandedRowKeys: [],
+          expandedRowKeys: expandedRowKeys,
+          onExpand: (expanded, record) => {
+            if (expanded) {
+              if (historyKind === 'Pending') {
+                setPendingExpandedRowKeys(
+                  pendingExpandedRowKeys
+                    ? pendingExpandedRowKeys.concat([record.key.toString()])
+                    : [record.key.toString()],
+                );
+              } else {
+                setSuccessExpandedRowKeys(
+                  successExpandedRowKeys
+                    ? successExpandedRowKeys.concat([record.key.toString()])
+                    : [record.key.toString()],
+                );
+              }
+            } else {
+              if (pendingExpandedRowKeys && historyKind === 'Pending') {
+                setPendingExpandedRowKeys(pendingExpandedRowKeys.filter((item) => item !== record.key.toString()));
+              } else if (successExpandedRowKeys && historyKind === 'Successful') {
+                setSuccessExpandedRowKeys(successExpandedRowKeys.filter((item) => item !== record.key.toString()));
+              }
+            }
+          },
         }}
         dataSource={historyData}
         pagination={{ pageSize: 5 }}
