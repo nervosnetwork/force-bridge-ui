@@ -1,6 +1,7 @@
 import { API, eth, ForceBridgeAPIV1Handler, Module, nervos, NervosNetwork } from '@force-bridge/commons';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { GlobalSetting, useGlobalSetting } from './setting';
+import { Version, fromEnv } from './version';
 import { ConnectStatus, TwoWaySigner, Wallet } from 'interfaces/WalletConnector';
 import { EthereumWalletConnector } from 'xchain/eth/EthereumWalletConnector';
 
@@ -32,6 +33,8 @@ interface ForceBridgeState {
 
   xchainModule: Module;
   nervosModule: Module<NervosNetwork>;
+
+  version: Version;
 }
 
 const Context = createContext<ForceBridgeState | null>(null);
@@ -88,6 +91,7 @@ export const ForceBridgeProvider: React.FC = (props) => {
     direction,
     xchainModule: xchainModule,
     nervosModule: nervos.module,
+    version: fromEnv(),
   };
 
   return <Context.Provider value={state}>{props.children}</Context.Provider>;

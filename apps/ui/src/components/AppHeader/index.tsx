@@ -2,6 +2,7 @@ import { MenuOutlined } from '@ant-design/icons';
 import { Col, Dropdown, Menu, Row } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { About } from './About';
 import { NetworkDirectionSelector } from './NetworkDirectionSelector';
 import LogoImage from './logo.svg';
 import { LinearGradientButton } from 'components/Styled';
@@ -36,6 +37,9 @@ export const AppHeader: React.FC = () => {
         <a href="https://github.com/nervosnetwork/force-bridge" target="_blank" rel="noreferrer">
           GitHub
         </a>
+      </Menu.Item>
+      <Menu.Item>
+        <About />
       </Menu.Item>
     </Menu>
   );

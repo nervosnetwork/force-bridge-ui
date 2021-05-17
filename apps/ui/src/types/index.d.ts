@@ -3,6 +3,9 @@ declare namespace NodeJS {
     NODE_ENV: 'development' | 'production' | 'test';
     PUBLIC_URL: string;
 
+    REACT_APP_REPO_UI_URL: string;
+    REACT_APP_REPO_UI_GIT_SHA: string;
+
     REACT_APP_BRIDGE_RPC_URL: string;
     REACT_APP_CKB_RPC_URL: string;
 
