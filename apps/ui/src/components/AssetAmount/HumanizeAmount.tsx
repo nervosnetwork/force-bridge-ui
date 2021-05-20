@@ -2,7 +2,7 @@ import { AssetType } from '@force-bridge/commons';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { useAssetInfo } from 'hooks/useAssetInfo';
+import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
 
 const HumanizeAmountWrapper = styled.span`
@@ -20,7 +20,7 @@ interface HumanizeAmountProps {
 
 export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
   const { asset, humanize, showSymbol } = props;
-  const { infoOf } = useAssetInfo();
+  const { infoOf } = useAssetInfoListQuery();
 
   const info = useMemo(() => {
     if (asset.info) return asset.info;

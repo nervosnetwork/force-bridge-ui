@@ -3,10 +3,11 @@ import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
-import { BridgeOperationContainer } from 'views/Bridge/containers/BridgeOperationContainer';
+import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 
 const EthereumBridge: React.FC = () => {
-  const { selectedAsset, setSelectedAsset } = BridgeOperationContainer.useContainer();
+  const { selectedAsset } = useSelectBridgeAsset();
+
   return (
     <EthereumProviderContainer.Provider>
       <ChainIdWarning
@@ -14,7 +15,7 @@ const EthereumBridge: React.FC = () => {
         chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
       />
       <div>
-        <BridgeOperationForm onAssetSelected={setSelectedAsset} />
+        <BridgeOperationForm />
         <div style={{ padding: '8px' }} />
         {selectedAsset && <BridgeHistory asset={selectedAsset} />}
       </div>

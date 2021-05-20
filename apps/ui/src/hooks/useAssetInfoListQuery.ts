@@ -9,7 +9,7 @@ interface UseAssetInfoState {
   infoOf: (asset: AssetType) => FungibleBaseInfo | undefined;
 }
 
-export function useAssetInfo(): UseAssetInfoState {
+export function useAssetInfoListQuery(): UseAssetInfoState {
   const { network, api, xchainModule } = ForceBridgeContainer.useContainer();
 
   const X = xchainModule.assetModel;
