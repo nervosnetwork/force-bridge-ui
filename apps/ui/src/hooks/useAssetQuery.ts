@@ -3,13 +3,15 @@ import { useMemo } from 'react';
 import { QueryObserverResult, useQuery } from 'react-query';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
-import { useAssetInfo } from 'hooks/useAssetInfo';
+import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
+import { useSigner } from 'hooks/useSigner';
 
 type Assets = { xchain: Asset[]; nervos: nervos.SUDT[] };
 
 export function useAssetQuery(): QueryObserverResult<Assets> {
-  const { api, direction, network, signer } = ForceBridgeContainer.useContainer();
-  const { query } = useAssetInfo();
+  const { api, direction, network } = ForceBridgeContainer.useContainer();
+  const { query } = useAssetInfoListQuery();
+  const signer = useSigner();
 
   const infos = useMemo(() => {
     if (!query.data) return;
@@ -17,7 +19,7 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
   }, [query.data]);
 
   return useQuery(
-    ['getAssetBalance', { network, direction }],
+    ['getAssetBalance', { network, direction, signer: signer?.identity }],
     async (): Promise<Assets> => {
       if (!signer) boom('signer is not found when fetching balance');
       if (!infos) boom('asset list is not loaded');
@@ -28,8 +30,8 @@ export function useAssetQuery(): QueryObserverResult<Assets> {
         assetIdent: ident,
       });
 
-      const xchainBalances = await api.getBalance(infos.xchain.map(infoToBalancePayload(signer.identityXChain())));
-      const nervosBalances = await api.getBalance(infos.nervos.map(infoToBalancePayload(signer.identityNervos())));
+      const xchainBalances = await api.getBalance(infos.xchain.map(infoToBalancePayload(signer.identityXChain)));
+      const nervosBalances = await api.getBalance(infos.nervos.map(infoToBalancePayload(signer.identityNervos)));
 
       return {
         xchain: xchainBalances.map<Asset>((balance, i) => {

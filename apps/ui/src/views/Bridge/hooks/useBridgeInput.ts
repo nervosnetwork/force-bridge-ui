@@ -12,9 +12,6 @@ export type ValidationResult = {
 type ValidateStatus = 'success' | 'failed' | 'pending';
 
 interface BridgeState {
-  asset: Asset | undefined;
-  setAsset: (asset: Asset | undefined) => void;
-
   bridgeInInputAmount: string;
   setBridgeInInputAmount: (amount: string) => void;
   bridgeOutInputAmount: string;
@@ -34,9 +31,8 @@ export interface Options {
   initValues?: { fromInputAmount?: string; asset?: Asset; recipient?: string };
 }
 
-export function useBridgeInput(options?: Options): BridgeState {
+export function useBridgeInput(asset: Asset | undefined, options?: Options): BridgeState {
   const initValues = options?.initValues;
-  const [asset, setAsset] = useState<Asset | undefined>(initValues?.asset);
   const [bridgeInInputAmount, setBridgeInInputAmount] = useState<string>(initValues?.fromInputAmount ?? '');
   const [bridgeOutInputAmount, setBridgeOutInputAmount] = useState<string>(initValues?.fromInputAmount ?? '');
   const [recipient, setRecipient] = useState<string>(initValues?.recipient ?? '');
@@ -102,9 +98,6 @@ export function useBridgeInput(options?: Options): BridgeState {
   }, []);
 
   return {
-    asset,
-    setAsset,
-
     bridgeInInputAmount: bridgeInInputAmount,
     setBridgeInInputAmount: validateAndSetBridgeInInput,
 

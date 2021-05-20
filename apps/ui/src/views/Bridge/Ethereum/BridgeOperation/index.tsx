@@ -1,5 +1,4 @@
 import Icon from '@ant-design/icons';
-import { Asset } from '@force-bridge/commons';
 import { Button, Divider, Row, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
@@ -21,6 +20,7 @@ import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
 import { useBridgeInput, ValidationResult } from 'views/Bridge/hooks/useBridgeInput';
+import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
@@ -45,36 +45,34 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
   return <HelpWrapper type="danger">{help}</HelpWrapper>;
 };
 
-interface BridgeOperationProps {
-  onAssetSelected: (asset: Asset) => void;
-}
-
-export const BridgeOperationForm: React.FC<BridgeOperationProps> = (props) => {
+export const BridgeOperationForm: React.FC = () => {
   const { signer, direction, switchBridgeDirection } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const history = useHistory();
   const location = useLocation();
+  const { selectedAsset, setSelectedAsset } = useSelectBridgeAsset();
+
   const searchParams = useSearchParams();
+  const initRecipient = searchParams.get('recipient');
+  const initAmount = searchParams.get('amount');
+
   const formik = useFormik<ValidationResult>({
     onSubmit,
     initialValues: {},
     validate: () => errors,
-    initialTouched: { bridgeInInputAmount: !!searchParams.get('amount'), recipient: !!searchParams.get('recipient') },
+    initialTouched: { bridgeInInputAmount: !!initAmount, recipient: !!initRecipient },
   });
 
   const {
     bridgeOutInputAmount,
     bridgeInInputAmount,
     setBridgeInInputAmount,
-    asset: selectedAsset,
-    setAsset: setSelectedAsset,
     setRecipient,
     recipient,
     errors,
     validateStatus,
-    // fee,
     reset,
-  } = useBridgeInput();
+  } = useBridgeInput(selectedAsset);
 
   const allowance = useAllowance(selectedAsset);
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
@@ -107,79 +105,30 @@ export const BridgeOperationForm: React.FC<BridgeOperationProps> = (props) => {
     }
   }
 
-  function onSelect(asset: Asset) {
-    setSelectedAsset(asset);
-    props.onAssetSelected(asset);
-  }
-
   const assetList = useMemo(() => {
     if (!query.data) return [];
     if (direction === BridgeDirection.In) return query.data.xchain;
     return query.data.nervos;
   }, [direction, query.data]);
 
-  const defaultSelectedXChainAssetIdent = searchParams.get('xchain-asset');
-  // set default selected asset from url `?xchain-asset=...`
-  useEffect(() => {
-    if (selectedAsset) return;
-    if (!assetList.length || !defaultSelectedXChainAssetIdent) return;
-
-    if (direction === BridgeDirection.In) {
-      const found = assetList.find((item) => item.ident === defaultSelectedXChainAssetIdent);
-      found && onSelect(found);
-    }
-
-    if (direction === BridgeDirection.Out) {
-      const found = assetList.find(
-        (item) => item.shadow?.ident && item.shadow.ident === defaultSelectedXChainAssetIdent,
-      );
-      found && onSelect(found);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assetList, selectedAsset, direction, defaultSelectedXChainAssetIdent]);
-
   // bind url query with the input
   useEffect(() => {
-    if (!assetList.length) return;
+    if (!initRecipient && !initAmount) return;
 
-    const defaultRecipient = searchParams.get('recipient');
-    const defaultAmount = searchParams.get('amount');
+    setRecipient(initRecipient ?? '');
+    setBridgeInInputAmount(initAmount ?? '');
+  }, [initAmount, initRecipient, setBridgeInInputAmount, setRecipient, signer]);
 
-    if (!defaultRecipient && !defaultAmount) return;
-
-    setRecipient(defaultRecipient ?? '');
-    setBridgeInInputAmount(defaultAmount ?? '');
+  // remove recipient and amount from url once signer loaded
+  useEffect(() => {
+    if (!signer) return;
+    if (!initAmount && !initRecipient) return;
 
     searchParams.delete('recipient');
     searchParams.delete('amount');
 
-    history.replace({
-      ...location,
-      search: searchParams.toString(),
-    });
-  }, [history, location, searchParams, setBridgeInInputAmount, setRecipient, assetList]);
-
-  // clear the selected asset when direction was changed
-  useEffect(() => {
-    setSelectedAsset(undefined);
-  }, [direction, setSelectedAsset]);
-
-  // bind the url asset type with selected asset
-  useEffect(() => {
-    if (!selectedAsset) return;
-
-    const xchainAssetIdent = direction === BridgeDirection.In ? selectedAsset.ident : selectedAsset.shadow?.ident;
-    if (!xchainAssetIdent) return;
-
-    const params = new URLSearchParams(location.search);
-    params.set('xchain-asset', xchainAssetIdent);
-
-    history.replace({
-      ...location,
-      search: params.toString(),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [direction, selectedAsset]);
+    history.replace({ search: searchParams.toString() });
+  }, [signer, searchParams, history, location, initAmount, initRecipient]);
 
   const statusOf = (name: keyof ValidationResult) => {
     const touched = formik.touched[name];
@@ -209,7 +158,7 @@ export const BridgeOperationForm: React.FC<BridgeOperationProps> = (props) => {
                 options={assetList}
                 rowKey={(asset) => asset.identity()}
                 selected={selectedAsset?.identity()}
-                onSelect={(_id, asset) => onSelect(asset)}
+                onSelect={(_id, asset) => setSelectedAsset(asset)}
               />
             </span>
           }
