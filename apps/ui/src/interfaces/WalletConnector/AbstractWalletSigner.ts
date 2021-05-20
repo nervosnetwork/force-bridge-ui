@@ -1,9 +1,9 @@
 import { NervosNetwork, NetworkBase } from '@force-bridge/commons';
 import { TwoWaySigner } from './types';
-import { boom, unimplemented } from 'interfaces/errors';
+import { boom, unimplemented } from 'errors';
 
 export abstract class AbstractWalletSigner<T extends NetworkBase> implements TwoWaySigner<T> {
-  constructor(private _identNervos: NervosNetwork['UserIdent'], private _identXChain: T['UserIdent']) {}
+  protected constructor(private _identNervos: NervosNetwork['UserIdent'], private _identXChain: T['UserIdent']) {}
 
   async sendTransaction(raw: T['RawTransaction'] | NervosNetwork['RawTransaction']): Promise<{ txId: string }> {
     if (this._isNervosTransaction(raw)) return this._sendToNervos(raw);

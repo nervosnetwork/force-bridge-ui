@@ -21,8 +21,8 @@ import PWCore, {
 import { RPC } from 'ckb-js-toolkit';
 import { BigNumber, ethers } from 'ethers';
 import { ConnectorConfig } from './EthereumWalletConnector';
+import { boom, unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
-import { boom, unimplemented } from 'interfaces/errors';
 
 const Erc20ABI = [
   'function allowance(address owner, address spender) view returns (uint256)',

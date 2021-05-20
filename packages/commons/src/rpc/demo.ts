@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import CKB from '@nervosnetwork/ckb-sdk-core/';
 import { ethers } from 'ethers';
 import { ForceBridgeAPIV1Handler } from './client';

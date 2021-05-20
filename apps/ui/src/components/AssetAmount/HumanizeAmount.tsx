@@ -2,8 +2,8 @@ import { AssetType } from '@force-bridge/commons';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { useAssetInfo } from 'state/useAssetInfo';
-import { BeautyAmount, HumanizeOptions } from 'suite';
+import { useAssetInfo } from 'hooks/useAssetInfo';
+import { BeautyAmount, HumanizeOptions } from 'libs';
 
 const HumanizeAmountWrapper = styled.span`
   .symbol {
