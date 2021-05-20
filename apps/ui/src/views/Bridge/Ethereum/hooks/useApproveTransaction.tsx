@@ -32,7 +32,7 @@ export function useApproveTransaction(): UseMutationResult<{ txId: string }, unk
         Modal.success({
           title: 'Approve Tx Sent',
           content: (
-            <p>
+            <div>
               The transaction was sent, check it in&nbsp;
               <TransactionLink network={fromNetwork} txId={txId}>
                 explorer
@@ -41,7 +41,7 @@ export function useApproveTransaction(): UseMutationResult<{ txId: string }, unk
                 <summary>transaction id</summary>
                 {txId}
               </details>
-            </p>
+            </div>
           ),
         });
       },
