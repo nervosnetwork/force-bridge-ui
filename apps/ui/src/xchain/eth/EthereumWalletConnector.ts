@@ -4,8 +4,8 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
 import warning from 'tiny-warning';
 import { EthWalletSigner } from './EthWalletSigner';
+import { unimplemented } from 'errors';
 import { AbstractWalletConnector, ConnectStatus } from 'interfaces/WalletConnector';
-import { unimplemented } from 'interfaces/errors';
 
 export interface ConnectorConfig {
   ckbChainID:

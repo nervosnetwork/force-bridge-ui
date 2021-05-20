@@ -3,8 +3,9 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { LinearGradientButton } from 'components/Styled';
 import { UserIdent } from 'components/UserIdent';
+import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { useGlobalSetting } from 'hooks/useGlobalSetting';
 import { ConnectStatus } from 'interfaces/WalletConnector';
-import { BridgeDirection, useForceBridge } from 'state/global';
 
 const StyledWalletConnectButton = styled(LinearGradientButton)`
   color: ${(props) => props.theme.palette.common.black};
@@ -22,7 +23,8 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
     connectingContent = 'Connecting...',
     ...buttonProps
   } = props;
-  const { signer, walletConnectStatus, globalSetting, wallet, direction } = useForceBridge();
+  const { signer, walletConnectStatus, wallet, direction } = ForceBridgeContainer.useContainer();
+  const [globalSetting] = useGlobalSetting();
 
   const userIdentityMode = globalSetting.userIdentityMode;
 

@@ -1,6 +1,6 @@
 import { NervosNetwork, NetworkBase } from '@force-bridge/commons';
+import { unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
-import { unimplemented } from 'interfaces/errors';
 
 export class DummyWalletSigner extends AbstractWalletSigner<NetworkBase> {
   constructor(nervosIdent: string, xchainIdent: string, private _nervosRPCURL: string, private _xchainRPCURL: string) {

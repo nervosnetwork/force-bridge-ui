@@ -1,7 +1,7 @@
 import { NetworkTypes } from '@force-bridge/commons';
 import { DummyWalletSigner } from './DummyWalletSigner';
+import { unimplemented } from 'errors';
 import { AbstractWalletConnector } from 'interfaces/WalletConnector';
-import { unimplemented } from 'interfaces/errors';
 
 const asyncSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

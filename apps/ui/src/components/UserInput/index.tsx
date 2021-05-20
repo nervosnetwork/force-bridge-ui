@@ -2,7 +2,7 @@ import { Input, InputProps, Row } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 
-interface UserInputProps extends InputProps {
+export interface UserInputProps extends InputProps {
   label?: React.ReactNode;
   extra?: React.ReactNode;
 }

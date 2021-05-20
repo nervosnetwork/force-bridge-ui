@@ -1,21 +1,28 @@
-import { Asset } from '@force-bridge/commons';
-import React, { useState } from 'react';
-import { BridgeHistory } from './BridgeHistory';
-import { BridgeOperation } from './BridgeOperation';
-import { useBindRouteAndBridgeState } from './useBindRouteAndBridgeState';
-import { XChainEntry } from 'xchain';
+import { Skeleton } from 'antd';
+import React, { lazy, Suspense } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import { BridgeOperationContainer } from './containers/BridgeOperationContainer';
+import { useBindRouteAndBridgeState } from './hooks/useBindRouteAndBridgeState';
+import { StyledCardWrapper } from 'components/Styled';
+
+const EthereumBridge = lazy(async () => import('./Ethereum'));
 
 export const BridgeView: React.FC = () => {
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>();
   useBindRouteAndBridgeState();
 
   return (
-    <XChainEntry>
-      <div>
-        <BridgeOperation onAssetSelected={setSelectedAsset} />
-        <div style={{ padding: '8px' }} />
-        {selectedAsset && <BridgeHistory asset={selectedAsset} />}
-      </div>
-    </XChainEntry>
+    <BridgeOperationContainer.Provider>
+      <Suspense
+        fallback={
+          <StyledCardWrapper>
+            <Skeleton active />
+          </StyledCardWrapper>
+        }
+      >
+        <Switch>
+          <Route path={['/bridge/Ethereum/Nervos', '/bridge/Nervos/Ethereum']} component={EthereumBridge} />
+        </Switch>
+      </Suspense>
+    </BridgeOperationContainer.Provider>
   );
 };
