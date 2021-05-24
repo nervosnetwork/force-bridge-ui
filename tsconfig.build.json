@@ -19,7 +19,6 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
-    "incremental": true,
     "preserveWatchOutput": true
   }
 }
