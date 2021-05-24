@@ -22,16 +22,15 @@
     "eslint-plugin-prettier": "^3.3.1",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
+    "lerna": "^4.0.0",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.5.4",
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "build:lib": "yarn run build:lib:types && yarn run build:lib:js",
-    "build:lib:js": "babel --relative packages/**/src -d ../lib --extensions .ts --ignore \"packages/**/*.spec.ts\"",
-    "build:lib:types": "tsc -b tsconfig.build.json",
-    "clean:lib": "rimraf packages/*/lib packages/*/*.tsbuildinfo",
+    "build:lib": "lerna run build",
+    "clean:lib": "lerna run clean",
     "lint": "eslint --color --format=pretty packages/*/src/**/*.{ts,tsx} --color --format=pretty",
     "test": "jest"
   },
