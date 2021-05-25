@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row, Typography } from 'antd';
+import { Button, Divider, Row, Spin, Typography } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -14,12 +14,13 @@ import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
+import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
+import { useBridgeFeeQuery, useValidateBridgeOperationForm, ValidateResult } from 'hooks/bridge-operation';
 import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
-import { useBridgeInput, ValidationResult } from 'views/Bridge/hooks/useBridgeInput';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
 
@@ -56,23 +57,27 @@ export const BridgeOperationForm: React.FC = () => {
   const initRecipient = searchParams.get('recipient');
   const initAmount = searchParams.get('amount');
 
-  const formik = useFormik<ValidationResult>({
+  const feeQuery = useBridgeFeeQuery();
+  const { validate, status: validateStatus, reset, result: errors } = useValidateBridgeOperationForm();
+
+  useEffect(() => {
+    validate();
+  }, [validate]);
+
+  const formik = useFormik<ValidateResult>({
     onSubmit,
     initialValues: {},
-    validate: () => errors,
+    validate,
     initialTouched: { bridgeInInputAmount: !!initAmount, recipient: !!initRecipient },
   });
 
   const {
-    bridgeOutInputAmount,
-    bridgeInInputAmount,
-    setBridgeInInputAmount,
+    bridgeOutAmount: bridgeOutInputAmount,
+    bridgeInAmount: bridgeInInputAmount,
+    setBridgeInAmount: setBridgeInInputAmount,
     setRecipient,
     recipient,
-    errors,
-    validateStatus,
-    reset,
-  } = useBridgeInput(selectedAsset);
+  } = BridgeOperationFormContainer.useContainer();
 
   const allowance = useAllowance(selectedAsset);
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
@@ -130,7 +135,7 @@ export const BridgeOperationForm: React.FC = () => {
     history.replace({ search: searchParams.toString() });
   }, [signer, searchParams, history, location, initAmount, initRecipient]);
 
-  const statusOf = (name: keyof ValidationResult) => {
+  const statusOf = (name: keyof ValidateResult) => {
     const touched = formik.touched[name];
     const message = errors?.[name];
 
@@ -169,7 +174,7 @@ export const BridgeOperationForm: React.FC = () => {
                 size="small"
                 onClick={() => setBridgeInInputAmount(BeautyAmount.from(selectedAsset).humanize())}
               >
-                MAX:&nbsp;
+                Max:&nbsp;
                 <HumanizeAmount asset={selectedAsset} />
               </Button>
             )
@@ -195,6 +200,17 @@ export const BridgeOperationForm: React.FC = () => {
           placeholder="0.0"
           disabled
           value={bridgeOutInputAmount}
+          extra={
+            <Button type="link" size="small">
+              {feeQuery.data && (
+                <>
+                  Fee:&nbsp;
+                  <HumanizeAmount asset={feeQuery.data.fee} />
+                </>
+              )}
+              {feeQuery.isLoading && <Spin />}
+            </Button>
+          }
         />
       </div>
 

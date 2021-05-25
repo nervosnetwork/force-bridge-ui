@@ -10,7 +10,7 @@ export interface AssetModel<T extends NetworkTypes> {
   // TODO maybe we should remove the unnecessary network?
   network: T['Network'];
 
-  isCurrentNetworkAsset: (asset: AssetType) => asset is AssetType<T>;
+  isCurrentNetworkAsset: (asset: AssetType) => asset is AssetType;
 
   // prettier-ignore
   createFungibleAsset: <X extends AssetType>(options: X) => RequiredAsset<'amount'> & X;
@@ -18,9 +18,9 @@ export interface AssetModel<T extends NetworkTypes> {
   createNativeAsset: <X extends AssetType>(options: X) => RequiredAsset<'amount'> & X;
 
   // check if two assets are the same asset
-  equalsFungibleAsset: (x: AssetType<T>, y: AssetType<T>) => boolean;
+  equalsFungibleAsset: (x: AssetType, y: AssetType) => boolean;
   // identity of an asset, e.g. address of an ERC20
-  identity: (asset: AssetType<T>) => string;
+  identity: (asset: AssetType) => string;
   // check an asset is native asset of the network or not
   isNativeAsset: (asset: AssetType) => boolean;
   // check an asset is derived from an network or not

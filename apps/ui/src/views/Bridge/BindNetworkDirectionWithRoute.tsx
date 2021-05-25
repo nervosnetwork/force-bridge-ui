@@ -1,16 +1,17 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useMount } from 'react-use';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
-export function useBindRouteAndBridgeState(): void {
+export const BindNetworkDirectionWithRoute: React.FC = () => {
   const bridge = ForceBridgeContainer.useContainer();
   const match = useRouteMatch<{ fromNetwork: string; toNetwork: string }>();
   const location = useLocation();
   const history = useHistory();
 
   // first time
-  useEffect(() => {
+  useMount(() => {
     const { fromNetwork, toNetwork } = match.params;
     if (!fromNetwork || !toNetwork) return;
 
@@ -25,9 +26,7 @@ export function useBindRouteAndBridgeState(): void {
       bridge.switchNetwork(fromNetwork);
       return;
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   const { network, direction } = bridge;
   useEffect(() => {
@@ -41,4 +40,6 @@ export function useBindRouteAndBridgeState(): void {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [network, direction]);
-}
+
+  return null;
+};

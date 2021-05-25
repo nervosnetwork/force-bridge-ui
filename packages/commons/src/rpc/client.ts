@@ -27,6 +27,24 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     );
   }
 
+  getBridgeInNervosBridgeFee(
+    _payload: API.GetBridgeInNervosBridgeFeePayload,
+  ): Promise<API.GetBridgeInNervosBridgeFeeResponse> {
+    // TODO mock
+    return Promise.resolve({
+      fee: { network: 'Ethereum', amount: '10000000000000000', ident: '0x0000000000000000000000000000000000000000' },
+    });
+  }
+
+  getBridgeOutNervosBridgeFee(
+    _payload: API.GetBridgeOutNervosBridgeFeePayload,
+  ): Promise<API.GetBridgeOutNervosBridgeFeeResponse> {
+    // TODO mock
+    return Promise.resolve({
+      fee: { network: 'Ethereum', amount: '10000000000000000', ident: '0x0000000000000000000000000000000000000000' },
+    });
+  }
+
   async generateBridgeInNervosTransaction<T extends NetworkTypes>(
     payload: API.GenerateBridgeInTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {
