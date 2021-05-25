@@ -8,6 +8,7 @@ import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
 import { SubmitButton } from './SubmitButton';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
+import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
@@ -47,6 +48,8 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
 };
 
 export const BridgeOperationForm: React.FC = () => {
+  useAutoSetBridgeToAmount();
+
   const { signer, direction, switchBridgeDirection } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const history = useHistory();

@@ -43,13 +43,14 @@ export class BeautyAmount {
     return new BeautyAmount(new BigNumber(humanizeAmount).times(10 ** decimals), decimals);
   }
 
-  setVal(value: BigNumber | ((val: BigNumber) => BigNumber) | AmountWithoutDecimals): void {
+  setVal(value: BigNumber | ((val: BigNumber) => BigNumber) | AmountWithoutDecimals): this {
     if (typeof value === 'function') {
       this.val = value(this.val);
-      return;
+      return this;
     }
 
     this.val = new BigNumber(value);
+    return this;
   }
 
   humanize(options?: HumanizeOptions): string {
