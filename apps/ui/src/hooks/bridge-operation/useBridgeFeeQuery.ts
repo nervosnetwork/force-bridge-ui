@@ -9,7 +9,7 @@ import { BeautyAmount } from 'libs';
 
 export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBridgeFeeResponse, Error> {
   const { api, direction, network } = ForceBridgeContainer.useContainer();
-  const { asset, bridgeInAmount: input } = BridgeOperationFormContainer.useContainer();
+  const { asset, bridgeFromAmount: input } = BridgeOperationFormContainer.useContainer();
 
   const [bridgeInAmount] = useDebounce(input, 250, { leading: true });
 

@@ -72,9 +72,9 @@ export const BridgeOperationForm: React.FC = () => {
   });
 
   const {
-    bridgeOutAmount: bridgeOutInputAmount,
-    bridgeInAmount: bridgeInInputAmount,
-    setBridgeInAmount: setBridgeInInputAmount,
+    bridgeToAmount,
+    bridgeFromAmount,
+    setBridgeFromAmount,
     setRecipient,
     recipient,
   } = BridgeOperationFormContainer.useContainer();
@@ -105,7 +105,7 @@ export const BridgeOperationForm: React.FC = () => {
       const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
       if (asset.info?.decimals == null) boom('asset info is not loaded');
 
-      asset.amount = BeautyAmount.fromHumanize(bridgeInInputAmount, asset.info.decimals).val.toString();
+      asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
       sendBridgeTransaction({ asset, recipient }).then(resetForm);
     }
   }
@@ -121,8 +121,8 @@ export const BridgeOperationForm: React.FC = () => {
     if (!initRecipient && !initAmount) return;
 
     setRecipient(initRecipient ?? '');
-    setBridgeInInputAmount(initAmount ?? '');
-  }, [initAmount, initRecipient, setBridgeInInputAmount, setRecipient, signer]);
+    setBridgeFromAmount(initAmount ?? '');
+  }, [initAmount, initRecipient, setBridgeFromAmount, setRecipient, signer]);
 
   // remove recipient and amount from url once signer loaded
   useEffect(() => {
@@ -153,8 +153,8 @@ export const BridgeOperationForm: React.FC = () => {
           id="bridgeInInputAmount"
           name="bridgeInInputAmount"
           onBlur={formik.handleBlur}
-          value={bridgeInInputAmount}
-          onChange={(e) => setBridgeInInputAmount(e.target.value)}
+          value={bridgeFromAmount}
+          onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={
             <span>
               <label className="label">From:</label>&nbsp;
@@ -172,7 +172,7 @@ export const BridgeOperationForm: React.FC = () => {
               <Button
                 type="link"
                 size="small"
-                onClick={() => setBridgeInInputAmount(BeautyAmount.from(selectedAsset).humanize())}
+                onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize())}
               >
                 Max:&nbsp;
                 <HumanizeAmount asset={selectedAsset} />
@@ -199,7 +199,7 @@ export const BridgeOperationForm: React.FC = () => {
           }
           placeholder="0.0"
           disabled
-          value={bridgeOutInputAmount}
+          value={bridgeToAmount}
           extra={
             <Button type="link" size="small">
               {feeQuery.data && (

@@ -26,7 +26,7 @@ function checkDecimals(input: string, decimals: number): boolean {
 
 export function useValidateInput(): () => ValidateResult | undefined {
   const { direction, xchainModule, nervosModule } = ForceBridgeContainer.useContainer();
-  const { bridgeInAmount, recipient, asset } = BridgeOperationFormContainer.useContainer();
+  const { bridgeFromAmount, recipient, asset } = BridgeOperationFormContainer.useContainer();
   const signer = useSignerSelector();
 
   const validators = direction === BridgeDirection.In ? nervosModule.validators : xchainModule.validators;
@@ -38,10 +38,10 @@ export function useValidateInput(): () => ValidateResult | undefined {
       result.bridgeInInputAmount = 'bridge assets is not loaded';
     } else if (signer == null) {
       result.bridgeInInputAmount = 'signer is not found, maybe wallet is disconnected';
-    } else if (!checkDecimals(bridgeInAmount, asset.info.decimals)) {
+    } else if (!checkDecimals(bridgeFromAmount, asset.info.decimals)) {
       result.bridgeInInputAmount = `max decimal places should be less than ${asset.info.decimals}`;
     } else {
-      const inputAmount = BeautyAmount.fromHumanize(bridgeInAmount || '0', asset.info.decimals);
+      const inputAmount = BeautyAmount.fromHumanize(bridgeFromAmount || '0', asset.info.decimals);
       if (inputAmount.val.lte(0)) {
         result.bridgeInInputAmount = 'bridge in amount should large than 0';
       }
@@ -59,7 +59,7 @@ export function useValidateInput(): () => ValidateResult | undefined {
 
     if (Object.keys(result).length === 0) return undefined;
     return result;
-  }, [asset, bridgeInAmount, recipient, signer, validators]);
+  }, [asset, bridgeFromAmount, recipient, signer, validators]);
 }
 
 export function useValidateBridgeOperationForm(): BridgeOperationValidation {
@@ -67,26 +67,6 @@ export function useValidateBridgeOperationForm(): BridgeOperationValidation {
 
   const feeQuery = useBridgeFeeQuery();
   const validateInput = useValidateInput();
-
-  // const validate = useCallback((): void => {
-  //   setValidateResult(undefined);
-  //
-  //   if (feeQuery.status === 'loading') return;
-  //
-  //   const inputValidationResult = validateInput();
-  //
-  //   if (!inputValidationResult && feeQuery.status === 'success') {
-  //     setValidateResult(undefined);
-  //
-  //     return;
-  //   }
-  //
-  //   if (inputValidationResult) {
-  //     setValidateResult(inputValidationResult);
-  //   } else if (feeQuery.error) {
-  //     setValidateResult({ bridgeInInputAmount: feeQuery.error.message });
-  //   }
-  // }, [feeQuery.status, feeQuery.error, validateInput]);
 
   const validate = useCallback(() => {
     setValidateResult(validateInput());

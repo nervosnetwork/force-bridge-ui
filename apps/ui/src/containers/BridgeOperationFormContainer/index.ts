@@ -9,11 +9,11 @@ interface BridgeOperationFormState {
   recipient: string;
   setRecipient: (recipient: string) => void;
 
-  bridgeInAmount: string;
-  setBridgeInAmount: (amount: string) => void;
+  bridgeFromAmount: string;
+  setBridgeFromAmount: (amount: string) => void;
 
-  bridgeOutAmount: string;
-  setBridgeOutAmount: (amount: string) => void;
+  bridgeToAmount: string;
+  setBridgeToAmount: (amount: string) => void;
 }
 
 const INPUT_AMOUNT_REGEX = /^[0-9]*([0-9]\.)?[0-9]*$/;
@@ -25,14 +25,14 @@ export function isValidAmountInput(inputAmount: string): boolean {
 export const BridgeOperationFormContainer = createContainer<BridgeOperationFormState>(() => {
   const [asset, setAsset] = useState<Asset | undefined>();
   const [recipient, setRecipient] = useState<string>('');
-  const [bridgeInAmount, setBridgeInAmount] = useState<string>('');
-  const [bridgeOutAmount, setBridgeOutAmount] = useState<string>('');
+  const [bridgeFromAmount, setBridgeInAmount] = useState<string>('');
+  const [bridgeToAmount, setBridgeOutAmount] = useState<string>('');
 
-  const checkAndSetBridgeInAmount = useCallback((input: string) => {
+  const checkAndSetBridgeFromAmount = useCallback((input: string) => {
     if (isValidAmountInput(input)) setBridgeInAmount(input);
   }, []);
 
-  const checkAndSetBridgeOutAmount = useCallback((input: string) => {
+  const checkAndSetBridgeToAmount = useCallback((input: string) => {
     if (isValidAmountInput(input)) setBridgeOutAmount(input);
   }, []);
 
@@ -41,9 +41,9 @@ export const BridgeOperationFormContainer = createContainer<BridgeOperationFormS
     setAsset,
     recipient,
     setRecipient,
-    bridgeInAmount,
-    setBridgeInAmount: checkAndSetBridgeInAmount,
-    bridgeOutAmount,
-    setBridgeOutAmount: checkAndSetBridgeOutAmount,
+    bridgeFromAmount: bridgeFromAmount,
+    setBridgeFromAmount: checkAndSetBridgeFromAmount,
+    bridgeToAmount: bridgeToAmount,
+    setBridgeToAmount: checkAndSetBridgeToAmount,
   };
 });
