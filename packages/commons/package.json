@@ -2,6 +2,12 @@
   "name": "@force-bridge/commons",
   "version": "0.0.1",
   "main": "lib/index.js",
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "npm run build:js && npm run build:types",
+    "build:js": "babel --root-mode upward --extensions '.ts' --out-dir lib src",
+    "build:types": "tsc -p tsconfig.build.json"
+  },
   "dependencies": {
     "@nervosnetwork/ckb-sdk-utils": "^0.40.0",
     "@nervosnetwork/ckb-types": "^0.39.0",
