@@ -69,8 +69,19 @@ export function useValidateBridgeOperationForm(): BridgeOperationValidation {
   const validateInput = useValidateInput();
 
   const validate = useCallback(() => {
-    setValidateResult(validateInput());
-  }, [validateInput]);
+    const validateInputResult = validateInput();
+    if (!validateInputResult && !feeQuery.error) {
+      return setValidateResult(undefined);
+    }
+
+    if (validateInputResult) {
+      return setValidateResult(validateInputResult);
+    }
+
+    setValidateResult({
+      bridgeInInputAmount: feeQuery.error?.message,
+    });
+  }, [validateInput, feeQuery.error]);
 
   const reset = useCallback(() => {
     setValidateResult(undefined);

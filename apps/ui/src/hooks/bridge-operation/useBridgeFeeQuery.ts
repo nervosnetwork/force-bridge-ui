@@ -2,6 +2,7 @@ import { API } from '@force-bridge/commons';
 import { useMemo } from 'react';
 import { QueryObserverResult, useQuery } from 'react-query';
 import { useDebounce } from 'use-debounce';
+import { useValidateInput } from './useValidateForm';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { asserts } from 'errors';
@@ -10,6 +11,7 @@ import { BeautyAmount } from 'libs';
 export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBridgeFeeResponse, Error> {
   const { api, direction, network } = ForceBridgeContainer.useContainer();
   const { asset, bridgeFromAmount: input } = BridgeOperationFormContainer.useContainer();
+  const validate = useValidateInput();
 
   const [bridgeInAmount] = useDebounce(input, 250, { leading: true });
 
@@ -31,8 +33,9 @@ export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBr
       return api.getBridgeOutNervosBridgeFee({ network, amount, xchainAssetIdent: asset.shadow.ident });
     },
     {
-      enabled: !!asset && !!amount,
+      enabled: !!asset && !!amount && !validate(),
       refetchInterval: false,
+      retry: false,
     },
   );
 }
