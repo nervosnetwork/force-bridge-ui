@@ -28,21 +28,15 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   }
 
   getBridgeInNervosBridgeFee(
-    _payload: API.GetBridgeInNervosBridgeFeePayload,
+    payload: API.GetBridgeInNervosBridgeFeePayload,
   ): Promise<API.GetBridgeInNervosBridgeFeeResponse> {
-    // TODO mock
-    return Promise.resolve({
-      fee: { network: 'Ethereum', amount: '10000000000000000', ident: '0x0000000000000000000000000000000000000000' },
-    });
+    return Promise.resolve(this.client.request('getBridgeInNervosBridgeFee', payload));
   }
 
   getBridgeOutNervosBridgeFee(
-    _payload: API.GetBridgeOutNervosBridgeFeePayload,
+    payload: API.GetBridgeOutNervosBridgeFeePayload,
   ): Promise<API.GetBridgeOutNervosBridgeFeeResponse> {
-    // TODO mock
-    return Promise.resolve({
-      fee: { network: 'Ethereum', amount: '10000000000000000', ident: '0x0000000000000000000000000000000000000000' },
-    });
+    return Promise.resolve(Promise.resolve(this.client.request('getBridgeOutNervosBridgeFee', payload)));
   }
 
   async generateBridgeInNervosTransaction<T extends NetworkTypes>(
