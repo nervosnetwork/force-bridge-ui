@@ -54,9 +54,9 @@ export function createAssetModel<T extends NetworkTypes>(options: Options<T>): A
     identity,
     equalsFungibleAsset,
 
-    isCurrentNetworkAsset: createAssetPredicate<AssetType<T>>(isCurrentNetworkAsset),
-    isNativeAsset: createAssetPredicate<AssetType<T>>(isNativeAsset),
-    isDerivedAsset: createAssetPredicate<AssetType<T>>(isDerivedAsset),
+    isCurrentNetworkAsset: createAssetPredicate<AssetType>(isCurrentNetworkAsset),
+    isNativeAsset: createAssetPredicate<AssetType>(isNativeAsset),
+    isDerivedAsset: createAssetPredicate<AssetType>(isDerivedAsset),
   };
 }
 

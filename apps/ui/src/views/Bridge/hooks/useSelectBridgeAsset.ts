@@ -1,6 +1,7 @@
 import { Asset, NERVOS_NETWORK } from '@force-bridge/commons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useAssetQuery } from 'hooks/useAssetQuery';
 
@@ -15,6 +16,7 @@ export function useSelectBridgeAsset(): SelectedAssetState {
   const location = useLocation();
   const { data: assets } = useAssetQuery();
   const { direction } = ForceBridgeContainer.useContainer();
+  const { setAsset } = BridgeOperationFormContainer.useContainer();
 
   const assetXChainIdent = useMemo(() => {
     const params = new URLSearchParams(location.search);
@@ -28,6 +30,8 @@ export function useSelectBridgeAsset(): SelectedAssetState {
     if (direction === BridgeDirection.Out) return found?.shadow;
     return found;
   }, [assetXChainIdent, assets, direction]);
+
+  useEffect(() => setAsset(selectedAsset), [selectedAsset, setAsset]);
 
   const setSelectedAsset = useCallback(
     (asset: Asset | undefined) => {

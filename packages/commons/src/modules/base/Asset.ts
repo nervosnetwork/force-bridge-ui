@@ -29,6 +29,9 @@ export abstract class Asset {
   isNative: boolean;
 
   info?: FungibleBaseInfo;
+  /**
+   * @deprecated shadow will be deprecated in the future
+   */
   shadow?: Asset;
 
   protected constructor(options: FullAssetPayload) {

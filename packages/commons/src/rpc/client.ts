@@ -27,6 +27,18 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     );
   }
 
+  getBridgeInNervosBridgeFee(
+    payload: API.GetBridgeInNervosBridgeFeePayload,
+  ): Promise<API.GetBridgeInNervosBridgeFeeResponse> {
+    return Promise.resolve(this.client.request('getBridgeInNervosBridgeFee', payload));
+  }
+
+  getBridgeOutNervosBridgeFee(
+    payload: API.GetBridgeOutNervosBridgeFeePayload,
+  ): Promise<API.GetBridgeOutNervosBridgeFeeResponse> {
+    return Promise.resolve(Promise.resolve(this.client.request('getBridgeOutNervosBridgeFee', payload)));
+  }
+
   async generateBridgeInNervosTransaction<T extends NetworkTypes>(
     payload: API.GenerateBridgeInTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {

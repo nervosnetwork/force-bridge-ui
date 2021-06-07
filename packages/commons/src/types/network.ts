@@ -29,8 +29,8 @@ export type FungibleBaseInfo = {
   shadow: { network: string; ident: string };
 };
 
-export type AssetType<T extends NetworkTypes = NetworkTypes> = {
-  network: T['Network'];
+export type AssetType = {
+  network: string;
   ident: string;
   amount?: AmountWithoutDecimals;
   info?: FungibleBaseInfo;
