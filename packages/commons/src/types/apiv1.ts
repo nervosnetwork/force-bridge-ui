@@ -84,6 +84,26 @@ export type GetBridgeTransactionStatusResponse = {
   status: BridgeTransactionStatus;
 };
 
+export interface GetBridgeInNervosBridgeFeePayload {
+  network: string;
+  xchainAssetIdent: string;
+  amount: string;
+}
+
+export interface GetBridgeInNervosBridgeFeeResponse {
+  fee: RequiredAsset<'amount'>;
+}
+
+export interface GetBridgeOutNervosBridgeFeePayload {
+  network: string;
+  xchainAssetIdent: string;
+  amount: string;
+}
+
+export interface GetBridgeOutNervosBridgeFeeResponse {
+  fee: RequiredAsset<'amount'>;
+}
+
 // TODO: change to the higher order generic when it impl
 // https://github.com/microsoft/TypeScript/issues/1213
 export interface ForceBridgeAPIV1 {
@@ -110,4 +130,9 @@ export interface ForceBridgeAPIV1 {
   // get the user's balance, or if no `assets` param is passed in, return all whitelisted assets
   // prettier-ignore
   getBalance: (payload: GetBalancePayload) => Promise<GetBalanceResponse>;
+
+  // prettier-ignore
+  getBridgeInNervosBridgeFee: (payload: GetBridgeInNervosBridgeFeePayload) => Promise<GetBridgeInNervosBridgeFeeResponse>
+  // prettier-ignore
+  getBridgeOutNervosBridgeFee: (payload: GetBridgeOutNervosBridgeFeePayload) => Promise<GetBridgeOutNervosBridgeFeeResponse>
 }

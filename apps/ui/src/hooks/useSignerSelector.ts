@@ -10,7 +10,10 @@ interface SignerState {
   sendTransaction: (tx: unknown) => Promise<{ txId: string }>;
 }
 
-export function useSigner(): SignerState | undefined {
+/**
+ * signer from fromNetwork
+ */
+export function useSignerSelector(): SignerState | undefined {
   const { signer, direction } = ForceBridgeContainer.useContainer();
 
   return useMemo(() => {
@@ -29,4 +32,4 @@ export function useSigner(): SignerState | undefined {
   }, [signer, direction]);
 }
 
-export const useConnectedSigner = createNonNilStateHook(useSigner);
+export const useConnectedSigner = createNonNilStateHook(useSignerSelector);

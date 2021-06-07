@@ -1,22 +1,21 @@
 import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider';
 import { ExternalProvider } from '@ethersproject/providers/src.ts/web3-provider';
-import { EthereumNetwork, NervosNetwork } from '@force-bridge/commons';
-import { hasProp } from '@force-bridge/commons/lib/utils';
+import { EthereumNetwork, NervosNetwork, utils } from '@force-bridge/commons';
 import PWCore, {
   Amount,
   AmountUnit,
   Builder,
   Cell,
   CellDep,
+  CHAIN_SPECS,
   DepType,
+  EthProvider,
   HashType,
   OutPoint,
+  PwCollector,
   RawTransaction,
   Script,
   Transaction,
-  EthProvider,
-  PwCollector,
-  CHAIN_SPECS,
 } from '@lay2/pw-core';
 import { RPC } from 'ckb-js-toolkit';
 import { BigNumber, ethers } from 'ethers';
@@ -36,7 +35,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
   constructor(nervosIdent: string, xchainIdent: string, private _config: ConnectorConfig) {
     super(nervosIdent, xchainIdent);
-    if (hasProp(window, 'ethereum')) {
+    if (utils.hasProp(window, 'ethereum')) {
       const ethereum = window.ethereum as ExternalProvider;
       const provider = new ethers.providers.Web3Provider(ethereum);
       this.signer = provider.getSigner();
@@ -65,13 +64,13 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     raw: EthereumNetwork['RawTransaction'] | NervosNetwork['RawTransaction'],
   ): raw is NervosNetwork['RawTransaction'] {
     return !!(
-      hasProp(raw, 'version') &&
-      hasProp(raw, 'cellDeps') &&
-      hasProp(raw, 'headerDeps') &&
-      hasProp(raw, 'inputs') &&
-      hasProp(raw, 'outputs') &&
-      hasProp(raw, 'outputsData') &&
-      hasProp(raw, 'witnesses')
+      utils.hasProp(raw, 'version') &&
+      utils.hasProp(raw, 'cellDeps') &&
+      utils.hasProp(raw, 'headerDeps') &&
+      utils.hasProp(raw, 'inputs') &&
+      utils.hasProp(raw, 'outputs') &&
+      utils.hasProp(raw, 'outputsData') &&
+      utils.hasProp(raw, 'witnesses')
     );
   }
 

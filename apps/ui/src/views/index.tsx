@@ -1,10 +1,13 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
+import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppHeader } from './Header';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeView } from 'views/Bridge';
+
+BigNumber.set({ EXPONENTIAL_AT: 99 });
 
 const MainWrapper = styled.div`
   padding-top: 96px;

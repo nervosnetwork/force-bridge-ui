@@ -4,14 +4,14 @@ import { QueryObserverResult, useQuery } from 'react-query';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
 import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
-import { useSigner } from 'hooks/useSigner';
+import { useSignerSelector } from 'hooks/useSignerSelector';
 
 type Assets = { xchain: Asset[]; nervos: nervos.SUDT[] };
 
 export function useAssetQuery(): QueryObserverResult<Assets> {
   const { api, direction, network } = ForceBridgeContainer.useContainer();
   const { query } = useAssetInfoListQuery();
-  const signer = useSigner();
+  const signer = useSignerSelector();
 
   const infos = useMemo(() => {
     if (!query.data) return;
