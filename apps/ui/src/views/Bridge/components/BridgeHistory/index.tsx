@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ExpandRowContent } from './expandRowContent';
+import { ExpandRowContent } from './ExpandRowContent';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
