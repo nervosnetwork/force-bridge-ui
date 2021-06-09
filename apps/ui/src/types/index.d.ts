@@ -16,6 +16,6 @@ declare namespace NodeJS {
     REACT_APP_ETHEREUM_ENABLE_CHAIN_ID: string;
     REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME: string;
     REACT_APP_ETHEREUM_LOCKER_CONTRACT: string;
-    FINALIZED_NUMBER: number;
+    REACT_APP_FINALIZED_NUMBER: string;
   }
 }
