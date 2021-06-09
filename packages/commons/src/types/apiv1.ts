@@ -13,7 +13,7 @@ export type TransactionSummary = {
   txSummary: {
     fromAsset: RequiredAsset<'amount'>;
     toAsset: RequiredAsset<'amount'>;
-    fromTransaction: TransactionIdent & { timestamp: Timestamp };
+    fromTransaction: TransactionIdent & { timestamp: Timestamp } & { confirmStatus: number | 'confirmed' };
     toTransaction?: TransactionIdent & { timestamp?: Timestamp };
   };
 };
