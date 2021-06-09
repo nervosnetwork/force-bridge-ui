@@ -26,7 +26,7 @@ export function useSentTransactionStorage(): SentTransactionStorage {
       txSummary: {
         fromAsset: tx.fromAsset,
         toAsset: tx.toAsset,
-        fromTransaction: { txId: tx.txId, timestamp: tx.timestamp },
+        fromTransaction: { txId: tx.txId, timestamp: tx.timestamp, confirmStatus: 0 },
       },
     };
     if (!transactions) {

@@ -5,13 +5,15 @@ import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { ExpandRowContent } from './ExpandRowContent';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { StyledCardWrapper } from 'components/Styled';
-import { TransactionLink } from 'components/TransactionLink';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
-type TransactionWithDetail = TransactionSummaryWithStatus & { key: string; fromDetail: string; toDetail: string };
+export type TransactionWithKey = TransactionSummaryWithStatus & {
+  key: string;
+};
 
 const BridgeHistoryWrapper = styled(StyledCardWrapper)`
   .ant-table-thead > tr > th,
@@ -49,7 +51,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
 
   const transactionSummaries = useQueryWithCache(asset);
 
-  const columns: ColumnsType<TransactionWithDetail> = [
+  const columns: ColumnsType<TransactionWithKey> = [
     {
       title: 'From',
       dataIndex: '',
@@ -78,27 +80,18 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   ];
 
   const [historyKind, setHistoryKind] = useState<'Pending' | 'Successful'>('Pending');
-  const historyData = useMemo<TransactionWithDetail[]>(() => {
+  const historyData = useMemo<TransactionWithKey[]>(() => {
     if (!transactionSummaries) return [];
     return transactionSummaries
       .filter((item) => {
         return item.status === historyKind;
       })
       .map((item) => {
-        const from = item.txSummary.fromAsset.network === 'Nervos' ? '1. burn asset on ' : '1. lock asset on ';
-        let to;
-        if (!item.txSummary?.toTransaction?.txId) {
-          to = '';
-        } else {
-          to = item.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ';
-        }
-        const itemWithKey: TransactionWithDetail = {
+        const itemWithKey: TransactionWithKey = {
           txSummary: item.txSummary,
           status: item.status,
           message: '',
           key: item.txSummary.fromTransaction.txId,
-          fromDetail: from,
-          toDetail: to,
         };
         return itemWithKey;
       });
@@ -149,28 +142,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
         columns={columns}
         rowKey={(record) => record.txSummary.fromTransaction.txId}
         expandable={{
-          expandedRowRender: (record) => (
-            <div>
-              <div>
-                <TransactionLink
-                  network={record.txSummary.fromAsset.network}
-                  txId={record.txSummary.fromTransaction.txId}
-                >
-                  {record.fromDetail + record.txSummary.fromAsset.network}
-                </TransactionLink>
-              </div>
-              {record.txSummary?.toTransaction?.txId && (
-                <div>
-                  <TransactionLink
-                    network={record.txSummary.toAsset.network}
-                    txId={record.txSummary.toTransaction.txId}
-                  >
-                    {record.toDetail + record.txSummary.toAsset.network}
-                  </TransactionLink>
-                </div>
-              )}
-            </div>
-          ),
+          expandedRowRender: (record) => <ExpandRowContent record={record} />,
           expandedRowKeys: expandedRowKeys,
           onExpand: (expanded, record) => {
             if (expanded) {
