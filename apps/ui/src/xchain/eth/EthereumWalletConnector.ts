@@ -1,5 +1,5 @@
 import { EthereumNetwork } from '@force-bridge/commons';
-import PWCore, { Address, AddressType, CHAIN_SPECS, ChainID, Config } from '@lay2/pw-core';
+import PWCore, { Address, AddressType, CHAIN_SPECS, Config } from '@lay2/pw-core';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
 import warning from 'tiny-warning';
@@ -13,6 +13,7 @@ export interface ConnectorConfig {
     | 1 // testnet
     | 2; // devnet
   ckbRpcUrl: string;
+  contractAddress: string;
 }
 
 function retrySync(retry: () => boolean, options: { times: number; interval: number }): void {
@@ -26,9 +27,9 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
   private provider: MetaMaskInpageProvider | undefined;
   private readonly config: ConnectorConfig;
 
-  constructor(config: Partial<ConnectorConfig>) {
+  constructor(config: ConnectorConfig) {
     super();
-    this.config = Object.assign({}, { ckbChainID: ChainID.ckb_testnet }, config || {}) as ConnectorConfig;
+    this.config = config;
     this.init();
   }
 
