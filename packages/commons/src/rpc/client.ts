@@ -93,4 +93,8 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
   async getBalance(payload: API.GetBalancePayload): Promise<API.GetBalanceResponse> {
     return this.client.request('getBalance', payload);
   }
+
+  async getBridgeConfig(): Promise<API.GetConfigResponse> {
+    return this.client.request('getBridgeConfig');
+  }
 }
