@@ -104,6 +104,16 @@ export interface GetBridgeOutNervosBridgeFeeResponse {
   fee: RequiredAsset<'amount'>;
 }
 
+export interface EthereumConfig {
+  contractAddress: string;
+}
+
+export interface GetConfigResponse {
+  xchains: {
+    Ethereum: EthereumConfig;
+  };
+}
+
 // TODO: change to the higher order generic when it impl
 // https://github.com/microsoft/TypeScript/issues/1213
 export interface ForceBridgeAPIV1 {
@@ -135,4 +145,6 @@ export interface ForceBridgeAPIV1 {
   getBridgeInNervosBridgeFee: (payload: GetBridgeInNervosBridgeFeePayload) => Promise<GetBridgeInNervosBridgeFeeResponse>
   // prettier-ignore
   getBridgeOutNervosBridgeFee: (payload: GetBridgeOutNervosBridgeFeePayload) => Promise<GetBridgeOutNervosBridgeFeeResponse>
+
+  getBridgeConfig: () => Promise<GetConfigResponse>;
 }
