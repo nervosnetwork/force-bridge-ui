@@ -100,7 +100,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
   async getAllowance(asset: EthereumNetwork['DerivedAssetIdent']): Promise<BigNumber> {
     const erc20 = new ethers.Contract(asset, Erc20ABI, this.signer);
-    return erc20.allowance(await this.signer.getAddress(), process.env.REACT_APP_ETHEREUM_LOCKER_CONTRACT);
+    return erc20.allowance(await this.signer.getAddress(), this._config.contractAddress);
   }
 
   async toPWTransaction(rawTx: NervosNetwork['RawTransaction']): Promise<Transaction> {
