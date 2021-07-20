@@ -24,23 +24,27 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
     enabled: filter != null,
     refetchInterval: 5000,
   });
-  const { transactions: cachedTransactions } = useSentTransactionStorage();
+  const { transactions: cachedTransactions, removeTransactions } = useSentTransactionStorage();
   if (!signer || !asset) return null;
   if (!cachedTransactions) return query.data;
-  const relatedTransactions = cachedTransactions.filter(
+  const cachedTransactionsOfSender = cachedTransactions.filter(
     (item) =>
       item.sender === signerIdent &&
       (item.txSummary.fromAsset.ident === asset.ident || item.txSummary.toAsset.ident === asset.ident),
   );
 
-  if (!query.data) return relatedTransactions as TransactionSummaryWithStatus[] | null | undefined;
-  const cachedTransactionsAfterFilter = relatedTransactions.filter((relatedItem) => {
-    return !query.data.find(
-      (item) => item.txSummary.fromTransaction.txId === relatedItem.txSummary.fromTransaction.txId,
-    );
+  if (!query.data) return cachedTransactionsOfSender as TransactionSummaryWithStatus[] | null | undefined;
+  const backendCoveredTransactions: string[] = [];
+  const availableCachedTransactions = cachedTransactionsOfSender.filter((cachedItem) => {
+    if (query.data.find((item) => item.txSummary.fromTransaction.txId === cachedItem.txSummary.fromTransaction.txId)) {
+      backendCoveredTransactions.push(cachedItem.txSummary.fromTransaction.txId);
+      return false;
+    }
+    return true;
   });
+  removeTransactions(backendCoveredTransactions);
   return query.data
-    .concat(cachedTransactionsAfterFilter)
+    .concat(availableCachedTransactions)
     .sort(
       (s1, s2) =>
         +new Date(s2.txSummary.toTransaction?.timestamp || s2.txSummary.fromTransaction.timestamp) -

@@ -1,6 +1,6 @@
-import { Asset } from '@force-bridge/commons';
-import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
-import { Button, Col, Row, Table } from 'antd';
+import { Asset, utils } from '@force-bridge/commons';
+import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { Button, Col, Row, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -68,6 +68,9 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
         <div>
           <div>
             <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
+            {record.status === BridgeTransactionStatus.Failed && (
+              <Typography.Text type="danger"> (error)</Typography.Text>
+            )}
           </div>
           <div className="date">
             {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
@@ -84,13 +87,16 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     if (!transactionSummaries) return [];
     return transactionSummaries
       .filter((item) => {
-        return item.status === historyKind;
+        if (historyKind === 'Pending') {
+          return item.status === 'Pending' || item.status === 'Failed';
+        }
+        return item.status === 'Successful';
       })
       .map((item) => {
         const itemWithKey: TransactionWithKey = {
           txSummary: item.txSummary,
           status: item.status,
-          message: '',
+          message: utils.hasProp(item, 'message') ? item.message : '',
           key: item.txSummary.fromTransaction.txId,
         };
         return itemWithKey;
