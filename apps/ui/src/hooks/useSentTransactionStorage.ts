@@ -5,6 +5,7 @@ import { useLocalStorage } from '@rehooks/local-storage';
 export interface SentTransactionStorage {
   transactions: TransactionSummaryWithSender[] | null;
   addTransaction: (tx: TransactionWithSender) => void;
+  removeTransactions: (txIds: string[]) => void;
 }
 
 export type TransactionSummaryWithSender = UnFailedTransactionSummary & { sender: string };
@@ -26,7 +27,7 @@ export function useSentTransactionStorage(): SentTransactionStorage {
       txSummary: {
         fromAsset: tx.fromAsset,
         toAsset: tx.toAsset,
-        fromTransaction: { txId: tx.txId, timestamp: tx.timestamp, confirmStatus: 0 },
+        fromTransaction: { txId: tx.txId, timestamp: tx.timestamp, confirmStatus: 'pending' },
       },
     };
     if (!transactions) {
@@ -34,5 +35,12 @@ export function useSentTransactionStorage(): SentTransactionStorage {
     }
     setTransactions(transactions.concat(txSummary));
   };
-  return { transactions: transactions, addTransaction: addTransaction };
+  const removeTransactions = (txIds: string[]) => {
+    if (!transactions || !txIds.length) return;
+    const newTransactions = transactions.filter(
+      (value) => !txIds.find((id) => id === value.txSummary.fromTransaction.txId),
+    );
+    setTransactions(newTransactions);
+  };
+  return { transactions: transactions, addTransaction: addTransaction, removeTransactions: removeTransactions };
 }

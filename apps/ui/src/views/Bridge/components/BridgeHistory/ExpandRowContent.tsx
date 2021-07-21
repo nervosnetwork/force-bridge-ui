@@ -15,8 +15,9 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
     confirmStatus = '';
   } else {
     confirmStatus =
-      record.txSummary.fromTransaction.confirmStatus === 'confirmed'
-        ? ' (confirmed)'
+      record.txSummary.fromTransaction.confirmStatus === 'confirmed' ||
+      record.txSummary.fromTransaction.confirmStatus === 'pending'
+        ? ` (${record.txSummary.fromTransaction.confirmStatus})`
         : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${finalizeNumber})`;
   }
   const fromTransactionDescription =
@@ -24,12 +25,18 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
     record.txSummary.fromAsset.network +
     confirmStatus;
 
-  let toTransactionDescription;
-  if (record.txSummary?.toTransaction?.txId) {
-    toTransactionDescription =
-      (record.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ') +
-      record.txSummary.toAsset.network;
+  let toTransactionDescription =
+    (record.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ') +
+    record.txSummary.toAsset.network;
+  if (record.status === BridgeTransactionStatus.Failed) {
+    toTransactionDescription = toTransactionDescription + ` (error: ${record.message})`;
+  } else if (
+    record.status === BridgeTransactionStatus.Pending &&
+    record.txSummary.fromTransaction.confirmStatus === 'confirmed'
+  ) {
+    toTransactionDescription = toTransactionDescription + ' (pending)';
   }
+
   return (
     <div>
       <div>
@@ -37,7 +44,10 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
           {fromTransactionDescription}
         </TransactionLink>
       </div>
-      {record.txSummary?.toTransaction?.txId && (
+      {(record.status === BridgeTransactionStatus.Failed ||
+        (record.status === BridgeTransactionStatus.Pending &&
+          record.txSummary.fromTransaction.confirmStatus === 'confirmed')) && <div>{toTransactionDescription}</div>}
+      {record.status === BridgeTransactionStatus.Successful && record.txSummary?.toTransaction?.txId && (
         <div>
           <TransactionLink network={record.txSummary.toAsset.network} txId={record.txSummary.toTransaction.txId}>
             {toTransactionDescription}
