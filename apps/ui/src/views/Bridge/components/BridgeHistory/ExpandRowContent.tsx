@@ -1,5 +1,7 @@
 import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { Space } from 'antd';
 import React from 'react';
+import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
 
@@ -40,9 +42,14 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
   return (
     <div>
       <div>
-        <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
-          {fromTransactionDescription}
-        </TransactionLink>
+        <Space>
+          <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
+            {fromTransactionDescription}
+          </TransactionLink>
+          {confirmStatus === ' (pending)' && record.txSummary.fromAsset.network === 'Nervos' && (
+            <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />
+          )}
+        </Space>
       </div>
       {(record.status === BridgeTransactionStatus.Failed ||
         (record.status === BridgeTransactionStatus.Pending &&
