@@ -39,6 +39,13 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
     toTransactionDescription = toTransactionDescription + ' (pending)';
   }
 
+  const isDisplayRetry =
+    record.txSummary.fromTransaction.confirmStatus === 'pending' && record.txSummary.fromAsset.network === 'Nervos';
+  const isDisplayToTransactionText =
+    record.status === BridgeTransactionStatus.Failed ||
+    (record.status === BridgeTransactionStatus.Pending &&
+      record.txSummary.fromTransaction.confirmStatus === 'confirmed');
+
   return (
     <div>
       <div>
@@ -46,14 +53,10 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
           <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
             {fromTransactionDescription}
           </TransactionLink>
-          {confirmStatus === ' (pending)' && record.txSummary.fromAsset.network === 'Nervos' && (
-            <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />
-          )}
+          {isDisplayRetry && <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />}
         </Space>
       </div>
-      {(record.status === BridgeTransactionStatus.Failed ||
-        (record.status === BridgeTransactionStatus.Pending &&
-          record.txSummary.fromTransaction.confirmStatus === 'confirmed')) && <div>{toTransactionDescription}</div>}
+      {isDisplayToTransactionText && <div>{toTransactionDescription}</div>}
       {record.status === BridgeTransactionStatus.Successful && record.txSummary?.toTransaction?.txId && (
         <div>
           <TransactionLink network={record.txSummary.toAsset.network} txId={record.txSummary.toTransaction.txId}>
