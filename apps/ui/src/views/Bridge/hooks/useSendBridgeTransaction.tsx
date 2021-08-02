@@ -21,7 +21,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
     async (input: BridgeInputValues) => {
       if (!signer) boom('signer is not load');
       let generated;
-      let txSummary;
+      let txToCache;
       if (direction === BridgeDirection.In) {
         // TODO refactor to life-time style? beforeTransactionSending / afterTransactionSending
         generated = await api.generateBridgeInNervosTransaction({
@@ -29,7 +29,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
           recipient: input.recipient,
           sender: signer.identityXChain(),
         });
-        txSummary = {
+        txToCache = {
           txId: '',
           sender: signer.identityXChain(),
           timestamp: new Date().getTime(),
@@ -41,6 +41,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
             ident: input.asset!.shadow!.ident,
             amount: input.asset.amount,
           },
+          rawTx: generated.rawTransaction,
         };
       } else {
         generated = await api.generateBridgeOutNervosTransaction({
@@ -50,7 +51,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
           recipient: input.recipient,
           sender: signer.identityNervos(),
         });
-        txSummary = {
+        txToCache = {
           txId: '',
           sender: signer.identityNervos(),
           timestamp: new Date().getTime(),
@@ -62,12 +63,13 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
             ident: input.asset!.shadow!.ident,
             amount: input.asset.amount,
           },
+          rawTx: generated.rawTransaction,
         };
       }
 
       const { txId } = await signer.sendTransaction(generated.rawTransaction);
-      txSummary.txId = txId;
-      addTransaction(txSummary);
+      txToCache.txId = txId;
+      addTransaction(txToCache);
       return { txId: txId };
     },
     {
