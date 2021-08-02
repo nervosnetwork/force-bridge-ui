@@ -1,5 +1,7 @@
 import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { Space } from 'antd';
 import React from 'react';
+import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
 
@@ -37,16 +39,24 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
     toTransactionDescription = toTransactionDescription + ' (pending)';
   }
 
+  const isDisplayRetry =
+    record.txSummary.fromTransaction.confirmStatus === 'pending' && record.txSummary.fromAsset.network === 'Nervos';
+  const isDisplayToTransactionText =
+    record.status === BridgeTransactionStatus.Failed ||
+    (record.status === BridgeTransactionStatus.Pending &&
+      record.txSummary.fromTransaction.confirmStatus === 'confirmed');
+
   return (
     <div>
       <div>
-        <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
-          {fromTransactionDescription}
-        </TransactionLink>
+        <Space>
+          <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
+            {fromTransactionDescription}
+          </TransactionLink>
+          {isDisplayRetry && <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />}
+        </Space>
       </div>
-      {(record.status === BridgeTransactionStatus.Failed ||
-        (record.status === BridgeTransactionStatus.Pending &&
-          record.txSummary.fromTransaction.confirmStatus === 'confirmed')) && <div>{toTransactionDescription}</div>}
+      {isDisplayToTransactionText && <div>{toTransactionDescription}</div>}
       {record.status === BridgeTransactionStatus.Successful && record.txSummary?.toTransaction?.txId && (
         <div>
           <TransactionLink network={record.txSummary.toAsset.network} txId={record.txSummary.toTransaction.txId}>
