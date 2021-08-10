@@ -106,9 +106,14 @@ export interface GetBridgeOutNervosBridgeFeeResponse {
 
 export interface EthereumConfig {
   contractAddress: string;
+  confirmNumber: number;
 }
 
 export interface GetConfigResponse {
+  nervos: {
+    network: 'mainnet' | 'testnet';
+    confirmNumber: number;
+  };
   xchains: {
     Ethereum: EthereumConfig;
   };
@@ -119,9 +124,9 @@ export interface GetConfigResponse {
 export interface ForceBridgeAPIV1 {
   /* generate transaction */
   // prettier-ignore
-  generateBridgeInNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeInTransactionPayload) => Promise<GenerateTransactionResponse<T>>
+  generateBridgeInNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeInTransactionPayload) => Promise<GenerateTransactionResponse<T>>;
   // prettier-ignore
-  generateBridgeOutNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeOutNervosTransactionPayload) => Promise<GenerateTransactionResponse<T>>
+  generateBridgeOutNervosTransaction: <T extends NetworkTypes>(payload: GenerateBridgeOutNervosTransactionPayload) => Promise<GenerateTransactionResponse<T>>;
 
   /* send transaction */
   sendSignedTransaction: <T extends NetworkBase>(payload: SignedTransactionPayload<T>) => Promise<TransactionIdent>;
@@ -142,9 +147,9 @@ export interface ForceBridgeAPIV1 {
   getBalance: (payload: GetBalancePayload) => Promise<GetBalanceResponse>;
 
   // prettier-ignore
-  getBridgeInNervosBridgeFee: (payload: GetBridgeInNervosBridgeFeePayload) => Promise<GetBridgeInNervosBridgeFeeResponse>
+  getBridgeInNervosBridgeFee: (payload: GetBridgeInNervosBridgeFeePayload) => Promise<GetBridgeInNervosBridgeFeeResponse>;
   // prettier-ignore
-  getBridgeOutNervosBridgeFee: (payload: GetBridgeOutNervosBridgeFeePayload) => Promise<GetBridgeOutNervosBridgeFeeResponse>
+  getBridgeOutNervosBridgeFee: (payload: GetBridgeOutNervosBridgeFeePayload) => Promise<GetBridgeOutNervosBridgeFeeResponse>;
 
   getBridgeConfig: () => Promise<GetConfigResponse>;
 }

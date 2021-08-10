@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
@@ -16,6 +16,10 @@ function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbC
 const EthereumBridge: React.FC = () => {
   const { selectedAsset } = useSelectBridgeAsset();
   const { setWallet, api, wallet } = ForceBridgeContainer.useContainer();
+  const [confirmNumberConfig, setConfirmNumberConfig] = useState<{
+    xchainConfirmNumber: number;
+    nervosConfirmNumber: number;
+  }>();
 
   useEffect(() => {
     // TODO fetch the CKBChainID from the RPC
@@ -31,6 +35,10 @@ const EthereumBridge: React.FC = () => {
           contractAddress: config.xchains.Ethereum.contractAddress,
         }),
       );
+      setConfirmNumberConfig({
+        xchainConfirmNumber: config.xchains.Ethereum.confirmNumber,
+        nervosConfirmNumber: config.nervos.confirmNumber,
+      });
     });
 
     return () => {
@@ -48,7 +56,13 @@ const EthereumBridge: React.FC = () => {
         <div>
           <BridgeOperationForm />
           <div style={{ padding: '8px' }} />
-          {selectedAsset && <BridgeHistory asset={selectedAsset} />}
+          {selectedAsset && confirmNumberConfig && (
+            <BridgeHistory
+              asset={selectedAsset}
+              xchainConfirmNumber={confirmNumberConfig.xchainConfirmNumber}
+              nervosConfirmNumber={confirmNumberConfig.nervosConfirmNumber}
+            />
+          )}
         </div>
       )}
     </EthereumProviderContainer.Provider>
