@@ -7,12 +7,14 @@ import { TransactionLink } from 'components/TransactionLink';
 
 interface ExpandRowContentProps {
   record: TransactionWithKey;
+  xchainConfirmNumber: number;
+  nervosConfirmNumber: number;
 }
 
 export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
-  const { record } = props;
-  const finalizeNumber = process.env.REACT_APP_FINALIZED_NUMBER;
+  const { record, xchainConfirmNumber, nervosConfirmNumber } = props;
   let confirmStatus;
+  const confirmNumber = record.txSummary.fromAsset.network === 'Nervos' ? nervosConfirmNumber : xchainConfirmNumber;
   if (record.status === BridgeTransactionStatus.Successful) {
     confirmStatus = '';
   } else {
@@ -20,7 +22,7 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
       record.txSummary.fromTransaction.confirmStatus === 'confirmed' ||
       record.txSummary.fromTransaction.confirmStatus === 'pending'
         ? ` (${record.txSummary.fromTransaction.confirmStatus})`
-        : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${finalizeNumber})`;
+        : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${confirmNumber})`;
   }
   const fromTransactionDescription =
     (record.txSummary.fromAsset.network === 'Nervos' ? '1. burn asset on ' : '1. lock asset on ') +

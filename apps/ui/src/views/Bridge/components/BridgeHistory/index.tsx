@@ -38,6 +38,8 @@ const BridgeHistoryWrapper = styled(StyledCardWrapper)`
 
 interface BridgeHistoryProps {
   asset: Asset;
+  xchainConfirmNumber: number;
+  nervosConfirmNumber: number;
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
@@ -148,7 +150,13 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
         columns={columns}
         rowKey={(record) => record.txSummary.fromTransaction.txId}
         expandable={{
-          expandedRowRender: (record) => <ExpandRowContent record={record} />,
+          expandedRowRender: (record) => (
+            <ExpandRowContent
+              record={record}
+              nervosConfirmNumber={props.nervosConfirmNumber}
+              xchainConfirmNumber={props.xchainConfirmNumber}
+            />
+          ),
           expandedRowKeys: expandedRowKeys,
           onExpand: (expanded, record) => {
             if (expanded) {
