@@ -80,7 +80,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
           title: 'Bridge Tx sent',
           content: (
             <p>
-              The transaction was sent, check it in&nbsp;
+              The transaction has been sent, check it in&nbsp;
               <TransactionLink network={fromNetwork} txId={txId}>
                 explorer
               </TransactionLink>

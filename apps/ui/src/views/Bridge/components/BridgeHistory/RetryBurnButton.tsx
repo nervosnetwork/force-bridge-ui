@@ -32,7 +32,7 @@ export const RetryBurnButton: React.FC<RetryBurnButtonProps> = (props) => {
           title: 'Retry burn tx sent',
           content: (
             <p>
-              The transaction was sent, check it in&nbsp;
+              The transaction has been sent, check it in&nbsp;
               <TransactionLink network={NERVOS_NETWORK} txId={txId}>
                 explorer
               </TransactionLink>

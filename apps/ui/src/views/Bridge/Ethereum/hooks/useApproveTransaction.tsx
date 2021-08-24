@@ -33,7 +33,7 @@ export function useApproveTransaction(): UseMutationResult<{ txId: string }, unk
           title: 'Approve Tx Sent',
           content: (
             <div>
-              The transaction was sent, check it in&nbsp;
+              The transaction has been sent, check it in&nbsp;
               <TransactionLink network={fromNetwork} txId={txId}>
                 explorer
               </TransactionLink>
