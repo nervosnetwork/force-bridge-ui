@@ -24,18 +24,23 @@ Create an `.env.local` at [apps/ui/](apps/ui) to declare required environment va
 force-bridge-ui works with Rinkeby network and Ethereum network
 
 <details>
-  <summary>Rinkeby network</summary>
+  <summary>Testnet</summary>
 
 ```
 # Force-Bridge RPC
-REACT_APP_BRIDGE_RPC_URL=
+REACT_APP_BRIDGE_RPC_URL=/api/force-bridge/api/v1
 # CKB node RPC
-REACT_APP_CKB_RPC_URL=
+REACT_APP_CKB_RPC_URL=//aggron.ckb.dev/rpc
 
 # Nervos explorer for exploring transaction
 REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/aggron/transaction/
 # Ethereum explorer for exploring transaction
 REACT_APP_TX_EXPLORER_ETHEREUM=https://rinkeby.etherscan.io/tx/
+
+# 0: mainnet
+# 1: testnet
+# 2: devnet
+REACT_APP_CKB_CHAIN_ID=1
 
 # Rinkeby
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=4
@@ -45,18 +50,23 @@ REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Rinkeby
 </details>
 
 <details>
-  <summary>Ethereum network</summary>
+  <summary>Mainnet</summary>
 
 ```
 # Force-Bridge RPC
-REACT_APP_BRIDGE_RPC_URL=
+REACT_APP_BRIDGE_RPC_URL=/api/force-bridge/api/v1
 # CKB node RPC
-REACT_APP_CKB_RPC_URL=
+REACT_APP_CKB_RPC_URL=//lina.ckb.dev/rpc
 
 # Nervos explorer for exploring transaction
 REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/transaction/
 # Ethereum explorer for exploring transaction
 REACT_APP_TX_EXPLORER_ETHEREUM=https://etherscan.io/tx/
+
+# 0: mainnet
+# 1: testnet
+# 2: devnet
+REACT_APP_CKB_CHAIN_ID=0
 
 # Mainnet
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=1
