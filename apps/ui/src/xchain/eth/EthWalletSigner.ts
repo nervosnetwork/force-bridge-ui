@@ -9,10 +9,8 @@ import PWCore, {
   CellDep,
   CHAIN_SPECS,
   DepType,
-  EthProvider,
   HashType,
   OutPoint,
-  PwCollector,
   RawTransaction,
   Script,
   Transaction,
@@ -41,14 +39,9 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
       this.signer = provider.getSigner();
       this.pwCore = new PWCore(_config.ckbRpcUrl);
       this.pwLockCellDep = this.getPWLockCellDep(_config);
-      this.init();
     } else {
       boom(unimplemented);
     }
-  }
-
-  async init(): Promise<void> {
-    this.pwCore = await this.pwCore.init(new EthProvider(), new PwCollector(this._config.ckbRpcUrl));
   }
 
   getPWLockCellDep(config: ConnectorConfig): CellDep {

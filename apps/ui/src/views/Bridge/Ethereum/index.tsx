@@ -1,3 +1,4 @@
+import PWCore, { CHAIN_SPECS, ChainID, EthProvider, PwCollector } from '@lay2/pw-core';
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
@@ -24,17 +25,32 @@ const EthereumBridge: React.FC = () => {
   useEffect(() => {
     // TODO fetch the CKBChainID from the RPC
     const ckbChainID = Number(process.env.REACT_APP_CKB_CHAIN_ID);
-
     checkChainId(ckbChainID);
 
-    api.getBridgeConfig().then((config) => {
-      setWallet(
-        new EthereumWalletConnector({
-          ckbRpcUrl: process.env.REACT_APP_CKB_RPC_URL,
-          ckbChainID,
-          contractAddress: config.xchains.Ethereum.contractAddress,
-        }),
+    api.getBridgeConfig().then(async (config) => {
+      const ckbRpcUrl = process.env.REACT_APP_CKB_RPC_URL;
+      const pwChainId = ckbChainID === 0 ? ChainID.ckb : ChainID.ckb_testnet;
+
+      const wallet = new EthereumWalletConnector({
+        ckbRpcUrl: ckbRpcUrl,
+        ckbChainID: pwChainId,
+        contractAddress: config.xchains.Ethereum.contractAddress,
+      });
+
+      setWallet(wallet);
+
+      await new PWCore(ckbRpcUrl).init(
+        new EthProvider(),
+        new PwCollector(ckbRpcUrl),
+        // FIXME pw-lock has a bug here, remove the type convert after pw-core upgrade to 0.4.x
+        (String(pwChainId) as unknown) as ChainID,
+        [CHAIN_SPECS.Lina, CHAIN_SPECS.Aggron][ckbChainID],
       );
+
+      // FIXME remove me when pw-core upgrade to 0.4.x
+      PWCore.chainId = ckbChainID;
+      await wallet.init();
+
       setConfirmNumberConfig({
         xchainConfirmNumber: config.xchains.Ethereum.confirmNumber,
         nervosConfirmNumber: config.nervos.confirmNumber,
