@@ -6,6 +6,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
+import { BridgeReminder } from './BridgeReminder';
 import { SubmitButton } from './SubmitButton';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
@@ -240,6 +241,8 @@ export const BridgeOperationForm: React.FC = () => {
         allowanceStatus={allowance}
         isloading={isLoading}
       />
+
+      <BridgeReminder />
     </BridgeViewWrapper>
   );
 };

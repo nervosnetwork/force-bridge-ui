@@ -27,6 +27,10 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     );
   }
 
+  getMinimalBridgeAmount(payload: API.GetMinimalBridgeAmountPayload): Promise<API.GetMinimalBridgeAmountResponse> {
+    return Promise.resolve(this.client.request('getMinimalBridgeAmount', payload));
+  }
+
   getBridgeInNervosBridgeFee(
     payload: API.GetBridgeInNervosBridgeFeePayload,
   ): Promise<API.GetBridgeInNervosBridgeFeeResponse> {
