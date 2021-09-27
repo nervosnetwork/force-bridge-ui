@@ -3,10 +3,10 @@ import { Typography, Space } from 'antd';
 import React from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
+import { HumanizeAmount } from 'components/AssetAmount';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { asserts } from 'errors';
-import { BeautyAmount } from 'libs';
 
 export const StyledReminderWrapper = styled.div`
   margin-top: 28px;
@@ -43,20 +43,13 @@ export const BridgeReminder: React.FC = () => {
 
   const minimalBridgeAmount = (
     <>
-      {query.data && (
-        <span>
-          {BeautyAmount.from(query.data.minimalAmount, asset.info?.decimals).humanize()}&nbsp;
-          {asset.info?.symbol}
-        </span>
-      )}
+      {query.data && <HumanizeAmount showSymbol asset={{ ...asset, amount: query.data.minimalAmount }} />}
       {query.isLoading && <LoadingOutlined />}
       {query.isError && (
-        <>
-          <Space>
-            <FrownOutlined />
-            <Typography.Text type="danger">failed to get data</Typography.Text>
-          </Space>
-        </>
+        <Space>
+          <FrownOutlined />
+          <Typography.Text type="danger">failed to get data</Typography.Text>
+        </Space>
       )}
     </>
   );
