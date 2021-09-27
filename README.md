@@ -58,7 +58,7 @@ REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/transaction/
 # Ethereum explorer for exploring transaction
 REACT_APP_TX_EXPLORER_ETHEREUM=https://etherscan.io/tx/
 
-# Rinkeby
+# Mainnet
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=1
 REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Ethereum
 ```
