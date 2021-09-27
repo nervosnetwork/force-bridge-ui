@@ -36,6 +36,15 @@ export const AppHeader: React.FC = () => {
   const referenceLinks = (
     <Menu>
       <Menu.Item>
+        <a
+          href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/dapp-user-guide.md"
+          target="_blank"
+          rel="noreferrer"
+        >
+          User Guide
+        </a>
+      </Menu.Item>
+      <Menu.Item>
         <a href="https://github.com/nervosnetwork/force-bridge" target="_blank" rel="noreferrer">
           GitHub
         </a>

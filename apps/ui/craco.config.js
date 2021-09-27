@@ -8,9 +8,17 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://47.56.233.149:3083',
+        target: 'http://testnet-watcher.force-bridge.com',
+        cookieDomainRewrite: true,
+        headers: { host: 'testnet-watcher.force-bridge.com' },
         pathRewrite: { '^/api': '' },
       },
+      // '/api': {
+      //   target: 'http://mainnet-watcher.force-bridge.com',
+      //   cookieDomainRewrite: true,
+      //   headers: { host: 'mainnet-watcher.force-bridge.com' },
+      //   pathRewrite: { '^/api': '' },
+      // },
     },
   },
   plugins: [

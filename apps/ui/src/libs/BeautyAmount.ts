@@ -40,7 +40,7 @@ export class BeautyAmount {
   }
 
   static fromHumanize(humanizeAmount: string, decimals: number): BeautyAmount {
-    return new BeautyAmount(new BigNumber(humanizeAmount).times(10 ** decimals), decimals);
+    return new BeautyAmount(new BigNumber(humanizeAmount).times(new BigNumber(10).pow(decimals)), decimals);
   }
 
   setVal(value: BigNumber | ((val: BigNumber) => BigNumber) | AmountWithoutDecimals): this {
@@ -56,7 +56,7 @@ export class BeautyAmount {
   humanize(options?: HumanizeOptions): string {
     const { decimalPlaces = Infinity, separator = true } = options ?? {};
 
-    const valWithDecimals = this.val.times(10 ** -this.decimals);
+    const valWithDecimals = this.val.times(new BigNumber(10).pow(-this.decimals));
     const originDecimalPlaces = valWithDecimals.decimalPlaces();
 
     const rounded = valWithDecimals.decimalPlaces(Math.min(originDecimalPlaces, decimalPlaces), BigNumber.ROUND_FLOOR);

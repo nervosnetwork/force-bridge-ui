@@ -1,5 +1,5 @@
 import { EthereumNetwork } from '@force-bridge/commons';
-import PWCore, { Address, AddressType, CHAIN_SPECS, Config } from '@lay2/pw-core';
+import { Address, AddressType } from '@lay2/pw-core';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
 import warning from 'tiny-warning';
@@ -30,13 +30,11 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
   constructor(config: ConnectorConfig) {
     super();
     this.config = config;
-    this.init();
   }
 
   async init(): Promise<void> {
     const provider = (await detectEthereumProvider()) as MetaMaskInpageProvider;
     if (!provider) throw new Error('Metamask is required');
-    PWCore.config = this.getPWConfig();
 
     provider.on('accountsChanged', (accounts) => this.onSignerChanged(accounts));
     this.provider = provider;
@@ -62,10 +60,6 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
 
   protected async _disconnect(): Promise<void> {
     unimplemented();
-  }
-
-  private getPWConfig(): Config {
-    return [CHAIN_SPECS.Lina, CHAIN_SPECS.Aggron, CHAIN_SPECS.Lay2][this.config.ckbChainID];
   }
 
   private onSignerChanged(accounts: unknown): void {
