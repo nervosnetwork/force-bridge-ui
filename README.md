@@ -20,7 +20,11 @@ yarn workspace @force-bridge/ui run start
 
 ### Create .env
 
-Create an `.env.local` at [apps/ui/](apps/ui) to declare required environment variables
+Create an `.env.local` at [apps/ui/](apps/ui) to declare required environment variables, the below env config shows how
+force-bridge-ui works with Rinkeby network and Ethereum network
+
+<details>
+  <summary>Rinkeby network</summary>
 
 ```
 # Force-Bridge RPC
@@ -36,10 +40,30 @@ REACT_APP_TX_EXPLORER_ETHEREUM=https://rinkeby.etherscan.io/tx/
 # Rinkeby
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=4
 REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Rinkeby
+```
 
-REACT_APP_ETHEREUM_LOCKER_CONTRACT=0x88631919037C4574C3142476E5e45DbD96C1BE36
+</details>
+
+<details>
+  <summary>Ethereum network</summary>
 
 ```
+# Force-Bridge RPC
+REACT_APP_BRIDGE_RPC_URL=
+# CKB node RPC
+REACT_APP_CKB_RPC_URL=
+
+# Nervos explorer for exploring transaction
+REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/transaction/
+# Ethereum explorer for exploring transaction
+REACT_APP_TX_EXPLORER_ETHEREUM=https://etherscan.io/tx/
+
+# Rinkeby
+REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=1
+REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Ethereum
+```
+
+</details>
 
 ### Run Command To Build
 
@@ -53,7 +77,7 @@ REACT_APP_ETHEREUM_LOCKER_CONTRACT=0x88631919037C4574C3142476E5e45DbD96C1BE36
 > yarn run build
 ```
 
-We will get a `build` folder after the build. The `build/index.html` is the program entry, and we should serve the `build` folder with an HTTP server.
+We will get a `build` folder after the build. The `build/index.html` is the program entry, and we should serve
+the `build` folder with an HTTP server.
 
-For more about deployment, we can check
-this [doc](https://create-react-app.dev/docs/deployment)
+For more about deployment, we can check this [doc](https://create-react-app.dev/docs/deployment)
