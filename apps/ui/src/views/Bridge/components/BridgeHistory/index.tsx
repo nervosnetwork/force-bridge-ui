@@ -58,7 +58,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       title: 'From',
       dataIndex: '',
       render: (value, record) => (
-        <div>
+        <div style={{ width: '120px' }}>
           <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
         </div>
       ),
@@ -67,7 +67,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       title: 'To',
       dataIndex: '',
       render: (value, record) => (
-        <div>
+        <div style={{ width: '120px' }}>
           <div>
             <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
             {record.status === BridgeTransactionStatus.Failed && (
@@ -76,7 +76,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
           </div>
           <div className="date">
             {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
-              'YYYY-MM-DD HH:mm:ss',
+              'YYYY-MM-DD HH:mm',
             )}
           </div>
         </div>
