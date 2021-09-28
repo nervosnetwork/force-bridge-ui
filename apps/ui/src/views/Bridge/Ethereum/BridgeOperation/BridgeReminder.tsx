@@ -69,7 +69,7 @@ export const BridgeReminder: React.FC = () => {
         </Typography.Text>
         {direction === BridgeDirection.In && (
           <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-            3. You will get 350 CKBytes as the capacity of mirror token when you transfer to Nervos Network
+            3. You will get 400 CKBytes as the capacity of mirror token when you transfer to Nervos Network
           </Typography.Text>
         )}
       </Space>
