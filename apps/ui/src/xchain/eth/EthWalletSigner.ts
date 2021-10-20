@@ -8,6 +8,7 @@ import PWCore, {
   Cell,
   CellDep,
   CHAIN_SPECS,
+  DefaultSigner,
   DepType,
   HashType,
   OutPoint,
@@ -15,11 +16,20 @@ import PWCore, {
   Script,
   Transaction,
 } from '@lay2/pw-core';
-import { RPC } from 'ckb-js-toolkit';
+import { RPC, transformers } from 'ckb-js-toolkit';
 import { BigNumber, ethers } from 'ethers';
 import { ConnectorConfig } from './EthereumWalletConnector';
 import { boom, unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
+
+PWCore.prototype.sendTransaction = async function sendTransaction(toSend, signer) {
+  const tx = toSend instanceof Builder ? await toSend.build() : toSend;
+  tx.validate();
+  if (!signer) {
+    signer = new DefaultSigner(PWCore.provider);
+  }
+  return this.rpc.send_transaction(transformers.TransformTransaction(await signer.sign(tx)), 'passthrough');
+};
 
 const Erc20ABI = [
   'function allowance(address owner, address spender) view returns (uint256)',
