@@ -176,7 +176,7 @@ export const BridgeOperationForm: React.FC = () => {
               <Button
                 type="link"
                 size="small"
-                onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize())}
+                onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize().replaceAll(',', ''))}
               >
                 Max:&nbsp;
                 <HumanizeAmount asset={selectedAsset} />
