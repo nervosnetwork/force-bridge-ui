@@ -8,10 +8,10 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://testnet-watcher.force-bridge.com',
+        target: 'https://testnet.forcebridge.com',
         cookieDomainRewrite: true,
-        headers: { host: 'testnet-watcher.force-bridge.com' },
-        pathRewrite: { '^/api': '' },
+        headers: { host: 'testnet.forcebridge.com' },
+        // pathRewrite: { '^/api': '' },
       },
       // '/api': {
       //   target: 'http://mainnet-watcher.force-bridge.com',
