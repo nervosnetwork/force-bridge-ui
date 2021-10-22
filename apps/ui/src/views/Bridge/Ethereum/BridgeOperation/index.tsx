@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row, Spin, Typography } from 'antd';
+import { Button, Divider, Row, Spin, Typography, Tooltip } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { BridgeReminder } from './BridgeReminder';
 import { SubmitButton } from './SubmitButton';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
+import { toGodwokenAddress } from './utils';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
 import { AssetSymbol } from 'components/AssetSymbol';
@@ -225,9 +226,29 @@ export const BridgeOperationForm: React.FC = () => {
           id="recipient"
           name="recipient"
           onBlur={formik.handleBlur}
-          label={<span className="label">Recipient</span>}
+          label={<span className="label">Recipient:</span>}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
+          extra={
+            signer && (
+              <>
+                <Tooltip title={'Pw ckb address'}>
+                  <Button type="link" size="small" onClick={() => setRecipient(signer.identityNervos())}>
+                    Pw
+                  </Button>
+                </Tooltip>
+                <Tooltip title={'Godwoken deposit ckb address'}>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => setRecipient(toGodwokenAddress(signer.identityXChain()))}
+                  >
+                    Godwoken
+                  </Button>
+                </Tooltip>
+              </>
+            )
+          }
         />
         <Help {...statusOf('recipient')} />
       </div>

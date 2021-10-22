@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
+    "@ckb-lumos/base": "^0.16.0",
+    "@ckb-lumos/helpers": "^0.16.0",
     "@craco/craco": "^6.1.1",
     "@force-bridge/commons": "*",
     "@lay2/pw-core": "^0.3.22",
