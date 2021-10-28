@@ -9,7 +9,7 @@
     "build:types": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@nervosnetwork/ckb-sdk-utils": "^0.40.0",
+    "@nervosnetwork/ckb-sdk-utils": "^0.101.0",
     "@nervosnetwork/ckb-types": "^0.39.0",
     "@types/lodash.isequal": "^4.5.5",
     "@types/node-fetch": "^2.5.10",
