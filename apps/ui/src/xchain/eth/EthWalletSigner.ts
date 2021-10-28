@@ -22,7 +22,7 @@ import { ConnectorConfig } from './EthereumWalletConnector';
 import { boom, unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 
-// TODO, update to latest PW-core when PW is stable
+// TODO update to latest PW-core when PW is stable
 PWCore.prototype.sendTransaction = async function sendTransaction(toSend, signer) {
   const tx = toSend instanceof Builder ? await toSend.build() : toSend;
   tx.validate();
