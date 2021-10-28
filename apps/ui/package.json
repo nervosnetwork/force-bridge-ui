@@ -4,8 +4,6 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@ckb-lumos/base": "^0.16.0",
-    "@ckb-lumos/helpers": "^0.16.0",
     "@craco/craco": "^6.1.1",
     "@force-bridge/commons": "*",
     "@lay2/pw-core": "^0.3.22",
@@ -23,6 +21,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.9",
     "antd": "^4.15.1",
+    "bech32": "^1.1.4",
     "bignumber.js": "^9.0.1",
     "ckb-js-toolkit": "^0.9.1",
     "craco-less": "^1.17.1",
