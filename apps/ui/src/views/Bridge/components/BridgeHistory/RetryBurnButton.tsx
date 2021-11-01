@@ -55,15 +55,36 @@ export const RetryBurnButton: React.FC<RetryBurnButtonProps> = (props) => {
         if (errorMsg.includes('"code":-301')) {
           Modal.error({
             title: 'Retry burn tx failed',
-            content: 'Failed to resolve tx inputs, please dismiss current bridge and fire up a new one',
-            okText: 'dismiss this burn',
+            content: (
+              <p>
+                The original tx may either be committed or conflicted. If committed, the related record will show up
+                soon, otherwise you may fire up a new one (
+                <TransactionLink network={NERVOS_NETWORK} txId={burnTxId}>
+                  should checkout status first
+                </TransactionLink>
+                ).
+                <details>
+                  <summary>Details</summary>
+                  Failed to resolve tx inputs.
+                </details>
+              </p>
+            ),
+            okText: 'OK',
             width: 360,
             onOk: () => removeTransactions([burnTxId]),
           });
         } else if (errorMsg.includes('"code":-1107')) {
           Modal.error({
             title: 'Retry burn tx failed',
-            content: 'Tx already exist in transaction pool, please wait for tx committed',
+            content: (
+              <p>
+                Please wait for tx committed.
+                <details>
+                  <summary>Details</summary>
+                  Tx already exist in transaction pool.
+                </details>
+              </p>
+            ),
             width: 360,
           });
         } else {
