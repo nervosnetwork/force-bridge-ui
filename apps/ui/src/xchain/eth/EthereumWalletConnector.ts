@@ -2,6 +2,7 @@ import { EthereumNetwork } from '@force-bridge/commons';
 import { Address, AddressType } from '@lay2/pw-core';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
+import { scriptToAddress } from '@nervosnetwork/ckb-sdk-utils';
 import warning from 'tiny-warning';
 import { EthWalletSigner } from './EthWalletSigner';
 import { unimplemented } from 'errors';
@@ -69,7 +70,16 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
     const address = Array.isArray(accounts) ? accounts[0] : accounts;
     if (typeof address !== 'string') return super.changeSigner(undefined);
 
-    const signer = new EthWalletSigner(new Address(address, AddressType.eth).toCKBAddress(), address, this.config);
+    const pwLockscript = new Address(address, AddressType.eth).toLockScript();
+    const pwCKBAddress = scriptToAddress(
+      {
+        args: pwLockscript.args,
+        codeHash: pwLockscript.codeHash,
+        hashType: pwLockscript.hashType,
+      },
+      this.config.ckbChainID === 0,
+    );
+    const signer = new EthWalletSigner(pwCKBAddress, address, this.config);
     super.changeSigner(signer);
   }
 }
