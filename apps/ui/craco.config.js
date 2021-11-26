@@ -8,9 +8,9 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'https://testnet.forcebridge.com',
+        target: 'https://force-bridge-dev.ckbapp.dev',
         cookieDomainRewrite: true,
-        headers: { host: 'testnet.forcebridge.com' },
+        headers: { host: 'force-bridge-dev.ckbapp.dev' },
         // pathRewrite: { '^/api': '' },
       },
       // '/api': {
