@@ -7,7 +7,7 @@ import PWCore, {
   Builder,
   Cell,
   CellDep,
-  CHAIN_SPECS,
+  // CHAIN_SPECS,
   DefaultSigner,
   DepType,
   HashType,
@@ -55,13 +55,14 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     }
   }
 
-  getPWLockCellDep(config: ConnectorConfig): CellDep {
-    if (0 === config.ckbChainID) {
-      return CHAIN_SPECS.Lina.pwLock.cellDep;
-    } else if (1 === config.ckbChainID) {
-      return CHAIN_SPECS.Aggron.pwLock.cellDep;
-    }
-    boom(unimplemented);
+  getPWLockCellDep(_config: ConnectorConfig): CellDep {
+    // if (0 === config.ckbChainID) {
+    //   return CHAIN_SPECS.Lina.pwLock.cellDep;
+    // } else if (1 === config.ckbChainID) {
+    //   return CHAIN_SPECS.Aggron.pwLock.cellDep;
+    // }
+    // boom(unimplemented);
+    return PWCore.config.pwLock.cellDep;
   }
 
   _isNervosTransaction(
