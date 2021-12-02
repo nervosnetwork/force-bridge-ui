@@ -1,6 +1,6 @@
 import { Asset, utils } from '@force-bridge/commons';
 import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
-import { Button, Col, Row, Table, Typography } from 'antd';
+import { Button, Col, Row, Table, Typography, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { ExpandRowContent } from './ExpandRowContent';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
+import { NetworkIcon } from 'components/Network';
 import { StyledCardWrapper } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
@@ -59,7 +60,10 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       dataIndex: '',
       render: (value, record) => (
         <div style={{ width: '120px' }}>
-          <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
+          <Space>
+            <NetworkIcon network={record.txSummary.fromAsset.network} />
+            <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
+          </Space>
         </div>
       ),
     },
@@ -69,10 +73,13 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       render: (value, record) => (
         <div style={{ width: '120px' }}>
           <div>
-            <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
-            {record.status === BridgeTransactionStatus.Failed && (
-              <Typography.Text type="danger"> (error)</Typography.Text>
-            )}
+            <Space>
+              <NetworkIcon network={record.txSummary.toAsset.network} />
+              <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
+              {record.status === BridgeTransactionStatus.Failed && (
+                <Typography.Text type="danger"> (error)</Typography.Text>
+              )}
+            </Space>
           </div>
           <div className="date">
             {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
