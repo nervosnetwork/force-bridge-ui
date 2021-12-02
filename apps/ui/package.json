@@ -9,6 +9,7 @@
     "@lay2/pw-core": "^0.3.22",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/inpage-provider": "^8.0.4",
+    "@nervosnetwork/ckb-sdk-utils": "^0.101.0",
     "@rehooks/local-storage": "2.4.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
