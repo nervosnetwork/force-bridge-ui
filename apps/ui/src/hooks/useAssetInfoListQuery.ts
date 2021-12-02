@@ -28,8 +28,8 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
           info: {
             ...assetWithInfo.info,
             shadow: assetWithInfo,
-            name: `ck${assetWithInfo.info.name}`,
-            symbol: `ck${assetWithInfo.info.symbol}`,
+            name: assetWithInfo.info.name,
+            symbol: assetWithInfo.info.symbol,
           },
         });
 
