@@ -93,9 +93,7 @@ export const BridgeOperationForm: React.FC = () => {
   function resetForm() {
     reset();
     if (!signer) return;
-
-    if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
-    else setRecipient(signer.identityXChain());
+    setRecipient('');
   }
 
   useEffect(resetForm, [direction, reset, setRecipient, signer]);
@@ -161,7 +159,10 @@ export const BridgeOperationForm: React.FC = () => {
           onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={
             <span>
-              <label className="label">From:</label>&nbsp;
+              <label className="label" style={{ fontSize: '14px' }}>
+                {direction === BridgeDirection.In ? 'Ethereum:' : 'Nervos:'}
+              </label>
+              &nbsp;
               <AssetSelector
                 btnProps={{ disabled: query.data == null, loading: query.isLoading }}
                 options={assetList}
@@ -179,7 +180,7 @@ export const BridgeOperationForm: React.FC = () => {
                 onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize({ separator: false }))}
               >
                 Max:&nbsp;
-                <HumanizeAmount asset={selectedAsset} />
+                <HumanizeAmount asset={selectedAsset} humanize={{ decimalPlaces: 4 }} />
               </Button>
             )
           }
@@ -197,8 +198,15 @@ export const BridgeOperationForm: React.FC = () => {
         <UserInput
           label={
             <span>
-              <label className="label">To:</label>&nbsp;
-              {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
+              <label className="label" style={{ fontSize: '14px' }}>
+                {direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}
+              </label>
+              &nbsp;
+              {selectedAsset && (
+                <Button size="small" disabled={true}>
+                  <AssetSymbol info={selectedAsset?.shadow?.info} />
+                </Button>
+              )}
             </span>
           }
           placeholder="0.0"
@@ -225,7 +233,12 @@ export const BridgeOperationForm: React.FC = () => {
           id="recipient"
           name="recipient"
           onBlur={formik.handleBlur}
-          label={<span className="label">Recipient</span>}
+          label={
+            <span className="label" style={{ fontSize: '14px' }}>
+              Recipient:
+            </span>
+          }
+          placeholder={direction === BridgeDirection.In ? 'input ckb address' : 'input ethereum address'}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />

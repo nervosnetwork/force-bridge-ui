@@ -74,13 +74,21 @@ export function useValidateBridgeOperationForm(): BridgeOperationValidation {
       return setValidateResult(undefined);
     }
 
-    if (validateInputResult) {
-      return setValidateResult(validateInputResult);
+    const validateResult: ValidateResult = {};
+    if (validateInputResult?.bridgeInInputAmount) {
+      validateResult.bridgeInInputAmount = validateInputResult.bridgeInInputAmount;
+    }
+    if (validateInputResult?.bridgeOutInputAmount) {
+      validateResult.bridgeOutInputAmount = validateInputResult.bridgeOutInputAmount;
+    }
+    if (validateInputResult?.recipient) {
+      validateResult.recipient = validateInputResult.recipient;
+    }
+    if (!validateInputResult?.bridgeInInputAmount && feeQuery.error?.message) {
+      validateResult.bridgeInInputAmount = feeQuery.error?.message;
     }
 
-    setValidateResult({
-      bridgeInInputAmount: feeQuery.error?.message,
-    });
+    setValidateResult(validateResult);
   }, [validateInput, feeQuery.error]);
 
   const reset = useCallback(() => {

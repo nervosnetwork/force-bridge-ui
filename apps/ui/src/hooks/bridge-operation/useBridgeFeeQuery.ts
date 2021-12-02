@@ -33,7 +33,7 @@ export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBr
       return api.getBridgeOutNervosBridgeFee({ network, amount, xchainAssetIdent: asset.shadow.ident });
     },
     {
-      enabled: !!asset && !!amount && !validate(),
+      enabled: !!asset && !!amount && !validate()?.bridgeInInputAmount,
       refetchInterval: false,
       retry: false,
     },

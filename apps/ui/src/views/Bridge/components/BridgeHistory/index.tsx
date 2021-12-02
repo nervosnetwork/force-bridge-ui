@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { ExpandRowContent } from './ExpandRowContent';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
+import { NetworkIcon } from 'components/Network';
 import { StyledCardWrapper } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
@@ -59,6 +60,8 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       dataIndex: '',
       render: (value, record) => (
         <div style={{ width: '120px' }}>
+          <NetworkIcon network={record.txSummary.fromAsset.network} />
+          &nbsp;
           <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
         </div>
       ),
@@ -69,6 +72,8 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       render: (value, record) => (
         <div style={{ width: '120px' }}>
           <div>
+            <NetworkIcon network={record.txSummary.toAsset.network} />
+            &nbsp;
             <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
             {record.status === BridgeTransactionStatus.Failed && (
               <Typography.Text type="danger"> (error)</Typography.Text>
