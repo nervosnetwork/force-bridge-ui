@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
 import { BridgeReminder } from './BridgeReminder';
-import { RecipientButton } from './RecipientButton';
 import { SubmitButton } from './SubmitButton';
 import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
@@ -94,9 +93,7 @@ export const BridgeOperationForm: React.FC = () => {
   function resetForm() {
     reset();
     if (!signer) return;
-
-    if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
-    else setRecipient(signer.identityXChain());
+    setRecipient('');
   }
 
   useEffect(resetForm, [direction, reset, setRecipient, signer]);
@@ -162,7 +159,7 @@ export const BridgeOperationForm: React.FC = () => {
           onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={
             <span>
-              <label className="label">From:</label>&nbsp;
+              <label className="label">{direction === BridgeDirection.In ? 'Ethereum:' : 'Nervos:'}</label>&nbsp;
               <AssetSelector
                 btnProps={{ disabled: query.data == null, loading: query.isLoading }}
                 options={assetList}
@@ -198,7 +195,7 @@ export const BridgeOperationForm: React.FC = () => {
         <UserInput
           label={
             <span>
-              <label className="label">To:</label>&nbsp;
+              <label className="label">{direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}</label>&nbsp;
               {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
             </span>
           }
@@ -229,7 +226,6 @@ export const BridgeOperationForm: React.FC = () => {
           label={<span className="label">Recipient:</span>}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
-          extra={signer && <RecipientButton setRecipient={setRecipient} signer={signer} direction={direction} />}
         />
         <Help {...statusOf('recipient')} />
       </div>
