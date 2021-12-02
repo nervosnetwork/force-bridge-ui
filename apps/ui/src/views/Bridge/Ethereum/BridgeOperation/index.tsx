@@ -180,7 +180,7 @@ export const BridgeOperationForm: React.FC = () => {
                 onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize({ separator: false }))}
               >
                 Max:&nbsp;
-                <HumanizeAmount asset={selectedAsset} />
+                <HumanizeAmount asset={selectedAsset} humanize={{ decimalPlaces: 4 }} />
               </Button>
             )
           }
@@ -202,7 +202,11 @@ export const BridgeOperationForm: React.FC = () => {
                 {direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}
               </label>
               &nbsp;
-              {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
+              {selectedAsset && (
+                <Button size="small" disabled={true}>
+                  <AssetSymbol info={selectedAsset?.shadow?.info} />
+                </Button>
+              )}
             </span>
           }
           placeholder="0.0"

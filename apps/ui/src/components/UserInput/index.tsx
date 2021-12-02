@@ -10,7 +10,7 @@ export interface UserInputProps extends InputProps {
 const UserInputWrapper = styled.div`
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 16px;
-  padding: 16px;
+  padding: 16px 12px;
 
   .ant-input,
   .ant-input-lg {
