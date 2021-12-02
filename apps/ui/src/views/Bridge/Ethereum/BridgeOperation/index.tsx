@@ -159,7 +159,10 @@ export const BridgeOperationForm: React.FC = () => {
           onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={
             <span>
-              <label className="label">{direction === BridgeDirection.In ? 'Ethereum:' : 'Nervos:'}</label>&nbsp;
+              <label className="label" style={{ fontSize: '14px' }}>
+                {direction === BridgeDirection.In ? 'Ethereum:' : 'Nervos:'}
+              </label>
+              &nbsp;
               <AssetSelector
                 btnProps={{ disabled: query.data == null, loading: query.isLoading }}
                 options={assetList}
@@ -195,7 +198,10 @@ export const BridgeOperationForm: React.FC = () => {
         <UserInput
           label={
             <span>
-              <label className="label">{direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}</label>&nbsp;
+              <label className="label" style={{ fontSize: '14px' }}>
+                {direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}
+              </label>
+              &nbsp;
               {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
             </span>
           }
@@ -223,7 +229,12 @@ export const BridgeOperationForm: React.FC = () => {
           id="recipient"
           name="recipient"
           onBlur={formik.handleBlur}
-          label={<span className="label">Recipient:</span>}
+          label={
+            <span className="label" style={{ fontSize: '14px' }}>
+              Recipient:
+            </span>
+          }
+          placeholder={direction === BridgeDirection.In ? 'input ckb address' : 'input ethereum address'}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />
