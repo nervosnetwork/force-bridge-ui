@@ -60,10 +60,9 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       dataIndex: '',
       render: (value, record) => (
         <div style={{ width: '120px' }}>
-          <Space>
-            <NetworkIcon network={record.txSummary.fromAsset.network} />
-            <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
-          </Space>
+          <NetworkIcon network={record.txSummary.fromAsset.network} />
+          &nbsp;
+          <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
         </div>
       ),
     },
@@ -73,13 +72,12 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       render: (value, record) => (
         <div style={{ width: '120px' }}>
           <div>
-            <Space>
-              <NetworkIcon network={record.txSummary.toAsset.network} />
-              <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
-              {record.status === BridgeTransactionStatus.Failed && (
-                <Typography.Text type="danger"> (error)</Typography.Text>
-              )}
-            </Space>
+            <NetworkIcon network={record.txSummary.toAsset.network} />
+            &nbsp;
+            <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
+            {record.status === BridgeTransactionStatus.Failed && (
+              <Typography.Text type="danger"> (error)</Typography.Text>
+            )}
           </div>
           <div className="date">
             {dayjs(record.txSummary.toTransaction?.timestamp || record.txSummary.fromTransaction.timestamp).format(
