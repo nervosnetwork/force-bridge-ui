@@ -238,6 +238,11 @@ export const BridgeOperationForm: React.FC = () => {
               Recipient:
             </span>
           }
+          tooltip={
+            direction === BridgeDirection.In
+              ? 'Please make sure the filled address belong to a sUDT-compatible application, otherwise your funds may be locked until the application adds sUDT support.'
+              : undefined
+          }
           placeholder={direction === BridgeDirection.In ? 'input ckb address' : 'input ethereum address'}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
