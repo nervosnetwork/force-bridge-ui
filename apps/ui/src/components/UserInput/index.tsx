@@ -1,4 +1,4 @@
-import { Input, InputProps, Row } from 'antd';
+import { Input, InputProps, Row, Tooltip } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -27,7 +27,13 @@ export const UserInput: React.FC<UserInputProps> = (props) => {
         <div>{label}</div>
         <div>{extra}</div>
       </Row>
-      <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
+      <Tooltip
+        color="volcano"
+        mouseEnterDelay={0}
+        title="Notice: make sure the recipient address support sUDT transfer (please don't bridge to any recipient address not support sUDT transfer)."
+      >
+        <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
+      </Tooltip>
     </UserInputWrapper>
   );
 };
