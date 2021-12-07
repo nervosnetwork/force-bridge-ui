@@ -5,6 +5,7 @@ import styled from 'styled-components';
 export interface UserInputProps extends InputProps {
   label?: React.ReactNode;
   extra?: React.ReactNode;
+  tooltip?: string;
 }
 
 const UserInputWrapper = styled.div`
@@ -20,20 +21,19 @@ const UserInputWrapper = styled.div`
 `;
 
 export const UserInput: React.FC<UserInputProps> = (props) => {
-  const { label, extra, className, ...inputProps } = props;
+  const { label, extra, tooltip, className, ...inputProps } = props;
   return (
     <UserInputWrapper className={className}>
       <Row justify="space-between" align="middle">
         <div>{label}</div>
         <div>{extra}</div>
       </Row>
-      <Tooltip
-        color="volcano"
-        mouseEnterDelay={0}
-        title="Notice: make sure the recipient address support sUDT transfer (please don't bridge to any recipient address not support sUDT transfer)."
-      >
-        <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
-      </Tooltip>
+      {tooltip && (
+        <Tooltip color="orange" mouseEnterDelay={0} title={tooltip}>
+          <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
+        </Tooltip>
+      )}
+      {!tooltip && <Input bordered={false} autoComplete="off" size="large" {...inputProps} />}
     </UserInputWrapper>
   );
 };
