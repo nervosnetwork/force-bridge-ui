@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { truncateMiddle } from 'utils';
 
 const AddressTip = styled(Typography.Text)`
-  color: ${(props) => props.theme.palette.common.white};
+  color: '#000000';
 `;
 
 interface UserIdentProps {

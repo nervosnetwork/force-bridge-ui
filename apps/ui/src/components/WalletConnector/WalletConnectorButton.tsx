@@ -1,16 +1,11 @@
 import { ButtonProps } from 'antd';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
-import { LinearGradientButton } from 'components/Styled';
+import { Button } from '@mui/material';
+import { CashIcon } from '@heroicons/react/solid';
 import { UserIdent } from 'components/UserIdent';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useGlobalSetting } from 'hooks/useGlobalSetting';
 import { ConnectStatus } from 'interfaces/WalletConnector';
-
-const StyledWalletConnectButton = styled(LinearGradientButton)`
-  color: ${(props) => props.theme.palette.common.black};
-  font-weight: 700;
-`;
 
 export interface WalletConnectorButtonProps extends ButtonProps {
   disconnectedContent?: React.ReactNode;
@@ -18,11 +13,7 @@ export interface WalletConnectorButtonProps extends ButtonProps {
 }
 
 export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (props) => {
-  const {
-    disconnectedContent = 'Connect a Wallet To Start',
-    connectingContent = 'Connecting...',
-    ...buttonProps
-  } = props;
+  const { disconnectedContent = 'Connect Wallet', connectingContent = 'Connecting...' } = props;
   const { signer, walletConnectStatus, wallet, direction } = ForceBridgeContainer.useContainer();
   const [globalSetting] = useGlobalSetting();
 
@@ -46,10 +37,17 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
 
   const connecting =
     walletConnectStatus === ConnectStatus.Connecting || (walletConnectStatus === ConnectStatus.Connected && !signer);
+  const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   return (
-    <StyledWalletConnectButton {...buttonProps} onClick={onClick} loading={connecting}>
+    <Button
+      onClick={onClick}
+      variant={isConnected ? 'outlined' : 'contained'}
+      color="secondary"
+      startIcon={isConnected && <CashIcon />}
+      sx={{ padding: '0.5rem 1rem' }}
+    >
       {buttonContent}
-    </StyledWalletConnectButton>
+    </Button>
   );
 };

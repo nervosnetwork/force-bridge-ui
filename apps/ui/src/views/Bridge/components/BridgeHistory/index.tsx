@@ -20,7 +20,7 @@ const BridgeHistoryWrapper = styled(StyledCardWrapper)`
   .ant-table-tbody > tr > td,
   .ant-table tfoot > tr > th,
   .ant-table tfoot > tr > td {
-    background: ${(props) => props.theme.palette.common.white};
+    background: '#000000';
     padding: 8px;
     vertical-align: baseline;
   }

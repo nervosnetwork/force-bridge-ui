@@ -26,6 +26,7 @@ import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
+import { NetworkDirectionSelector } from 'views/Header/NetworkDirectionSelector';
 
 const BridgeViewWrapper = styled(StyledCardWrapper)`
   .label {
@@ -52,7 +53,14 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
 export const BridgeOperationForm: React.FC = () => {
   useAutoSetBridgeToAmount();
 
-  const { signer, direction, switchBridgeDirection } = ForceBridgeContainer.useContainer();
+  const {
+    signer,
+    network,
+    direction,
+    switchBridgeDirection,
+    switchNetwork,
+    supportedNetworks,
+  } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const history = useHistory();
   const location = useLocation();
@@ -151,8 +159,17 @@ export const BridgeOperationForm: React.FC = () => {
 
   return (
     <BridgeViewWrapper>
-      <WalletConnectorButton block type="primary" />
-
+      <div style={{ maxWidth: '300px', margin: '0 auto' }}>
+        <NetworkDirectionSelector
+          networks={supportedNetworks}
+          network={network}
+          direction={direction}
+          onSelect={({ network, direction }) => {
+            switchNetwork(network);
+            switchBridgeDirection(direction);
+          }}
+        />
+      </div>
       <div className="input-wrapper">
         <UserInput
           id="bridgeInInputAmount"

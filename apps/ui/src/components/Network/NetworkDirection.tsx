@@ -10,7 +10,7 @@ export interface NetworkDirectionProps {
 }
 
 const StyledCol = styled(Col)`
-  color: ${(props) => props.theme.palette.common.black};
+  color: '#000000';
   font-weight: bold;
 
   .name {

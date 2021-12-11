@@ -1,9 +1,41 @@
-import { DefaultTheme } from 'styled-components';
+import { createTheme } from '@mui/material/styles';
 
-export const defaultTheme: DefaultTheme = {
+export const defaultTheme = createTheme({
   palette: {
-    common: { black: '#000', white: '#fff' },
-    primary: { main: 'linear-gradient(93.35deg, #B8F0D5 3.85%, #B8F0ED 100%)', contrastText: '#000' },
-    secondary: { main: '', contrastText: '' },
+    mode: 'dark',
+    primary: {
+      main: '#6b7280',
+    },
+    secondary: {
+      main: '#00CC9B',
+    },
   },
-};
+  typography: {
+    fontFamily: ['Roboto', 'sans-serif'].join(','),
+    body1: {
+      fontSize: 16,
+    },
+    body2: {
+      fontSize: 14,
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          fontSize: 16,
+          borderRadius: '0.375rem',
+        },
+        outlined: {
+          color: '#ffffff',
+          borderColor: '#00CC9B',
+        },
+        startIcon: {
+          width: '1.25rem',
+          height: '1.25rem',
+          color: '#00CC9B',
+        },
+      },
+    },
+  },
+});

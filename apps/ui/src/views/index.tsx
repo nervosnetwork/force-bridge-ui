@@ -3,9 +3,11 @@ import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import Container from '@mui/material/Container';
 import { AppHeader } from './Header';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeView } from 'views/Bridge';
+import '../assets/styles/app-container.scss';
 
 BigNumber.set({ EXPONENTIAL_AT: 99 });
 
@@ -31,11 +33,11 @@ export const AppView: React.FC = () => {
   return (
     <>
       <AppHeader />
-      <MainWrapper>
+      <Container className="app-container">
         <Route path="/bridge/:fromNetwork/:toNetwork">
           <BridgeView />
         </Route>
-      </MainWrapper>
+      </Container>
     </>
   );
 };
