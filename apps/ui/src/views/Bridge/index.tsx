@@ -20,7 +20,7 @@ export const BridgeView: React.FC = () => {
   return (
     <BridgeOperationFormContainer.Provider>
       <BindNetworkDirectionWithRoute />
-      <div style={{ maxWidth: '300px', margin: '0 auto' }}>
+      {/* <div style={{ maxWidth: '300px', margin: '0 auto' }}>
         <NetworkDirectionSelector
           networks={supportedNetworks}
           network={network}
@@ -30,7 +30,7 @@ export const BridgeView: React.FC = () => {
             switchBridgeDirection(direction);
           }}
         />
-      </div>
+      </div> */}
       <Suspense fallback={<Skeleton active />}>
         <Switch>
           <Route path={['/bridge/Ethereum/Nervos', '/bridge/Nervos/Ethereum']} component={EthereumBridge} />

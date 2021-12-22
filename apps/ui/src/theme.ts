@@ -8,12 +8,17 @@ export const defaultTheme = createTheme({
     },
     secondary: {
       main: '#00CC9B',
+      light: '#232323',
+    },
+    text: {
+      primary: '#E5E7EB',
     },
   },
   typography: {
     fontFamily: ['Roboto', 'sans-serif'].join(','),
     body1: {
       fontSize: 16,
+      fontWeight: 500,
     },
     body2: {
       fontSize: 14,

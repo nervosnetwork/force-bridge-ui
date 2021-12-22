@@ -33,11 +33,11 @@ export const AppView: React.FC = () => {
   return (
     <>
       <AppHeader />
-      <Container className="app-container">
+      <div className="app-container">
         <Route path="/bridge/:fromNetwork/:toNetwork">
           <BridgeView />
         </Route>
-      </Container>
+      </div>
     </>
   );
 };

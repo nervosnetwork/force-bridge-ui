@@ -2,6 +2,7 @@ import PWCore, { CHAIN_SPECS, ChainID, EthProvider, PwCollector } from '@lay2/pw
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
+import Container from '@mui/material/Container';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
@@ -69,9 +70,8 @@ const EthereumBridge: React.FC = () => {
         chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
       />
       {wallet instanceof EthereumWalletConnector && (
-        <div>
+        <Container maxWidth="sm">
           <BridgeOperationForm />
-          <div style={{ padding: '8px' }} />
           {selectedAsset && confirmNumberConfig && (
             <BridgeHistory
               asset={selectedAsset}
@@ -79,7 +79,7 @@ const EthereumBridge: React.FC = () => {
               nervosConfirmNumber={confirmNumberConfig.nervosConfirmNumber}
             />
           )}
-        </div>
+        </Container>
       )}
     </EthereumProviderContainer.Provider>
   );
