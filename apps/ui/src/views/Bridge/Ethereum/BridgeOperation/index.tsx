@@ -99,9 +99,10 @@ export const BridgeOperationForm: React.FC = () => {
   useEffect(resetForm, [direction, reset, setRecipient, signer]);
 
   function onSubmit() {
-    if (!selectedAsset || !recipient || !selectedAsset.shadow) return;
+    const needApprove = allowance && allowance.status === 'NeedApprove';
+    if (!selectedAsset || (!recipient && !needApprove) || !selectedAsset.shadow) return;
 
-    if (allowance && allowance.status === 'NeedApprove') {
+    if (needApprove) {
       sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(resetForm);
     } else {
       const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
