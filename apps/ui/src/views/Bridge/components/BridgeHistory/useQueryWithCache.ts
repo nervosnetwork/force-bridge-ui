@@ -40,7 +40,8 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
   const cachedTransactionsOfSender = cachedTransactions.filter(
     (item) =>
       item.sender === signerIdent &&
-      (item.txSummary.fromAsset.ident === asset.ident || item.txSummary.toAsset.ident === asset.ident),
+      ((item.txSummary.fromAsset.ident === asset.ident && item.txSummary.toAsset.ident === asset.shadow?.ident) ||
+        (item.txSummary.toAsset.ident === asset.ident && item.txSummary.fromAsset.ident === asset.shadow?.ident)),
   );
 
   if (!query.data) return cachedTransactionsOfSender as TransactionSummaryWithStatus[] | null | undefined;
