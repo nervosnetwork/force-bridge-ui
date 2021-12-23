@@ -12,7 +12,7 @@ import PWCore, {
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
-import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
+import { useChainId } from './hooks/useChainId';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
@@ -25,6 +25,7 @@ function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbC
 }
 
 const EthereumBridge: React.FC = () => {
+  const chainId = useChainId();
   const { selectedAsset } = useSelectBridgeAsset();
   const { setWallet, api, wallet, network } = ForceBridgeContainer.useContainer();
   const [confirmNumberConfig, setConfirmNumberConfig] = useState<{
@@ -97,10 +98,10 @@ const EthereumBridge: React.FC = () => {
     return () => {
       setWallet(undefined);
     };
-  }, [api, setWallet]);
+  }, [api, setWallet, chainId]);
 
   return (
-    <EthereumProviderContainer.Provider>
+    <>
       <ChainIdWarning
         chainId={
           network === 'Ethereum'
@@ -126,7 +127,7 @@ const EthereumBridge: React.FC = () => {
           )}
         </div>
       )}
-    </EthereumProviderContainer.Provider>
+    </>
   );
 };
 
