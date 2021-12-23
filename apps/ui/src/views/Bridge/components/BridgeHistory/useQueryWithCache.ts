@@ -7,25 +7,33 @@ import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeCon
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 
 export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null | undefined {
-  const { signer, direction, nervosModule, api } = ForceBridgeContainer.useContainer();
+  const { signer, direction, nervosModule, api, network } = ForceBridgeContainer.useContainer();
   // FIXME use network from ForceBridgeContainer if backend support
-  const network = 'Ethereum';
+  const ethereumNetwork = 'Ethereum';
   const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
     if (!asset || !signer) return undefined;
-    const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;
+    const userNetwork = direction === BridgeDirection.In ? ethereumNetwork : nervosModule.network;
     const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
-    return { network: network, xchainAssetIdent: asset.ident, user: { network: userNetwork, ident: userIdent } };
-  }, [asset, signer, direction, network, nervosModule.network]);
+    return {
+      network: ethereumNetwork,
+      xchainAssetIdent: asset.ident,
+      user: { network: userNetwork, ident: userIdent },
+    };
+  }, [asset, signer, direction, ethereumNetwork, nervosModule.network]);
   const signerIdent = useMemo(
     () => (direction === BridgeDirection.In ? signer?.identityXChain() : signer?.identityNervos()),
     [direction, signer],
   );
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const query = useQuery(['getBridgeTransactionSummaries', filter], () => api.getBridgeTransactionSummaries(filter!), {
-    enabled: filter != null,
-    refetchInterval: 5000,
-  });
+  const query = useQuery(
+    ['getBridgeTransactionSummaries', filter, network],
+    () => api.getBridgeTransactionSummaries(filter!),
+    {
+      enabled: filter != null,
+      refetchInterval: 5000,
+    },
+  );
   const { transactions: cachedTransactions, removeTransactions } = useSentTransactionStorage();
   if (!signer || !asset) return null;
   if (!cachedTransactions) return query.data;

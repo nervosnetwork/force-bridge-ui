@@ -18,21 +18,21 @@ export const StyledReminderWrapper = styled.div`
 `;
 
 export const BridgeReminder: React.FC = () => {
-  const { api, direction } = ForceBridgeContainer.useContainer();
+  const { api, direction, network } = ForceBridgeContainer.useContainer();
   const { asset } = BridgeOperationFormContainer.useContainer();
 
   // FIXME use network from ForceBridgeContainer if backend support
-  const network = 'Ethereum';
+  const ethereumNetwork = 'Ethereum';
   const query = useQuery(
-    ['getMinimalBridgeAmount', { asset: asset?.identity() }],
+    ['getMinimalBridgeAmount', { asset: asset?.identity(), network }],
     () => {
       asserts(asset != null && asset.shadow != null);
 
       if (direction === BridgeDirection.In) {
-        return api.getMinimalBridgeAmount({ network, xchainAssetIdent: asset.ident });
+        return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.ident });
       }
 
-      return api.getMinimalBridgeAmount({ network, xchainAssetIdent: asset.shadow.ident });
+      return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.shadow.ident });
     },
     {
       enabled: !!asset,

@@ -10,6 +10,7 @@ export interface AllowanceState {
 }
 
 export interface ApproveInfo {
+  network: string;
   user: string;
   assetIdent: string;
   txId: string;
@@ -31,7 +32,7 @@ export function useAllowance(asset: Asset | undefined): AllowanceState | undefin
     !eth.module.assetModel.isDerivedAsset(asset);
 
   const query = useQuery(
-    [signer?.identityXChain(), asset?.ident],
+    [signer?.identityXChain(), asset?.ident, network],
     async () => {
       if (!asset || !signer) return;
       return await (signer as EthWalletSigner).getAllowance(asset.ident);
@@ -46,7 +47,9 @@ export function useAllowance(asset: Asset | undefined): AllowanceState | undefin
   if (query.data.gte(asset.amount)) return { status: 'Approved', addApprove };
   if (
     approveList &&
-    approveList.find((item) => item.user === signer.identityXChain() && item.assetIdent === asset.ident)
+    approveList.find(
+      (item) => item.user === signer.identityXChain() && item.network === network && item.assetIdent === asset.ident,
+    )
   )
     return { status: 'Approving', addApprove };
   return { status: 'NeedApprove', addApprove };

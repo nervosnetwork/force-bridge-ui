@@ -22,7 +22,7 @@ export function useApproveTransaction(): UseMutationResult<{ txId: string }, unk
       if (!signer) boom('signer is not load');
 
       const txId = await (signer as EthWalletSigner).approve(input.asset.ident);
-      input.addApprove({ txId: txId.txId, user: signer.identityXChain(), assetIdent: input.asset.ident });
+      input.addApprove({ txId: txId.txId, network, user: signer.identityXChain(), assetIdent: input.asset.ident });
       return txId;
     },
     {
