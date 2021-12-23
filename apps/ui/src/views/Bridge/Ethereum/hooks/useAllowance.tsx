@@ -26,7 +26,7 @@ export function useAllowance(asset: Asset | undefined): AllowanceState | undefin
   const disableApprove =
     !signer ||
     !asset ||
-    network !== 'Ethereum' ||
+    (network !== 'Ethereum' && network !== 'Bsc') ||
     direction === BridgeDirection.Out ||
     !eth.module.assetModel.isDerivedAsset(asset);
 

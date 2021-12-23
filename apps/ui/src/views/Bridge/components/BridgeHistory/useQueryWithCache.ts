@@ -7,7 +7,9 @@ import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeCon
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 
 export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null | undefined {
-  const { signer, direction, network, nervosModule, api } = ForceBridgeContainer.useContainer();
+  const { signer, direction, nervosModule, api } = ForceBridgeContainer.useContainer();
+  // FIXME use network from ForceBridgeContainer if backend support
+  const network = 'Ethereum';
   const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
     if (!asset || !signer) return undefined;
     const userNetwork = direction === BridgeDirection.In ? network : nervosModule.network;

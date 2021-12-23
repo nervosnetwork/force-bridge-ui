@@ -51,7 +51,7 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
 export const BridgeOperationForm: React.FC = () => {
   useAutoSetBridgeToAmount();
 
-  const { signer, direction, switchBridgeDirection } = ForceBridgeContainer.useContainer();
+  const { signer, direction, switchBridgeDirection, network } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const history = useHistory();
   const location = useLocation();
@@ -160,7 +160,7 @@ export const BridgeOperationForm: React.FC = () => {
           label={
             <span>
               <label className="label" style={{ fontSize: '14px' }}>
-                {direction === BridgeDirection.In ? 'Ethereum:' : 'Nervos:'}
+                {direction === BridgeDirection.In ? `${network}:` : 'Nervos:'}
               </label>
               &nbsp;
               <AssetSelector
@@ -199,7 +199,7 @@ export const BridgeOperationForm: React.FC = () => {
           label={
             <span>
               <label className="label" style={{ fontSize: '14px' }}>
-                {direction === BridgeDirection.In ? 'Nervos:' : 'Ethereum:'}
+                {direction === BridgeDirection.In ? 'Nervos:' : `${network}:`}
               </label>
               &nbsp;
               {selectedAsset && (
@@ -243,7 +243,9 @@ export const BridgeOperationForm: React.FC = () => {
               ? 'Please make sure the filled address belong to a sUDT-compatible application, otherwise your funds may be locked until the application adds sUDT support.'
               : undefined
           }
-          placeholder={direction === BridgeDirection.In ? 'input ckb address' : 'input ethereum address'}
+          placeholder={
+            direction === BridgeDirection.In ? 'input ckb address' : `input ${network.toLowerCase()} address`
+          }
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
         />

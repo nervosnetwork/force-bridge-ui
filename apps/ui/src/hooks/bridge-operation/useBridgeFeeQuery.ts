@@ -9,7 +9,9 @@ import { asserts } from 'errors';
 import { BeautyAmount } from 'libs';
 
 export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBridgeFeeResponse, Error> {
-  const { api, direction, network } = ForceBridgeContainer.useContainer();
+  const { api, direction } = ForceBridgeContainer.useContainer();
+  // FIXME use network from ForceBridgeContainer if backend support
+  const network = 'Ethereum';
   const { asset, bridgeFromAmount: input } = BridgeOperationFormContainer.useContainer();
   const validate = useValidateInput();
 

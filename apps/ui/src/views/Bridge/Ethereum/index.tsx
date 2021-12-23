@@ -26,7 +26,7 @@ function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbC
 
 const EthereumBridge: React.FC = () => {
   const { selectedAsset } = useSelectBridgeAsset();
-  const { setWallet, api, wallet } = ForceBridgeContainer.useContainer();
+  const { setWallet, api, wallet, network } = ForceBridgeContainer.useContainer();
   const [confirmNumberConfig, setConfirmNumberConfig] = useState<{
     xchainConfirmNumber: number;
     nervosConfirmNumber: number;
@@ -102,8 +102,16 @@ const EthereumBridge: React.FC = () => {
   return (
     <EthereumProviderContainer.Provider>
       <ChainIdWarning
-        chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
-        chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
+        chainId={
+          network === 'Ethereum'
+            ? Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)
+            : Number(process.env.REACT_APP_BSC_ENABLE_CHAIN_ID)
+        }
+        chainName={
+          network === 'Ethereum'
+            ? process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME
+            : process.env.REACT_APP_BSC_ENABLE_CHAIN_NAME
+        }
       />
       {wallet instanceof EthereumWalletConnector && (
         <div>

@@ -22,7 +22,10 @@ export const BridgeView: React.FC = () => {
         }
       >
         <Switch>
-          <Route path={['/bridge/Ethereum/Nervos', '/bridge/Nervos/Ethereum']} component={EthereumBridge} />
+          <Route
+            path={['/bridge/Ethereum/Nervos', '/bridge/Nervos/Ethereum', '/bridge/Bsc/Nervos', '/bridge/Nervos/Bsc']}
+            component={EthereumBridge}
+          />
         </Switch>
       </Suspense>
     </BridgeOperationFormContainer.Provider>

@@ -18,9 +18,11 @@ export const StyledReminderWrapper = styled.div`
 `;
 
 export const BridgeReminder: React.FC = () => {
-  const { api, direction, network } = ForceBridgeContainer.useContainer();
+  const { api, direction } = ForceBridgeContainer.useContainer();
   const { asset } = BridgeOperationFormContainer.useContainer();
 
+  // FIXME use network from ForceBridgeContainer if backend support
+  const network = 'Ethereum';
   const query = useQuery(
     ['getMinimalBridgeAmount', { asset: asset?.identity() }],
     () => {
