@@ -4,6 +4,7 @@ import React from 'react';
 import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
+import { ForceBridgeContainer } from '../../../../containers/ForceBridgeContainer';
 
 interface ExpandRowContentProps {
   record: TransactionWithKey;
@@ -13,6 +14,7 @@ interface ExpandRowContentProps {
 
 export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
   const { record, xchainConfirmNumber, nervosConfirmNumber } = props;
+  const { network } = ForceBridgeContainer.useContainer();
   let confirmStatus;
   const confirmNumber = record.txSummary.fromAsset.network === 'Nervos' ? nervosConfirmNumber : xchainConfirmNumber;
   if (record.status === BridgeTransactionStatus.Successful) {
@@ -52,7 +54,10 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
     <div>
       <div>
         <Space>
-          <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
+          <TransactionLink
+            network={record.txSummary.fromAsset.network === 'Nervos' ? 'Nervos' : network}
+            txId={record.txSummary.fromTransaction.txId}
+          >
             {fromTransactionDescription}
           </TransactionLink>
           {isDisplayRetry && <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />}
@@ -61,7 +66,10 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
       {isDisplayToTransactionText && <div>{toTransactionDescription}</div>}
       {record.status === BridgeTransactionStatus.Successful && record.txSummary?.toTransaction?.txId && (
         <div>
-          <TransactionLink network={record.txSummary.toAsset.network} txId={record.txSummary.toTransaction.txId}>
+          <TransactionLink
+            network={record.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
+            txId={record.txSummary.toTransaction.txId}
+          >
             {toTransactionDescription}
           </TransactionLink>
         </div>
