@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row, Spin } from 'antd';
+import { Divider, Row, Spin } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -17,7 +17,7 @@ import { AssetSymbol } from 'components/AssetSymbol';
 import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
 import { WalletConnectorButton } from 'components/WalletConnector';
-import { Box, MenuItem, Typography } from '@mui/material';
+import { Box, Button, MenuItem, Typography } from '@mui/material';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
@@ -30,7 +30,7 @@ import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransa
 import { NetworkDirectionSelector } from 'views/Header/NetworkDirectionSelector';
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import '../../../../assets/styles/transfer.scss';
-import { CustomizedSelect } from './styled';
+import { CustomizedSelect } from '../../../../components/AssetSelector/styled';
 
 const HelpWrapper = styled(Typography)`
   padding-left: 8px;
@@ -161,54 +161,52 @@ export const BridgeOperationForm: React.FC = () => {
             switchBridgeDirection(direction);
           }}
         />
-        <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={1}>
-          Asset
-        </Typography>
-        <CustomizedSelect fullWidth labelId="demo-simple-select-label" id="demo-simple-select" label="Age">
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </CustomizedSelect>
         <div className="input-wrapper">
-          <UserInput
-            id="bridgeInInputAmount"
-            name="bridgeInInputAmount"
-            onBlur={formik.handleBlur}
-            value={bridgeFromAmount}
-            onChange={(e) => setBridgeFromAmount(e.target.value)}
-            label={
-              <span>
-                <label className="label">From:</label>&nbsp;
-                <AssetSelector
-                  btnProps={{ disabled: query.data == null, loading: query.isLoading }}
-                  options={assetList}
-                  rowKey={(asset) => asset.identity()}
-                  selected={selectedAsset?.identity()}
-                  onSelect={(_id, asset) => setSelectedAsset(asset)}
-                />
-              </span>
-            }
-            extra={
-              selectedAsset && (
-                <Button
-                  type="link"
-                  size="small"
-                  onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize({ separator: false }))}
-                >
-                  Max:&nbsp;
-                  <HumanizeAmount asset={selectedAsset} />
-                </Button>
-              )
-            }
-            placeholder="0.0"
-            disabled={selectedAsset == null || signer == null}
+          <AssetSelector
+            btnProps={{ disabled: query.data == null, loading: query.isLoading }}
+            options={assetList}
+            rowKey={(asset) => asset.identity()}
+            selected={selectedAsset?.identity()}
+            onSelect={(_id, asset) => setSelectedAsset(asset)}
           />
-          <Help {...statusOf('bridgeInInputAmount')} />
         </div>
 
-        <Row justify="center" align="middle">
-          <Icon style={{ fontSize: '24px' }} component={BridgeDirectionIcon} onClick={() => switchBridgeDirection()} />
-        </Row>
+        <UserInput
+          id="bridgeInInputAmount"
+          name="bridgeInInputAmount"
+          onBlur={formik.handleBlur}
+          value={bridgeFromAmount}
+          onChange={(e) => setBridgeFromAmount(e.target.value)}
+          label={'Amount'}
+          extra={
+            selectedAsset && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => setBridgeFromAmount(BeautyAmount.from(selectedAsset).humanize({ separator: false }))}
+              >
+                Max
+              </Button>
+            )
+          }
+          placeholder="0.0"
+          disabled={selectedAsset == null || signer == null}
+        />
+        <Help {...statusOf('bridgeInInputAmount')} />
+
+        <Divider dashed style={{ margin: 0, padding: 0 }} />
+
+        <div className="input-wrapper">
+          <UserInput
+            id="recipient"
+            name="recipient"
+            onBlur={formik.handleBlur}
+            label={<span className="label">To ETH Address:</span>}
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+          />
+          <Help {...statusOf('recipient')} />
+        </div>
 
         <div className="input-wrapper">
           <UserInput
@@ -221,33 +219,7 @@ export const BridgeOperationForm: React.FC = () => {
             placeholder="0.0"
             disabled
             value={bridgeToAmount}
-            extra={
-              <Button type="link" size="small">
-                {feeQuery.data && (
-                  <>
-                    Fee:&nbsp;
-                    <HumanizeAmount asset={feeQuery.data.fee} />
-                  </>
-                )}
-                {feeQuery.isLoading && <Spin />}
-              </Button>
-            }
           />
-        </div>
-
-        <Divider dashed style={{ margin: 0, padding: 0 }} />
-
-        <div className="input-wrapper">
-          <UserInput
-            id="recipient"
-            name="recipient"
-            onBlur={formik.handleBlur}
-            label={<span className="label">Recipient:</span>}
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            extra={signer && <RecipientButton setRecipient={setRecipient} signer={signer} direction={direction} />}
-          />
-          <Help {...statusOf('recipient')} />
         </div>
 
         <SubmitButton

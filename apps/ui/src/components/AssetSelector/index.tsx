@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSymbol } from 'components/AssetSymbol';
+import { CustomizedSelect } from 'components/AssetSelector/styled';
+import { MenuItem, Typography } from '@mui/material';
 
 type AssetWithInfoLike = {
   amount: AmountWithoutDecimals;
@@ -44,10 +46,9 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
   const [visible, setModalVisible] = useState(false);
 
   const { options, selected, onSelect, rowKey, btnProps } = props;
-  const selectedAsset = selected != null && options.find((asset) => rowKey(asset) === selected);
+  const selectedAsset = selected != null && options.find((asset) => rowKey(asset) === selected)?.info?.name;
 
   function onSelectInternal(item: T) {
-    setModalVisible(false);
     onSelect(rowKey(item), item);
   }
 
@@ -57,31 +58,18 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
   }
 
   return (
-    <span>
-      <Button type="primary" size="small" {...btnProps} onClick={onButtonClick}>
-        {selectedAsset ? (
-          <div>
-            <AssetSymbol info={selectedAsset.info} />
-          </div>
-        ) : (
-          'Select'
-        )}
-      </Button>
-      <StyledModal closable width={312} visible={visible} onCancel={() => setModalVisible(false)} footer={null}>
-        <ModalBorderWrapper>
-          <List
-            pagination={false}
-            dataSource={options}
-            rowKey={rowKey}
-            renderItem={(item) => (
-              <List.Item onClick={() => onSelectInternal(item)}>
-                <AssetSymbol info={item.info} />
-                <HumanizeAmount asset={item} />
-              </List.Item>
-            )}
-          />
-        </ModalBorderWrapper>
-      </StyledModal>
-    </span>
+    <>
+      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={1}>
+        Asset
+      </Typography>
+      <CustomizedSelect fullWidth value={selectedAsset}>
+        {options.map((item) => (
+          <MenuItem value={item.info?.name} key={item.info?.name} onClick={() => onSelectInternal(item)}>
+            <AssetSymbol info={item.info} />
+            <HumanizeAmount asset={item} />
+          </MenuItem>
+        ))}
+      </CustomizedSelect>
+    </>
   );
 }

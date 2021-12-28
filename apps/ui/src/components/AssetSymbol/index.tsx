@@ -1,4 +1,5 @@
 import { QuestionOutlined } from '@ant-design/icons';
+import { Avatar, Box, Typography } from '@mui/material';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -30,9 +31,11 @@ export const AssetSymbol: React.FC<React.HTMLAttributes<HTMLSpanElement> & Asset
   const logo = logoURI ? <img className="logo" alt={symbol} src={logoURI} /> : <QuestionOutlined className="logo" />;
 
   return (
-    <AssetSymbolWrapper {...wrapperProps}>
-      {logo}
-      <span className="symbol">{symbol}</span>
-    </AssetSymbolWrapper>
+    <Box display="flex" alignItems="center" {...wrapperProps}>
+      <Avatar sx={{ width: 32, height: 32 }} alt="Remy Sharp" src={logoURI} />
+      <Typography color="text.primary" variant="body2" fontWeight={700} marginLeft={1.5}>
+        {symbol}
+      </Typography>
+    </Box>
   );
 };

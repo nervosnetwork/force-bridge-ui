@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
+import { Typography } from '@mui/material';
 
 const HumanizeAmountWrapper = styled.span`
   .symbol {
@@ -37,8 +38,10 @@ export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
   return (
     <HumanizeAmountWrapper>
       <Tooltip title={beauty.humanize() + ' ' + info?.symbol}>
-        <span>{beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}</span>
         {showSymbol && <span className="symbol">{info?.symbol}</span>}
+        <Typography color="text.primary" variant="body2" fontWeight={700} marginLeft={1.5}>
+          {beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}
+        </Typography>
       </Tooltip>
     </HumanizeAmountWrapper>
   );

@@ -1,6 +1,18 @@
-import { Input, InputProps, Row } from 'antd';
+import {
+  Button,
+  FilledInput,
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputBase,
+  Paper,
+  Typography,
+} from '@mui/material';
+import { InputProps, Row } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
+import { InputWrapper } from './styled';
 
 export interface UserInputProps extends InputProps {
   label?: React.ReactNode;
@@ -22,12 +34,14 @@ const UserInputWrapper = styled.div`
 export const UserInput: React.FC<UserInputProps> = (props) => {
   const { label, extra, className, ...inputProps } = props;
   return (
-    <UserInputWrapper className={className}>
-      <Row justify="space-between" align="middle">
-        <div>{label}</div>
-        <div>{extra}</div>
-      </Row>
-      <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
-    </UserInputWrapper>
+    <>
+      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={1}>
+        {label}
+      </Typography>
+      <InputWrapper>
+        <InputBase sx={{ ml: 1, flex: 1 }} inputProps={{ ...inputProps }} />
+        {extra}
+      </InputWrapper>
+    </>
   );
 };
