@@ -72,13 +72,13 @@ const EthereumBridge: React.FC = () => {
       {wallet instanceof EthereumWalletConnector && (
         <Container maxWidth="sm">
           <BridgeOperationForm />
-          {selectedAsset && confirmNumberConfig && (
+          {/* {selectedAsset && confirmNumberConfig && (
             <BridgeHistory
               asset={selectedAsset}
               xchainConfirmNumber={confirmNumberConfig.xchainConfirmNumber}
               nervosConfirmNumber={confirmNumberConfig.nervosConfirmNumber}
             />
-          )}
+          )} */}
         </Container>
       )}
     </EthereumProviderContainer.Provider>

@@ -31,6 +31,7 @@ import { NetworkDirectionSelector } from 'views/Header/NetworkDirectionSelector'
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import '../../../../assets/styles/transfer.scss';
 import { CustomizedSelect } from '../../../../components/AssetSelector/styled';
+import { TransferDetails } from 'components/TransferDetails';
 
 const HelpWrapper = styled(Typography)`
   padding-left: 8px;
@@ -208,19 +209,7 @@ export const BridgeOperationForm: React.FC = () => {
           <Help {...statusOf('recipient')} />
         </div>
 
-        <div className="input-wrapper">
-          <UserInput
-            label={
-              <span>
-                <label className="label">To:</label>&nbsp;
-                {selectedAsset && <AssetSymbol info={selectedAsset?.shadow?.info} />}
-              </span>
-            }
-            placeholder="0.0"
-            disabled
-            value={bridgeToAmount}
-          />
-        </div>
+        <TransferDetails />
 
         <SubmitButton
           disabled={validateStatus !== 'success' && !enableApproveButton}
@@ -231,8 +220,6 @@ export const BridgeOperationForm: React.FC = () => {
           allowanceStatus={allowance}
           isloading={isLoading}
         />
-
-        <BridgeReminder />
       </Box>
     </>
   );

@@ -1,4 +1,7 @@
-import { Button, ButtonProps } from 'antd';
+import { Button } from '@mui/material';
+import { ButtonProps } from 'antd';
+import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { ConnectStatus } from 'interfaces/WalletConnector';
 import React from 'react';
 import { AllowanceState } from 'views/Bridge/Ethereum/hooks/useAllowance';
 
@@ -9,10 +12,13 @@ interface SubmitButtonProps extends ButtonProps {
 
 export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   const { isloading, allowanceStatus, ...buttonProps } = props;
+  const { walletConnectStatus } = ForceBridgeContainer.useContainer();
+  const isConnected = walletConnectStatus === ConnectStatus.Connected;
+
   if (!allowanceStatus) {
     return (
-      <Button loading={isloading} {...buttonProps}>
-        Bridge
+      <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }}>
+        {!isConnected ? 'Connect Wallet' : 'Transfer'}
       </Button>
     );
   }
@@ -37,7 +43,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   }
 
   return (
-    <Button loading={isLoading} {...buttonProps}>
+    <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }}>
       {content}
     </Button>
   );

@@ -1,7 +1,7 @@
 #root {
-  background-image: url('../images/cell-pattern-static.webp');
-  height: 100vh;
-  width: 100vw;
+  background: url('../images/cell-pattern-static.webp') center no-repeat fixed;
+  background-size: cover;
+  min-height: 100vh;
   .app-container {
     margin-top: 4rem;
     .MuiContainer-root {

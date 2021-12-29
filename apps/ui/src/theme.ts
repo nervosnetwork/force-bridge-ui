@@ -12,6 +12,7 @@ export const defaultTheme = createTheme({
     },
     text: {
       primary: '#E5E7EB',
+      secondary: '#484D4E',
     },
   },
   typography: {
