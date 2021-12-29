@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const CustomizedAccordion = styled(Accordion)(
   ({ theme }) => `
-    background-color: #232323;
+    background: #232323;
     border-radius: 0.375rem;
 
     ::before {

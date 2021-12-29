@@ -209,13 +209,10 @@ export const BridgeOperationForm: React.FC = () => {
           <Help {...statusOf('recipient')} />
         </div>
 
-        <TransferDetails />
+        {recipient && bridgeFromAmount && <TransferDetails />}
 
         <SubmitButton
           disabled={validateStatus !== 'success' && !enableApproveButton}
-          block
-          type="primary"
-          size="large"
           onClick={formik.submitForm}
           allowanceStatus={allowance}
           isloading={isLoading}

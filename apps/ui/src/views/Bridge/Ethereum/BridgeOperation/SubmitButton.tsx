@@ -1,3 +1,4 @@
+import { SwitchHorizontalIcon } from '@heroicons/react/solid';
 import { Button } from '@mui/material';
 import { ButtonProps } from 'antd';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
@@ -17,7 +18,14 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
 
   if (!allowanceStatus) {
     return (
-      <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }}>
+      <Button
+        variant="contained"
+        color="secondary"
+        startIcon={<SwitchHorizontalIcon />}
+        fullWidth
+        sx={{ marginTop: 5, padding: 2 }}
+        {...buttonProps}
+      >
         {!isConnected ? 'Connect Wallet' : 'Transfer'}
       </Button>
     );
@@ -43,7 +51,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   }
 
   return (
-    <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }}>
+    <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }} {...buttonProps}>
       {content}
     </Button>
   );
