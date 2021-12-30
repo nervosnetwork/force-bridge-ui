@@ -29,8 +29,8 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
           info: {
             ...assetWithInfo.info,
             shadow: assetWithInfo,
-            name: `assetWithInfo.info.name${assetNameConventionPostfix}`,
-            symbol: `assetWithInfo.info.symbol${assetNameConventionPostfix}`,
+            name: `${assetWithInfo.info.name}${assetNameConventionPostfix}`,
+            symbol: `${assetWithInfo.info.symbol}${assetNameConventionPostfix}`,
           },
         });
 
