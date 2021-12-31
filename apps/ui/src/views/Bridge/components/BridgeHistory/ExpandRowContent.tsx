@@ -4,7 +4,7 @@ import React from 'react';
 import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
-import { ForceBridgeContainer } from '../../../../containers/ForceBridgeContainer';
+import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
 interface ExpandRowContentProps {
   record: TransactionWithKey;
@@ -27,13 +27,11 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
         : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${confirmNumber})`;
   }
   const fromTransactionDescription =
-    (record.txSummary.fromAsset.network === 'Nervos' ? '1. burn asset on ' : '1. lock asset on ') +
-    record.txSummary.fromAsset.network +
+    (record.txSummary.fromAsset.network === 'Nervos' ? `1. burn asset on Nervos` : `1. lock asset on ${network}`) +
     confirmStatus;
 
   let toTransactionDescription =
-    (record.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ') +
-    record.txSummary.toAsset.network;
+    record.txSummary.toAsset.network === 'Nervos' ? `2. mint asset on Nervos` : `2. unlock asset on ${network}`;
   if (record.status === BridgeTransactionStatus.Failed) {
     toTransactionDescription = toTransactionDescription + ` (error: ${record.message})`;
   } else if (
