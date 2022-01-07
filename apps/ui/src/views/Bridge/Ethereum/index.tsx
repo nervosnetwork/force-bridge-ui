@@ -1,7 +1,6 @@
 import PWCore, { CHAIN_SPECS, ChainID, EthProvider, PwCollector } from '@lay2/pw-core';
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
-import { ChainIdWarning } from './ChainIdWarning';
 import { useChainId } from './hooks/useChainId';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
@@ -17,7 +16,7 @@ function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbC
 const EthereumBridge: React.FC = () => {
   const chainId = useChainId();
   const { selectedAsset } = useSelectBridgeAsset();
-  const { setWallet, api, wallet, network } = ForceBridgeContainer.useContainer();
+  const { setWallet, api, wallet } = ForceBridgeContainer.useContainer();
   const [confirmNumberConfig, setConfirmNumberConfig] = useState<{
     xchainConfirmNumber: number;
     nervosConfirmNumber: number;
@@ -65,18 +64,19 @@ const EthereumBridge: React.FC = () => {
 
   return (
     <>
-      <ChainIdWarning
-        chainId={
-          network === 'Ethereum'
-            ? Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)
-            : Number(process.env.REACT_APP_BSC_ENABLE_CHAIN_ID)
-        }
-        chainName={
-          network === 'Ethereum'
-            ? process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME
-            : process.env.REACT_APP_BSC_ENABLE_CHAIN_NAME
-        }
-      />
+      {/*<ChainIdWarning*/}
+      {/*  chainId={*/}
+      {/*    network === 'Ethereum'*/}
+      {/*      ? Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)*/}
+      {/*      : Number(process.env.REACT_APP_BSC_ENABLE_CHAIN_ID)*/}
+      {/*  }*/}
+      {/*  chainName={*/}
+      {/*    network === 'Ethereum'*/}
+      {/*      ? process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME*/}
+      {/*      : process.env.REACT_APP_BSC_ENABLE_CHAIN_NAME*/}
+      {/*  }*/}
+      {/*/>*/}
+
       {wallet instanceof EthereumWalletConnector && (
         <div>
           <BridgeOperationForm />
