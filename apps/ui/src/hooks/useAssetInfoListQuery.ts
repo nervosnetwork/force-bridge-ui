@@ -11,7 +11,7 @@ interface UseAssetInfoState {
 
 export function useAssetInfoListQuery(): UseAssetInfoState {
   const { network, api, xchainModule } = ForceBridgeContainer.useContainer();
-  const assetNameConventionPostfix = network.toLowerCase().slice(0, 2);
+  const assetNameConventionPostfix = ` | ${network.toLowerCase().slice(0, 3)}`;
 
   const X = xchainModule.assetModel;
   const query = useQuery(['getAssetAssetWithInfo', { network }], async () => {
