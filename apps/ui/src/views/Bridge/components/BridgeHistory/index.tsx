@@ -44,7 +44,7 @@ interface BridgeHistoryProps {
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { nervosModule } = ForceBridgeContainer.useContainer();
+  const { nervosModule, network } = ForceBridgeContainer.useContainer();
 
   const asset = useMemo(() => {
     const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(props.asset);
@@ -60,7 +60,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       dataIndex: '',
       render: (value, record) => (
         <div style={{ width: '120px' }}>
-          <NetworkIcon network={record.txSummary.fromAsset.network} />
+          <NetworkIcon network={record.txSummary.fromAsset.network === 'Nervos' ? 'Nervos' : network} />
           &nbsp;
           <HumanizeAmount showSymbol asset={record.txSummary.fromAsset} />
         </div>
@@ -72,7 +72,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
       render: (value, record) => (
         <div style={{ width: '120px' }}>
           <div>
-            <NetworkIcon network={record.txSummary.toAsset.network} />
+            <NetworkIcon network={record.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network} />
             &nbsp;
             <HumanizeAmount showSymbol asset={record.txSummary.toAsset} />
             {record.status === BridgeTransactionStatus.Failed && (
