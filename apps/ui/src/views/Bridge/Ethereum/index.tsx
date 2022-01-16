@@ -8,6 +8,8 @@ import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { ConnectorConfig, EthereumWalletConnector } from 'xchain';
+import { useSearchParams } from 'hooks/useSearchParams';
+import { Footer } from 'components/Footer';
 
 function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbChainID'] {
   if (chainId !== 0 && chainId !== 1 && chainId !== 2) {
@@ -63,6 +65,9 @@ const EthereumBridge: React.FC = () => {
     };
   }, [api, setWallet]);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isBridge = searchParams && searchParams[0] === 'isBridge' && searchParams[1] === 'true';
+
   return (
     <EthereumProviderContainer.Provider>
       <ChainIdWarning
@@ -71,14 +76,16 @@ const EthereumBridge: React.FC = () => {
       />
       {wallet instanceof EthereumWalletConnector && (
         <Container maxWidth="sm">
-          <BridgeOperationForm />
-          {/* {selectedAsset && confirmNumberConfig && (
+          {isBridge && <BridgeOperationForm />}
+
+          {!isBridge && confirmNumberConfig && (
             <BridgeHistory
               asset={selectedAsset}
               xchainConfirmNumber={confirmNumberConfig.xchainConfirmNumber}
               nervosConfirmNumber={confirmNumberConfig.nervosConfirmNumber}
             />
-          )} */}
+          )}
+          <Footer />
         </Container>
       )}
     </EthereumProviderContainer.Provider>

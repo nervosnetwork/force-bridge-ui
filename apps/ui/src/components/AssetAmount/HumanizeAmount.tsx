@@ -6,13 +6,6 @@ import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
 import { Typography } from '@mui/material';
 
-const HumanizeAmountWrapper = styled.span`
-  .symbol {
-    color: rgba(0, 0, 0, 0.6);
-    margin-left: 4px;
-  }
-`;
-
 interface HumanizeAmountProps {
   humanize?: HumanizeOptions;
   asset: Partial<AssetType>;
@@ -36,13 +29,11 @@ export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
   const beauty = BeautyAmount.from(asset.amount ?? '0', info?.decimals);
 
   return (
-    <HumanizeAmountWrapper>
-      <Tooltip title={beauty.humanize() + ' ' + info?.symbol}>
-        {showSymbol && <span className="symbol">{info?.symbol}</span>}
-        <Typography color="text.primary" variant="body2" fontWeight={700} marginLeft={1.5}>
-          {beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}
-        </Typography>
-      </Tooltip>
-    </HumanizeAmountWrapper>
+    <Tooltip title={beauty.humanize() + ' ' + info?.symbol}>
+      <Typography color="text.primary" variant="body2" fontWeight={700} marginLeft={1.5}>
+        {beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}
+        {showSymbol && ' ' + info?.symbol}
+      </Typography>
+    </Tooltip>
   );
 };

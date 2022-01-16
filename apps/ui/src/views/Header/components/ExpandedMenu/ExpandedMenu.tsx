@@ -6,6 +6,8 @@ import '../../../../assets/styles/expanded-menu.scss';
 import '../../../../assets/styles/icon-button.scss';
 import logo from '../../logo.png';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
+import { CustomizedExpandedMenu } from './styled';
+import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -57,11 +59,11 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
 
   return (
     <Grow in={isChecked}>
-      <Paper className="expanded-menu" ref={expandedMenuRef}>
+      <CustomizedExpandedMenu ref={expandedMenuRef}>
         <Grid container spacing={2} direction={{ xs: 'column', md: 'row' }}>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <img src={logo} />
-            <IconButton
+            <CustomizedIconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
@@ -70,13 +72,13 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
               onClick={() => setIsChecked(false)}
             >
               <XIcon />
-            </IconButton>
+            </CustomizedIconButton>
           </Box>
           {expandedMenuItems?.map((item) => {
             return ((!smallScreen && item.isDesktop) || smallScreen) && gridItem(item);
           })}
         </Grid>
-      </Paper>
+      </CustomizedExpandedMenu>
     </Grow>
   );
 });

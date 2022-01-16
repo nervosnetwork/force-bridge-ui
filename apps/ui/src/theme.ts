@@ -5,6 +5,7 @@ export const defaultTheme = createTheme({
     mode: 'dark',
     primary: {
       main: '#6b7280',
+      light: '#ffffff',
     },
     secondary: {
       main: '#00CC9B',
@@ -14,15 +15,28 @@ export const defaultTheme = createTheme({
       primary: '#E5E7EB',
       secondary: '#484D4E',
     },
+    info: {
+      main: '#9b18ef',
+    },
   },
   typography: {
     fontFamily: ['Roboto', 'sans-serif'].join(','),
+    h1: {
+      fontSize: 30,
+      fontWeight: 500,
+      color: '#ffffff',
+    },
+    h2: {
+      fontSize: 18,
+      fontWeight: 500,
+    },
     body1: {
       fontSize: 16,
       fontWeight: 500,
     },
     body2: {
       fontSize: 14,
+      fontWeight: 400,
     },
   },
   components: {
@@ -31,6 +45,10 @@ export const defaultTheme = createTheme({
         root: {
           fontSize: 16,
           borderRadius: '0.375rem',
+          ':disabled': {
+            color: '#000000',
+            backgroundColor: '#484d4e',
+          },
         },
         outlined: {
           color: '#ffffff',

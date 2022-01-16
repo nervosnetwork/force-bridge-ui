@@ -9,6 +9,7 @@ import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 import nervoslogo from '../../assets/images/nervos-logo-mark.jpg';
 import ethereumlogo from '../../assets/images/ethereum-logo.png';
 import '../../assets/styles/switcher.scss';
+import { Switcher } from './styled';
 
 interface NetworkDirectionSelectorProps {
   networks: string[];
@@ -31,27 +32,30 @@ export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> =
   ]);
 
   return (
-    <Grid container justifyContent="center" className="switcher">
-      <Grid item order={1} onClick={() => onSelect({ direction: BridgeDirection.In, network: 'Ethereum' })}>
-        <div className="bg-gradient">
-          <Avatar alt="Remy Sharp" src={nervoslogo} />
-        </div>
-        <Button variant="contained" size="small">
-          {selected.to}
-        </Button>
+    <Switcher>
+      <Grid container justifyContent="center">
+        <Grid item order={1} onClick={() => onSelect({ direction: BridgeDirection.In, network: 'Ethereum' })}>
+          <div className="bg-gradient">
+            <Avatar alt="Remy Sharp" src={nervoslogo} />
+          </div>
+          <Button variant="contained" size="small">
+            {selected.to}
+          </Button>
+        </Grid>
+        <Grid item order={2}>
+          <ChevronDoubleRightIcon />
+        </Grid>
+        <Grid item order={3} onClick={() => onSelect({ direction: BridgeDirection.Out, network: 'Ethereum' })}>
+          <div className="bg-gradient">
+            <Avatar alt="Remy Sharp" src={ethereumlogo} />
+          </div>
+          <Button variant="contained" size="small">
+            {selected.from}
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item order={2}>
-        <ChevronDoubleRightIcon />
-      </Grid>
-      <Grid item order={3} onClick={() => onSelect({ direction: BridgeDirection.Out, network: 'Ethereum' })}>
-        <div className="bg-gradient">
-          <Avatar alt="Remy Sharp" src={ethereumlogo} />
-        </div>
-        <Button variant="contained" size="small">
-          {selected.from}
-        </Button>
-      </Grid>
-    </Grid>
+    </Switcher>
+
     // <Dropdown trigger={['click']} overlay={directionsElem}>
     //   <LinearGradientButton block type="primary">
     //     {selectedItem}asd

@@ -13,7 +13,6 @@ export const BindNetworkDirectionWithRoute: React.FC = () => {
   // first time
   useMount(() => {
     const { fromNetwork, toNetwork } = match.params;
-    console.log(toNetwork, fromNetwork);
     if (!fromNetwork || !toNetwork) return;
 
     if (fromNetwork === NERVOS_NETWORK && bridge.supportedNetworks.includes(toNetwork)) {

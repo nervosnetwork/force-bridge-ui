@@ -57,7 +57,6 @@ export const ForceBridgeContainer = createContainer<ForceBridgeState>(() => {
 
   const switchBridgeDirection = useCallback(
     (nextDirection: BridgeDirection = direction === BridgeDirection.In ? BridgeDirection.Out : BridgeDirection.In) => {
-      console.log(direction);
       setDirection(nextDirection);
     },
     [direction, setDirection],

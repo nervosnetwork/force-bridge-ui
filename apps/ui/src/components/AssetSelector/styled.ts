@@ -1,9 +1,8 @@
-import { Select } from '@mui/material';
-import styled from 'styled-components';
+import { Select, styled } from '@mui/material';
 
 export const CustomizedSelect = styled(Select)(
   ({ theme }) => `
-    background-color: #232323;
+    background-color: ${theme.palette.secondary.light};
     border: none;
     border-radius: 0.375rem;
     transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);

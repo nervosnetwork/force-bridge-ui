@@ -27,19 +27,21 @@ import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
-import { NetworkDirectionSelector } from 'views/Header/NetworkDirectionSelector';
+import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import '../../../../assets/styles/transfer.scss';
 import { CustomizedSelect } from '../../../../components/AssetSelector/styled';
 import { TransferDetails } from 'components/TransferDetails';
-
-const HelpWrapper = styled(Typography)`
-  padding-left: 8px;
-`;
+import { ForceBridgeLogo, Transfer } from './styled';
+import { ConnectStatus } from 'interfaces/WalletConnector';
 
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
-  return <HelpWrapper type="danger">{help}</HelpWrapper>;
+  return (
+    <Typography variant="body2" color="info.main" marginTop={1}>
+      {help}
+    </Typography>
+  );
 };
 
 export const BridgeOperationForm: React.FC = () => {
@@ -83,6 +85,9 @@ export const BridgeOperationForm: React.FC = () => {
     setRecipient,
     recipient,
   } = BridgeOperationFormContainer.useContainer();
+
+  const { walletConnectStatus } = ForceBridgeContainer.useContainer();
+  const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   const allowance = useAllowance(selectedAsset);
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
@@ -151,8 +156,8 @@ export const BridgeOperationForm: React.FC = () => {
 
   return (
     <>
-      <img src={forcebridge} />
-      <Box className="transfer">
+      <ForceBridgeLogo src={forcebridge} />
+      <Transfer>
         <NetworkDirectionSelector
           networks={supportedNetworks}
           network={network}
@@ -179,7 +184,8 @@ export const BridgeOperationForm: React.FC = () => {
           value={bridgeFromAmount}
           onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={'Amount'}
-          extra={
+          error={statusOf('bridgeInInputAmount').validateStatus === 'error'}
+          endAdornment={
             selectedAsset && (
               <Button
                 variant="contained"
@@ -202,7 +208,8 @@ export const BridgeOperationForm: React.FC = () => {
             id="recipient"
             name="recipient"
             onBlur={formik.handleBlur}
-            label={<span className="label">To ETH Address:</span>}
+            label={'To ETH Address'}
+            error={statusOf('recipient').validateStatus === 'error'}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
@@ -212,12 +219,12 @@ export const BridgeOperationForm: React.FC = () => {
         {recipient && bridgeFromAmount && <TransferDetails />}
 
         <SubmitButton
-          disabled={validateStatus !== 'success' && !enableApproveButton}
+          disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
           onClick={formik.submitForm}
           allowanceStatus={allowance}
           isloading={isLoading}
         />
-      </Box>
+      </Transfer>
     </>
   );
 };
