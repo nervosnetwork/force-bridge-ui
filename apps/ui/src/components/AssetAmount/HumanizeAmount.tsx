@@ -30,7 +30,7 @@ export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
 
   return (
     <Tooltip title={beauty.humanize() + ' ' + info?.symbol}>
-      <Typography color="text.primary" variant="body2" fontWeight={700} marginLeft={1.5}>
+      <Typography color="primary.light" variant="body2" fontWeight={400} marginLeft={1.5}>
         {beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}
         {showSymbol && ' ' + info?.symbol}
       </Typography>

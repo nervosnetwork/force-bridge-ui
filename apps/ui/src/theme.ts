@@ -61,5 +61,12 @@ export const defaultTheme = createTheme({
         },
       },
     },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: 'rgba(72,77,78,0.4)',
+        },
+      },
+    },
   },
 });

@@ -17,16 +17,6 @@ export const History = styled(Box)(
       }
       .MuiGrid-item {
         padding:0 0.5rem;
-        .MuiAvatar-root {
-          width:32px;
-          height: 32px;
-        }
-        .MuiBox-root {
-          .MuiAvatar-root {
-            width:20px;
-            height: 20px;
-          }
-        }
       }
     }
     

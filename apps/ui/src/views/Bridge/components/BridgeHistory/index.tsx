@@ -5,12 +5,11 @@ import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { History } from './styled';
-import { Avatar, Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import { CheckCircleIcon, ChevronDoubleRightIcon, ClockIcon, SwitchHorizontalIcon } from '@heroicons/react/solid';
 import { useHistory, useLocation } from 'react-router-dom';
-import ethSmallLogo from '../../../../assets/images/eth-small-logo.png';
-import ckbSmallLogo from '../../../../assets/images/ckb-small-logo.png';
 import moment from 'moment';
+import { AssetLogo } from 'components/AssetLogo';
 
 interface BridgeHistoryProps {
   asset: Asset;
@@ -31,7 +30,6 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   }, [nervosModule.assetModel, props.asset]);
 
   const transactionSummaries = useQueryWithCache(asset);
-  console.log(transactionSummaries);
   const setParams = (isBridge: string) => {
     const params = new URLSearchParams(location.search);
     params.set('isBridge', isBridge);
@@ -61,19 +59,6 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     },
   });
 
-  const getAssetLogo = (network: string) => {
-    let result;
-    switch (network) {
-      case 'Ethereum':
-        result = <Avatar alt="Remy Sharp" src={ethSmallLogo} />;
-        break;
-      case 'Nervos':
-        result = <Avatar alt="Remy Sharp" src={ckbSmallLogo} sx={{ bgcolor: '#ffffff' }} />;
-        break;
-    }
-    return result;
-  };
-
   const getStatusIcon = (status: BridgeTransactionStatus) => {
     let result;
     switch (status) {
@@ -95,9 +80,9 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
           transactionSummaries?.map((item) => (
             <Grid container key={item.txSummary.fromTransaction.txId}>
               <Grid item xs display="flex">
-                {getAssetLogo(item.txSummary.fromAsset.network)}
+                <AssetLogo sx={{ width: 32, height: 32 }} network={item.txSummary.fromAsset.network} />
                 <ChevronDoubleRightIcon />
-                {getAssetLogo(item.txSummary.toAsset.network)}
+                <AssetLogo sx={{ width: 32, height: 32 }} network={item.txSummary.toAsset.network} />
               </Grid>
               <Grid item xs={6}>
                 <Box display="flex">
@@ -107,7 +92,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                   <Typography color="primary.light">{formatAddress(item.txSummary.toAsset.ident)}</Typography>
                 </Box>
                 <Box display="flex">
-                  {getAssetLogo(item.txSummary.toAsset.network)}{' '}
+                  <AssetLogo sx={{ width: 20, height: 20 }} network={item.txSummary.fromAsset.network} />{' '}
                   <HumanizeAmount showSymbol asset={item.txSummary.toAsset} />
                 </Box>
               </Grid>

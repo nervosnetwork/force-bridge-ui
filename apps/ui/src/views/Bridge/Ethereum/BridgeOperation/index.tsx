@@ -1,27 +1,19 @@
 import Icon from '@ant-design/icons';
 import { Divider, Row, Spin } from 'antd';
 import { useFormik } from 'formik';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
-import { BridgeReminder } from './BridgeReminder';
-import { RecipientButton } from './RecipientButton';
 import { SubmitButton } from './SubmitButton';
-import { ReactComponent as BridgeDirectionIcon } from './resources/icon-bridge-direction.svg';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
-import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetSelector } from 'components/AssetSelector';
-import { AssetSymbol } from 'components/AssetSymbol';
-import { StyledCardWrapper } from 'components/Styled';
 import { UserInput } from 'components/UserInput';
-import { WalletConnectorButton } from 'components/WalletConnector';
-import { Box, Button, MenuItem, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
-import { useBridgeFeeQuery, useValidateBridgeOperationForm, ValidateResult } from 'hooks/bridge-operation';
+import { useValidateBridgeOperationForm, ValidateResult } from 'hooks/bridge-operation';
 import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
@@ -30,10 +22,10 @@ import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransa
 import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import '../../../../assets/styles/transfer.scss';
-import { CustomizedSelect } from '../../../../components/AssetSelector/styled';
-import { TransferDetails } from 'components/TransferDetails';
 import { ForceBridgeLogo, Transfer } from './styled';
 import { ConnectStatus } from 'interfaces/WalletConnector';
+import { TransferModal } from 'components/TransferModal';
+import { TransferAccordion } from 'components/TransferAccordion';
 
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
@@ -64,7 +56,6 @@ export const BridgeOperationForm: React.FC = () => {
   const initRecipient = searchParams.get('recipient');
   const initAmount = searchParams.get('amount');
 
-  const feeQuery = useBridgeFeeQuery();
   const { validate, status: validateStatus, reset, result: errors } = useValidateBridgeOperationForm();
 
   useEffect(() => {
@@ -79,8 +70,8 @@ export const BridgeOperationForm: React.FC = () => {
   });
 
   const {
-    bridgeToAmount,
     bridgeFromAmount,
+    bridgeToAmount,
     setBridgeFromAmount,
     setRecipient,
     recipient,
@@ -154,6 +145,15 @@ export const BridgeOperationForm: React.FC = () => {
     return { help, validateStatus: status };
   };
 
+  const [open, setOpen] = useState<boolean>(false);
+  const handleClose = () => setOpen(false);
+
+  const submitForm = () => {
+    setOpen(true);
+    // formik.submitForm;
+  };
+  console.log(searchParams);
+
   return (
     <>
       <ForceBridgeLogo src={forcebridge} />
@@ -216,15 +216,16 @@ export const BridgeOperationForm: React.FC = () => {
           <Help {...statusOf('recipient')} />
         </div>
 
-        {recipient && bridgeFromAmount && <TransferDetails />}
+        {recipient && bridgeFromAmount && selectedAsset && <TransferAccordion selectedAsset={selectedAsset} />}
 
         <SubmitButton
           disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
-          onClick={formik.submitForm}
+          onClick={() => submitForm()}
           allowanceStatus={allowance}
           isloading={isLoading}
         />
       </Transfer>
+      {selectedAsset && <TransferModal open={open} onClose={handleClose} selectedAsset={selectedAsset} />}
     </>
   );
 };
