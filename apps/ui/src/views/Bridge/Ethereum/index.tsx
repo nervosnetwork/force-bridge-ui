@@ -65,7 +65,7 @@ const EthereumBridge: React.FC = () => {
     };
   }, [api, setWallet]);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const isBridge = searchParams && searchParams[0] === 'isBridge' && searchParams[1] === 'true';
 
   return (

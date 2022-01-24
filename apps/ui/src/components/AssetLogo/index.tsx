@@ -1,7 +1,7 @@
-import { Avatar, AvatarProps } from '@mui/material';
+import { AvatarProps } from '@mui/material';
 import React from 'react';
-import ethSmallLogo from '../../assets/images/eth-small-logo.png';
 import ckbSmallLogo from '../../assets/images/ckb-small-logo.png';
+import ethSmallLogo from '../../assets/images/eth-small-logo.png';
 import { CustomizedAvatar } from './styled';
 
 export interface AssetLogoProps extends AvatarProps {

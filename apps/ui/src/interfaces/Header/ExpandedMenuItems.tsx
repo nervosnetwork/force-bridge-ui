@@ -10,8 +10,8 @@ import { SvgIconProps } from '@mui/material';
 export interface IMenuItems {
   name: string;
   description: string;
-  href: string;
-  target: string;
+  href?: string;
+  target?: string;
   icon: React.ReactElement<SvgIconProps>;
   isDesktop: boolean;
 }
@@ -44,16 +44,12 @@ export const expandedMenuItems = [
   {
     name: 'Transfer',
     description: 'View the Force Bridge codebase',
-    href: 'https://github.com/nervosnetwork/force-bridge',
-    target: '_blank',
     icon: <SwitchHorizontalIcon />,
     isDesktop: false,
   },
   {
     name: 'History',
     description: 'Learn more about Nervos',
-    href: 'https://www.nervos.org/about/',
-    target: '_blank',
     icon: <ClockIcon />,
     isDesktop: false,
   },

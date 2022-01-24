@@ -1,15 +1,10 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import { Dropdown, Menu } from 'antd';
-import React, { useMemo } from 'react';
-import { NetworkDirection } from 'components/Network';
-import { LinearGradientButton } from 'components/Styled';
+import React from 'react';
 import { BridgeDirection } from 'containers/ForceBridgeContainer';
-import { Avatar, Button, Grid } from '@mui/material';
+import { Button, Menu, Typography } from '@mui/material';
+import { NetworkDirectionMenu, NetworkItem } from './styled';
+import { AssetLogo } from 'components/AssetLogo';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
-import nervoslogo from '../../assets/images/nervos-logo-mark.jpg';
-import ethereumlogo from '../../assets/images/ethereum-logo.png';
-import '../../assets/styles/switcher.scss';
-import { Switcher } from './styled';
 
 interface NetworkDirectionSelectorProps {
   networks: string[];
@@ -19,47 +14,58 @@ interface NetworkDirectionSelectorProps {
 }
 
 export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> = (props) => {
-  const { network, direction, networks, onSelect } = props;
+  const { networks, onSelect } = props;
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-  const selected = useMemo(() => {
-    if (direction === BridgeDirection.In) return { from: network, to: NERVOS_NETWORK };
-    return { from: NERVOS_NETWORK, to: network };
-  }, [direction, network]);
+  const handleMenuItemClick = (item: NetworkDirectionSelectorProps) => {
+    onSelect({ direction: item.direction, network: item.network });
+    setAnchorEl(null);
+  };
 
-  const switcherItems = networks.flatMap((network) => [
+  const directionItems = networks.flatMap((network) => [
     { key: network + '-' + NERVOS_NETWORK, network, direction: BridgeDirection.In, from: network, to: NERVOS_NETWORK },
     { key: NERVOS_NETWORK + '-' + network, network, direction: BridgeDirection.Out, from: NERVOS_NETWORK, to: network },
   ]);
 
   return (
-    <Switcher>
-      <Grid container justifyContent="center">
-        <Grid item order={1} onClick={() => onSelect({ direction: BridgeDirection.In, network: 'Ethereum' })}>
-          <div className="bg-gradient">
-            <Avatar alt="Remy Sharp" src={nervoslogo} />
-          </div>
-          <Button variant="contained" size="small">
-            {selected.to}
-          </Button>
-        </Grid>
-        <Grid item order={2}>
-          <ChevronDoubleRightIcon />
-        </Grid>
-        <Grid item order={3} onClick={() => onSelect({ direction: BridgeDirection.Out, network: 'Ethereum' })}>
-          <div className="bg-gradient">
-            <Avatar alt="Remy Sharp" src={ethereumlogo} />
-          </div>
-          <Button variant="contained" size="small">
-            {selected.from}
-          </Button>
-        </Grid>
-      </Grid>
-    </Switcher>
-
-    // <Dropdown trigger={['click']} overlay={directionsElem}>
-    //   <LinearGradientButton block type="primary">
-    //     {selectedItem}asd
-    //   </LinearGradientButton>
-    // </Dropdown>
+    <NetworkDirectionMenu>
+      <Button
+        id="basic-button"
+        variant="contained"
+        color="secondary"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        Change network direction
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {directionItems.map((item) => (
+          <NetworkItem key={item.key} onClick={() => handleMenuItemClick(item)}>
+            <AssetLogo sx={{ width: 20, height: 20 }} network={item.from} />
+            <Typography>{item.from}</Typography>
+            <ChevronDoubleRightIcon />
+            <AssetLogo sx={{ width: 20, height: 20 }} network={item.to} />
+            <Typography>{item.to}</Typography>
+          </NetworkItem>
+        ))}
+      </Menu>
+    </NetworkDirectionMenu>
   );
 };

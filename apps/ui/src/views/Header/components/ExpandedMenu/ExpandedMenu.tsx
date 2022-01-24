@@ -1,15 +1,17 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import { Grow, Paper, Grid, Typography, Link, IconButton, Box, useTheme, useMediaQuery } from '@mui/material';
+import { Grow, Grid, Typography, Link, Box, useTheme, useMediaQuery } from '@mui/material';
 import { XIcon } from '@heroicons/react/outline';
 import { IMenuItems, expandedMenuItems } from '../../../../interfaces/Header/ExpandedMenuItems';
-import '../../../../assets/styles/expanded-menu.scss';
-import '../../../../assets/styles/icon-button.scss';
 import logo from '../../logo.png';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedExpandedMenu } from './styled';
 import { CustomizedIconButton } from 'shared-styled/styled';
 
-export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
+interface ExpandedMenuProps {
+  handleMenuItemClick(item: string): void;
+}
+
+export const ExpandedMenu = forwardRef<CanOpenExpandedMenu, ExpandedMenuProps>((props, ref) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const expandedMenuRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
@@ -36,6 +38,11 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
     setIsChecked((prev) => !prev);
   };
 
+  const handleMobileMenuClick = (name: string) => {
+    props.handleMenuItemClick(name);
+    setIsChecked(false);
+  };
+
   const gridItem = (item: IMenuItems) => {
     return (
       <Grid
@@ -43,9 +50,12 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu>((props, ref) => {
         item
         xs={3}
         component={Link}
+        href={item.href}
+        target={item.target}
         color="inherit"
         underline="none"
         sx={{ display: { xs: item.name && 'flex', md: 'block' } }}
+        onClick={() => handleMobileMenuClick(item.name)}
       >
         <span className="item-icon">{item.icon}</span>
         <Typography> {item.name}</Typography>

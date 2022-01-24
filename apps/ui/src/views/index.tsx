@@ -5,7 +5,6 @@ import { Route, useHistory, useLocation } from 'react-router-dom';
 import { AppHeader } from './Header';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeView } from 'views/Bridge';
-import '../assets/styles/app-container.scss';
 import { AppContainer } from './styled';
 
 BigNumber.set({ EXPONENTIAL_AT: 99 });

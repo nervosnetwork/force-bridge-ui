@@ -1,26 +1,20 @@
 import { Asset } from '@force-bridge/commons';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 import { Box, Button, DialogActions, DialogContent, DialogProps, Divider, Grid, Typography } from '@mui/material';
-import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetLogo } from 'components/AssetLogo';
 import { TransferDetails } from 'components/TransferDetails';
-import { useBridgeFeeQuery } from 'hooks/bridge-operation';
 import React from 'react';
-import { CustomizedDialog, LoadingAnimation } from './styled';
-import load from '../../assets/images/load.gif';
-import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
+import { CustomizedDialog } from './styled';
 
 interface TransferDialogProps extends DialogProps {
   selectedAsset: Asset;
+  submitForm(): void;
+  onClose(): void;
 }
 
 export const TransferModal: React.FC<TransferDialogProps> = (props) => {
-  const { selectedAsset, ...modalProps } = props;
-  const { recipient } = BridgeOperationFormContainer.useContainer();
-
-  const formatAddress = (address: string) => {
-    return `${address.substring(0, 5)}...${address.substring(address.length - 5)}`;
-  };
+  const { selectedAsset, submitForm, onClose, ...modalProps } = props;
+  // const { recipient } = BridgeOperationFormContainer.useContainer();
 
   return (
     <CustomizedDialog {...modalProps} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
@@ -38,10 +32,10 @@ export const TransferModal: React.FC<TransferDialogProps> = (props) => {
       </DialogContent>
       <TransferDetails selectedAsset={selectedAsset} />
       <DialogActions>
-        <Button variant="contained" fullWidth onClick={() => props.onClose}>
+        <Button variant="contained" fullWidth onClick={() => onClose()}>
           Cancel
         </Button>
-        <Button variant="contained" color="secondary" fullWidth>
+        <Button variant="contained" color="secondary" fullWidth onClick={() => submitForm()}>
           Confirm
         </Button>
       </DialogActions>

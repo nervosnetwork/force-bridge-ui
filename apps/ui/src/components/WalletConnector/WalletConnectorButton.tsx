@@ -35,8 +35,6 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
     wallet?.connect();
   }
 
-  const connecting =
-    walletConnectStatus === ConnectStatus.Connecting || (walletConnectStatus === ConnectStatus.Connected && !signer);
   const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   return (

@@ -1,33 +1,14 @@
 import React, { useRef } from 'react';
 import { WalletConnectorButton } from 'components/WalletConnector';
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  IconButton,
-  Typography,
-  Container,
-  Link,
-  Button,
-  ListItem,
-  Grid,
-  MenuList,
-  MenuItem,
-} from '@mui/material';
-import { MenuIcon, SwitchHorizontalIcon } from '@heroicons/react/outline';
+import { Box, Toolbar, Container, MenuList, MenuItem } from '@mui/material';
+import { MenuIcon } from '@heroicons/react/outline';
 import logo from './logo.png';
-import '../../assets/styles/app-bar.scss';
-import '../../assets/styles/icon-button.scss';
 import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { menuItems } from 'interfaces/Header/MenuItems';
 import { CustomizedAppBar } from './styled';
 import { CustomizedIconButton } from 'shared-styled/styled';
-import { Link as RouterLink, LinkProps, useHistory, useLocation } from 'react-router-dom';
-
-const LinkBehavior = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => (
-  <RouterLink ref={ref} {...props} />
-));
+import { useHistory, useLocation } from 'react-router-dom';
 
 export const AppHeader: React.FC = () => {
   const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
@@ -44,15 +25,16 @@ export const AppHeader: React.FC = () => {
     history.replace({ search: params.toString() });
   };
 
-  const handleMenuItemClick = (index: number) => {
-    switch (index) {
-      case 0:
+  const handleMenuItemClick = (item: string) => {
+    console.log(item);
+    switch (item) {
+      case 'Transfer':
         setParams('true');
         break;
-      case 1:
+      case 'History':
         setParams('false');
         break;
-      case 2:
+      case 'More':
         expandedMenuRef.current?.openExpandedMenu();
         break;
     }
@@ -67,40 +49,12 @@ export const AppHeader: React.FC = () => {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               <MenuList>
                 {menuItems.map((item, index) => (
-                  <MenuItem onClick={() => handleMenuItemClick(index)}>
+                  <MenuItem onClick={() => handleMenuItemClick(item.name)}>
                     {item.icon}
                     {item.name}
                   </MenuItem>
                 ))}
               </MenuList>
-
-              {/* <MenuItem onClick={() => setParams('false')}>
-                <Typography textAlign="center">History</Typography>
-              </MenuItem> */}
-              {/* <Button color="primary" component={LinkBehavior} underline="none" to="asdas">
-                <SwitchHorizontalIcon />
-                <Typography textAlign="center">Transfer</Typography>
-              </Button> */}
-              {/* <Link
-                color="primary"
-                onClick={() => handleOpenExpandedMenu(index)}
-                component={LinkBehavior}
-                underline="none"
-                to={page.path}
-              >
-                {page.icon}
-                <Typography textAlign="center">{page.name}</Typography>
-              </Link>
-              <Link
-                color="primary"
-                onClick={() => handleOpenExpandedMenu(index)}
-                component={LinkBehavior}
-                underline="none"
-                to={page.path}
-              >
-                {page.icon}
-                <Typography textAlign="center">{page.name}</Typography>
-              </Link> */}
             </Box>
 
             <Box sx={{ flexGrow: 1 }}>
@@ -122,7 +76,7 @@ export const AppHeader: React.FC = () => {
           </Toolbar>
         </Container>
       </CustomizedAppBar>
-      <ExpandedMenu ref={expandedMenuRef} />
+      <ExpandedMenu ref={expandedMenuRef} handleMenuItemClick={handleMenuItemClick} />
     </>
   );
 };

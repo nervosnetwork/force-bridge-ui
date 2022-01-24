@@ -1,10 +1,9 @@
 import { AssetType } from '@force-bridge/commons';
+import { Typography } from '@mui/material';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
 import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
-import { Typography } from '@mui/material';
 
 interface HumanizeAmountProps {
   humanize?: HumanizeOptions;

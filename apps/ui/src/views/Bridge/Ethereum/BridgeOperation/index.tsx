@@ -1,5 +1,3 @@
-import Icon from '@ant-design/icons';
-import { Divider, Row, Spin } from 'antd';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -19,13 +17,13 @@ import { useSearchParams } from 'hooks/useSearchParams';
 import { BeautyAmount } from 'libs';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
-import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
-import '../../../../assets/styles/transfer.scss';
 import { ForceBridgeLogo, Transfer } from './styled';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { TransferModal } from 'components/TransferModal';
 import { TransferAccordion } from 'components/TransferAccordion';
+import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
+import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview/NetworkDirectionPreview';
 
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
@@ -89,6 +87,7 @@ export const BridgeOperationForm: React.FC = () => {
 
   function resetForm() {
     reset();
+    console.log('reset');
     if (!signer) return;
 
     if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
@@ -109,6 +108,7 @@ export const BridgeOperationForm: React.FC = () => {
       asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
       sendBridgeTransaction({ asset, recipient }).then(resetForm);
     }
+    setParams('false');
   }
 
   const assetList = useMemo(() => {
@@ -148,17 +148,34 @@ export const BridgeOperationForm: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const handleClose = () => setOpen(false);
 
-  const submitForm = () => {
-    setOpen(true);
-    // formik.submitForm;
+  const setParams = (isBridge: string) => {
+    const params = new URLSearchParams(location.search);
+    params.set('isBridge', isBridge);
+    history.replace({ search: params.toString() });
   };
-  console.log(searchParams);
+
+  const submitForm = () => {
+    formik.submitForm();
+  };
+
+  const openDialog = () => {
+    setOpen(true);
+  };
 
   return (
     <>
       <ForceBridgeLogo src={forcebridge} />
       <Transfer>
         <NetworkDirectionSelector
+          networks={supportedNetworks}
+          network={network}
+          direction={direction}
+          onSelect={({ network, direction }) => {
+            switchNetwork(network);
+            switchBridgeDirection(direction);
+          }}
+        />
+        <NetworkDirectionPreview
           networks={supportedNetworks}
           network={network}
           direction={direction}
@@ -201,8 +218,6 @@ export const BridgeOperationForm: React.FC = () => {
         />
         <Help {...statusOf('bridgeInInputAmount')} />
 
-        <Divider dashed style={{ margin: 0, padding: 0 }} />
-
         <div className="input-wrapper">
           <UserInput
             id="recipient"
@@ -220,12 +235,14 @@ export const BridgeOperationForm: React.FC = () => {
 
         <SubmitButton
           disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
-          onClick={() => submitForm()}
+          onClick={() => openDialog()}
           allowanceStatus={allowance}
           isloading={isLoading}
         />
       </Transfer>
-      {selectedAsset && <TransferModal open={open} onClose={handleClose} selectedAsset={selectedAsset} />}
+      {selectedAsset && (
+        <TransferModal open={open} onClose={handleClose} submitForm={submitForm} selectedAsset={selectedAsset} />
+      )}
     </>
   );
 };
