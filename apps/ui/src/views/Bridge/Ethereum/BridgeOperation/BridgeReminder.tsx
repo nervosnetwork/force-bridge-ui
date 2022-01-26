@@ -1,5 +1,5 @@
-import { AlertOutlined, LoadingOutlined, FrownOutlined } from '@ant-design/icons';
-import { Typography, Space } from 'antd';
+import { AlertOutlined, FrownOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Space, Typography } from 'antd';
 import React from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';

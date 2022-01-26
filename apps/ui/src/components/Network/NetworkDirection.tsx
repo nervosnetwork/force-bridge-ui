@@ -1,11 +1,11 @@
 import { ArrowRightOutlined } from '@ant-design/icons';
+import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { Typography } from '@mui/material';
 import { Col, Row } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
-import { NetworkIcon } from 'components/Network/NetworkIcon';
 import { AssetLogo } from 'components/AssetLogo';
-import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
-import { Typography } from '@mui/material';
+import { NetworkIcon } from 'components/Network/NetworkIcon';
 
 export interface NetworkDirectionProps {
   from: string;

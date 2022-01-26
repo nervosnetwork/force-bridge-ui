@@ -1,22 +1,23 @@
 import { Asset } from '@force-bridge/commons';
 import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { CheckCircleIcon, ChevronDoubleRightIcon, ClockIcon, SwitchHorizontalIcon } from '@heroicons/react/solid';
+import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
+
+import dayjs from 'dayjs';
+import moment from 'moment';
 import React, { useMemo } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+import { ExpandRowContent } from './ExpandRowContent';
+import { History } from './styled';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
-import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
-import { History } from './styled';
-import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
-import { CheckCircleIcon, ChevronDoubleRightIcon, ClockIcon, SwitchHorizontalIcon } from '@heroicons/react/solid';
-import { useHistory, useLocation } from 'react-router-dom';
-import moment from 'moment';
 import { AssetLogo } from 'components/AssetLogo';
-import { ConnectStatus } from 'interfaces/WalletConnector';
 import { AssetSelector } from 'components/AssetSelector';
+import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useAssetQuery } from 'hooks/useAssetQuery';
-import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
-import dayjs from 'dayjs';
-import { ExpandRowContent } from './ExpandRowContent';
+import { ConnectStatus } from 'interfaces/WalletConnector';
 import { formatAddress } from 'utils';
+import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 
 interface BridgeHistoryProps {
   asset?: Asset;
@@ -88,7 +89,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     <>
       <Typography variant="h1">History</Typography>
       <History textAlign="center">
-        {asset ? (
+        {asset && transactionSummaries?.length ? (
           transactionSummaries?.map((item, index) => (
             <>
               <Grid container key={item.txSummary.fromTransaction.txId}>
@@ -140,13 +141,14 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
             {isConnected ? (
               <>
                 <Typography variant="h2" color="text.secondary" marginTop={18}>
-                  Please select an asset first.
+                  {selectedAsset ? 'No results' : 'Please select an asset first'}.
                 </Typography>
                 <AssetSelector
                   options={assetList}
                   rowKey={(asset) => asset.identity()}
                   selected={selectedAsset?.identity()}
                   onSelect={(_id, asset) => setSelectedAsset(asset)}
+                  disabled={false}
                 />
               </>
             ) : (

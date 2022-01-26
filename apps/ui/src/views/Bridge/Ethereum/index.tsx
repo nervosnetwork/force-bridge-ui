@@ -1,16 +1,16 @@
 import PWCore, { CHAIN_SPECS, ChainID, EthProvider, PwCollector } from '@lay2/pw-core';
+import Container from '@mui/material/Container';
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
 import { ChainIdWarning } from './ChainIdWarning';
-import Container from '@mui/material/Container';
+import DialogProvider from 'components/ConfirmMessage';
+import { Footer } from 'components/Footer';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { useSearchParams } from 'hooks/useSearchParams';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { ConnectorConfig, EthereumWalletConnector } from 'xchain';
-import { useSearchParams } from 'hooks/useSearchParams';
-import { Footer } from 'components/Footer';
-import DialogProvider from 'components/ConfirmMessage';
 
 function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbChainID'] {
   if (chainId !== 0 && chainId !== 1 && chainId !== 2) {

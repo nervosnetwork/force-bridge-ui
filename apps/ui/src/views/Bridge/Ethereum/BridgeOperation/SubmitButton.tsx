@@ -1,18 +1,16 @@
 import { SwitchHorizontalIcon } from '@heroicons/react/solid';
-import { Button } from '@mui/material';
-import { ButtonProps } from 'antd';
+import { Button, ButtonProps } from '@mui/material';
+import React from 'react';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { ConnectStatus } from 'interfaces/WalletConnector';
-import React from 'react';
 import { AllowanceState } from 'views/Bridge/Ethereum/hooks/useAllowance';
 
 interface SubmitButtonProps extends ButtonProps {
-  isloading: boolean;
   allowanceStatus: AllowanceState | undefined;
 }
 
 export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
-  const { isloading, allowanceStatus, ...buttonProps } = props;
+  const { allowanceStatus, ...buttonProps } = props;
   const { walletConnectStatus } = ForceBridgeContainer.useContainer();
   const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
@@ -31,11 +29,8 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
     );
   }
 
-  let isLoading = false;
   let content;
-  if (allowanceStatus.status === 'Querying' || allowanceStatus.status === 'Approving' || isloading) {
-    isLoading = true;
-  }
+
   switch (allowanceStatus.status) {
     case 'NeedApprove':
       content = 'Approve';

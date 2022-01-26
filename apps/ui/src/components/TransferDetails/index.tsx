@@ -1,10 +1,10 @@
 import { Asset } from '@force-bridge/commons';
 import { Divider, Grid, Typography } from '@mui/material';
+import React from 'react';
+import { Details } from './styled';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { useBridgeFeeQuery } from 'hooks/bridge-operation';
-import React from 'react';
-import { Details } from './styled';
 
 interface TransferDetailsProps {
   selectedAsset: Asset;

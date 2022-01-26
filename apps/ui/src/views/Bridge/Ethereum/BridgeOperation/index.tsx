@@ -1,29 +1,30 @@
+import { Button, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
 import { SubmitButton } from './SubmitButton';
+import { ForceBridgeLogo, Transfer } from './styled';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
 import { AssetSelector } from 'components/AssetSelector';
+
+import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview/NetworkDirectionPreview';
+import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
+import { TransferAccordion } from 'components/TransferAccordion';
+import { TransferModal } from 'components/TransferModal';
 import { UserInput } from 'components/UserInput';
-import { Button, Typography } from '@mui/material';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
 import { useValidateBridgeOperationForm, ValidateResult } from 'hooks/bridge-operation';
 import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useSearchParams } from 'hooks/useSearchParams';
+import { ConnectStatus } from 'interfaces/WalletConnector';
 import { BeautyAmount } from 'libs';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { useSendBridgeTransaction } from 'views/Bridge/hooks/useSendBridgeTransaction';
-import forcebridge from '../../../../assets/images/forcebridge-white.png';
-import { ForceBridgeLogo, Transfer } from './styled';
-import { ConnectStatus } from 'interfaces/WalletConnector';
-import { TransferModal } from 'components/TransferModal';
-import { TransferAccordion } from 'components/TransferAccordion';
-import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
-import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview/NetworkDirectionPreview';
 
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
@@ -80,14 +81,12 @@ export const BridgeOperationForm: React.FC = () => {
   const allowance = useAllowance(selectedAsset);
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
 
-  const { mutateAsync: sendBridgeTransaction, isLoading: isBridgeLoading } = useSendBridgeTransaction();
-  const { mutateAsync: sendApproveTransaction, isLoading: isApproveLoading } = useApproveTransaction();
-  const isLoading = isBridgeLoading || isApproveLoading;
+  const { mutateAsync: sendBridgeTransaction } = useSendBridgeTransaction();
+  const { mutateAsync: sendApproveTransaction } = useApproveTransaction();
   const [loadingDialog, setLoadingDialog] = useState<boolean>(false);
 
   function resetForm() {
     reset();
-    console.log('reset');
     if (!signer) return;
 
     if (direction === BridgeDirection.In) setRecipient(signer.identityNervos());
@@ -191,6 +190,7 @@ export const BridgeOperationForm: React.FC = () => {
             rowKey={(asset) => asset.identity()}
             selected={selectedAsset?.identity()}
             onSelect={(_id, asset) => setSelectedAsset(asset)}
+            disabled={!isConnected}
           />
         </div>
 
@@ -227,6 +227,7 @@ export const BridgeOperationForm: React.FC = () => {
             error={statusOf('recipient').validateStatus === 'error'}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
+            disabled={selectedAsset == null || signer == null}
           />
           <Help {...statusOf('recipient')} />
         </div>
@@ -237,7 +238,6 @@ export const BridgeOperationForm: React.FC = () => {
           disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
           onClick={() => openDialog()}
           allowanceStatus={allowance}
-          isloading={isLoading}
         />
       </Transfer>
       {selectedAsset && (

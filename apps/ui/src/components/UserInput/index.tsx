@@ -1,5 +1,5 @@
-import React from 'react';
 import { InputBaseProps, Typography } from '@mui/material';
+import React from 'react';
 import { CustomInput } from './styled';
 
 export interface UserInputProps extends InputBaseProps {

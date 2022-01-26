@@ -1,7 +1,7 @@
+import { CashIcon } from '@heroicons/react/solid';
+import { Button } from '@mui/material';
 import { ButtonProps } from 'antd';
 import React, { useMemo } from 'react';
-import { Button } from '@mui/material';
-import { CashIcon } from '@heroicons/react/solid';
 import { UserIdent } from 'components/UserIdent';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useGlobalSetting } from 'hooks/useGlobalSetting';

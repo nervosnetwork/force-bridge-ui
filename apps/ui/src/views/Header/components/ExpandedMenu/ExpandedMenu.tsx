@@ -1,10 +1,10 @@
-import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import { Grow, Grid, Typography, Link, Box, useTheme, useMediaQuery } from '@mui/material';
 import { XIcon } from '@heroicons/react/outline';
-import { IMenuItems, expandedMenuItems } from '../../../../interfaces/Header/ExpandedMenuItems';
+import { Box, Grid, Grow, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { expandedMenuItems, IMenuItems } from '../../../../interfaces/Header/ExpandedMenuItems';
 import logo from '../../logo.png';
-import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedExpandedMenu } from './styled';
+import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedIconButton } from 'shared-styled/styled';
 
 interface ExpandedMenuProps {
@@ -72,7 +72,7 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu, ExpandedMenuProps>((
       <CustomizedExpandedMenu ref={expandedMenuRef}>
         <Grid container spacing={2} direction={{ xs: 'column', md: 'row' }}>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <img src={logo} />
+            <img src={logo} alt="logo" />
             <CustomizedIconButton
               size="large"
               aria-label="account of current user"

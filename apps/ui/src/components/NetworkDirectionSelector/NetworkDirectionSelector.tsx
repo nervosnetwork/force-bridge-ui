@@ -1,15 +1,18 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import React from 'react';
-import { BridgeDirection } from 'containers/ForceBridgeContainer';
+import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 import { Button, Menu, Typography } from '@mui/material';
+import React from 'react';
 import { NetworkDirectionMenu, NetworkItem } from './styled';
 import { AssetLogo } from 'components/AssetLogo';
-import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { BridgeDirection } from 'containers/ForceBridgeContainer';
 
-interface NetworkDirectionSelectorProps {
-  networks: string[];
+interface NetworkDirection {
   network: string;
   direction: BridgeDirection;
+}
+
+interface NetworkDirectionSelectorProps extends NetworkDirection {
+  networks: string[];
   onSelect: (config: { network: string; direction: BridgeDirection }) => void;
 }
 
@@ -24,7 +27,7 @@ export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> =
     setAnchorEl(null);
   };
 
-  const handleMenuItemClick = (item: NetworkDirectionSelectorProps) => {
+  const handleMenuItemClick = (item: NetworkDirection) => {
     onSelect({ direction: item.direction, network: item.network });
     setAnchorEl(null);
   };

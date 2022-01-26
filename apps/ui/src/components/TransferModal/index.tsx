@@ -1,11 +1,11 @@
 import { Asset } from '@force-bridge/commons';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
-import { Box, Button, DialogActions, DialogContent, DialogProps, Divider, Grid, Typography } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, DialogProps, Typography } from '@mui/material';
+import React from 'react';
+import load from '../../assets/images/load.gif';
+import { CustomizedDialog, LoadingAnimation } from './styled';
 import { AssetLogo } from 'components/AssetLogo';
 import { TransferDetails } from 'components/TransferDetails';
-import React from 'react';
-import { CustomizedDialog, LoadingAnimation } from './styled';
-import load from '../../assets/images/load.gif';
 
 interface TransferDialogProps extends DialogProps {
   recipient: string;

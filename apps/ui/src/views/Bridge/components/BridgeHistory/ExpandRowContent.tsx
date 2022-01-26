@@ -1,8 +1,8 @@
 import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionLink } from 'components/TransactionLink';
-import { Typography } from '@mui/material';
 
 interface ExpandRowContentProps {
   record: TransactionSummaryWithStatus;

@@ -4,6 +4,6 @@ export function truncateMiddle(str: string, start: number, end = start): string 
   return str.slice(0, start) + '...' + str.slice(-end);
 }
 
-export const formatAddress = (address: string) => {
+export const formatAddress = (address: string): string => {
   return `${address.substring(0, 5)}...${address.substring(address.length - 5)}`;
 };

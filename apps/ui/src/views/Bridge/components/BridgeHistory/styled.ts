@@ -42,7 +42,7 @@ export const History = styled(Box)(
     }
     .MuiOutlinedInput-root {
       margin-bottom: 144px;
-      width:50%;
+      width:94%;
     }
     @media only screen and (min-width: 768px) {
         & {

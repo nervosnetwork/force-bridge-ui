@@ -81,6 +81,7 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.12.0",
+    "eslint-plugin-import": "^2.25.4",
     "sass": "^1.44.0"
   }
 }

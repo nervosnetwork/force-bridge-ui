@@ -1,14 +1,15 @@
-import React, { useRef } from 'react';
-import { WalletConnectorButton } from 'components/WalletConnector';
-import { Box, Toolbar, Container, MenuList, MenuItem } from '@mui/material';
 import { MenuIcon } from '@heroicons/react/outline';
-import logo from './logo.png';
-import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
-import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
-import { menuItems } from 'interfaces/Header/MenuItems';
-import { CustomizedAppBar } from './styled';
-import { CustomizedIconButton } from 'shared-styled/styled';
+import { Box, Container, MenuItem, MenuList, Toolbar } from '@mui/material';
+import React, { useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+
+import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
+import logo from './logo.png';
+import { CustomizedAppBar } from './styled';
+import { WalletConnectorButton } from 'components/WalletConnector';
+import { menuItems } from 'interfaces/Header/MenuItems';
+import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
+import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const AppHeader: React.FC = () => {
   const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
@@ -26,7 +27,6 @@ export const AppHeader: React.FC = () => {
   };
 
   const handleMenuItemClick = (item: string) => {
-    console.log(item);
     switch (item) {
       case 'Transfer':
         setParams('true');
@@ -45,11 +45,11 @@ export const AppHeader: React.FC = () => {
       <CustomizedAppBar position="fixed" className="app-bar">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
-            <img src={logo} />
+            <img src={logo} alt="logo" />
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               <MenuList>
-                {menuItems.map((item, index) => (
-                  <MenuItem onClick={() => handleMenuItemClick(item.name)}>
+                {menuItems.map((item) => (
+                  <MenuItem key={item.name} onClick={() => handleMenuItemClick(item.name)}>
                     {item.icon}
                     {item.name}
                   </MenuItem>

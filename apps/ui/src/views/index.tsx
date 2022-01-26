@@ -3,9 +3,9 @@ import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
 import { AppHeader } from './Header';
+import { AppContainer } from './styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeView } from 'views/Bridge';
-import { AppContainer } from './styled';
 
 BigNumber.set({ EXPONENTIAL_AT: 99 });
 

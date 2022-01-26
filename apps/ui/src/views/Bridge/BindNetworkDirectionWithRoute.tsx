@@ -22,7 +22,6 @@ export const BindNetworkDirectionWithRoute: React.FC = () => {
     }
 
     if (toNetwork === NERVOS_NETWORK && bridge.supportedNetworks.includes(fromNetwork)) {
-      console.log(toNetwork);
       bridge.switchBridgeDirection(BridgeDirection.In);
       bridge.switchNetwork(fromNetwork);
       return;

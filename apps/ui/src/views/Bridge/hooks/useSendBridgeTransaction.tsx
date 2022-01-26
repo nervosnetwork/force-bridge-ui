@@ -1,14 +1,13 @@
 import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
-import { Modal } from 'antd';
+import { Box, Button, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
+import { useHistory, useLocation } from 'react-router-dom';
+import { useDialog } from 'components/ConfirmMessage';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
-import { useDialog } from 'components/ConfirmMessage';
-import { useHistory, useLocation } from 'react-router-dom';
-import { Box, Button, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { formatAddress } from 'utils';
 
 export interface BridgeInputValues {

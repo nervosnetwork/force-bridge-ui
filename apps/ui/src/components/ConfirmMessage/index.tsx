@@ -1,12 +1,11 @@
-import { Dialog } from '@mui/material';
+import React from 'react';
 import { CustomizedDialog } from 'components/TransferModal/styled';
-import React, { ReactElement } from 'react';
 
 type ProviderContext = readonly [(option: DialogOption) => void, () => void];
 
 const EMPTY_FUNC = () => undefined;
 const DialogContext = React.createContext<ProviderContext>([EMPTY_FUNC, EMPTY_FUNC]);
-export const useDialog = () => React.useContext(DialogContext);
+export const useDialog = (): ProviderContext => React.useContext(DialogContext);
 
 type DialogParams = {
   children: React.ReactNode;
@@ -34,7 +33,7 @@ interface DialogProviderProps {
   children: React.ReactNode;
 }
 
-export default function DialogProvider(props: DialogProviderProps) {
+export default function DialogProvider(props: DialogProviderProps): JSX.Element {
   const { children } = props;
   const [dialogs, setDialogs] = React.useState<DialogParams[]>([]);
   const createDialog = (option: DialogOption) => {

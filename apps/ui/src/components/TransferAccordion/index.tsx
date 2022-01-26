@@ -1,9 +1,9 @@
 import { Asset } from '@force-bridge/commons';
 import { AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
-import { TransferDetails } from 'components/TransferDetails';
-import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import React from 'react';
 import { CustomizedAccordion, CustomizedExclamationIcon } from './styled';
+import { TransferDetails } from 'components/TransferDetails';
+import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 
 interface TransferDetailsProps {
   selectedAsset: Asset;

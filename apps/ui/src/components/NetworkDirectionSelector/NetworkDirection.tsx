@@ -1,8 +1,8 @@
-import React from 'react';
-import { AssetLogo } from 'components/AssetLogo';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 import { Typography } from '@mui/material';
+import React from 'react';
 import { NetworkItem } from './styled';
+import { AssetLogo } from 'components/AssetLogo';
 
 export interface NetworkDirectionProps {
   from: string;
