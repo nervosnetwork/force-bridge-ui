@@ -10,6 +10,7 @@ import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 import { ConnectorConfig, EthereumWalletConnector } from 'xchain';
 import { useSearchParams } from 'hooks/useSearchParams';
 import { Footer } from 'components/Footer';
+import DialogProvider from 'components/ConfirmMessage';
 
 function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbChainID'] {
   if (chainId !== 0 && chainId !== 1 && chainId !== 2) {
@@ -65,29 +66,31 @@ const EthereumBridge: React.FC = () => {
     };
   }, [api, setWallet]);
 
-  const [searchParams] = useSearchParams();
-  const isBridge = searchParams && searchParams[0] === 'isBridge' && searchParams[1] === 'true';
+  const searchParams = useSearchParams();
+  const isBridge = searchParams.get('isBridge') === 'true';
 
   return (
     <EthereumProviderContainer.Provider>
-      <ChainIdWarning
-        chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
-        chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
-      />
-      {wallet instanceof EthereumWalletConnector && (
-        <Container maxWidth="sm">
-          {isBridge && <BridgeOperationForm />}
+      <DialogProvider>
+        <ChainIdWarning
+          chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
+          chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
+        />
+        {wallet instanceof EthereumWalletConnector && (
+          <Container maxWidth="sm">
+            {isBridge && <BridgeOperationForm />}
 
-          {!isBridge && confirmNumberConfig && (
-            <BridgeHistory
-              asset={selectedAsset}
-              xchainConfirmNumber={confirmNumberConfig.xchainConfirmNumber}
-              nervosConfirmNumber={confirmNumberConfig.nervosConfirmNumber}
-            />
-          )}
-          <Footer />
-        </Container>
-      )}
+            {!isBridge && (
+              <BridgeHistory
+                asset={selectedAsset}
+                xchainConfirmNumber={confirmNumberConfig?.xchainConfirmNumber}
+                nervosConfirmNumber={confirmNumberConfig?.nervosConfirmNumber}
+              />
+            )}
+            <Footer />
+          </Container>
+        )}
+      </DialogProvider>
     </EthereumProviderContainer.Provider>
   );
 };

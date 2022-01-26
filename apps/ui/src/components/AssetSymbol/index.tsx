@@ -1,7 +1,5 @@
-import { QuestionOutlined } from '@ant-design/icons';
 import { Avatar, Box, Typography } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 
 type AssetSymbolProps = {
   info?: {

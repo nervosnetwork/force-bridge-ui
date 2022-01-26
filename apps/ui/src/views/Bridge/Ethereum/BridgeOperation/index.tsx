@@ -46,8 +46,8 @@ export const BridgeOperationForm: React.FC = () => {
     supportedNetworks,
   } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
-  const history = useHistory();
   const location = useLocation();
+  const history = useHistory();
   const { selectedAsset, setSelectedAsset } = useSelectBridgeAsset();
 
   const searchParams = useSearchParams();
@@ -69,7 +69,6 @@ export const BridgeOperationForm: React.FC = () => {
 
   const {
     bridgeFromAmount,
-    bridgeToAmount,
     setBridgeFromAmount,
     setRecipient,
     recipient,
@@ -84,6 +83,7 @@ export const BridgeOperationForm: React.FC = () => {
   const { mutateAsync: sendBridgeTransaction, isLoading: isBridgeLoading } = useSendBridgeTransaction();
   const { mutateAsync: sendApproveTransaction, isLoading: isApproveLoading } = useApproveTransaction();
   const isLoading = isBridgeLoading || isApproveLoading;
+  const [loadingDialog, setLoadingDialog] = useState<boolean>(false);
 
   function resetForm() {
     reset();
@@ -100,16 +100,20 @@ export const BridgeOperationForm: React.FC = () => {
     if (!selectedAsset || !recipient || !selectedAsset.shadow) return;
 
     if (allowance && allowance.status === 'NeedApprove') {
-      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(resetForm);
+      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(afterSubmit);
     } else {
       const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
       if (asset.info?.decimals == null) boom('asset info is not loaded');
 
       asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
-      sendBridgeTransaction({ asset, recipient }).then(resetForm);
+      sendBridgeTransaction({ asset, recipient }).then(afterSubmit);
     }
-    setParams('false');
+    setLoadingDialog(true);
   }
+
+  const afterSubmit = () => {
+    resetForm();
+  };
 
   const assetList = useMemo(() => {
     if (!query.data) return [];
@@ -148,12 +152,6 @@ export const BridgeOperationForm: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const handleClose = () => setOpen(false);
 
-  const setParams = (isBridge: string) => {
-    const params = new URLSearchParams(location.search);
-    params.set('isBridge', isBridge);
-    history.replace({ search: params.toString() });
-  };
-
   const submitForm = () => {
     formik.submitForm();
   };
@@ -161,6 +159,8 @@ export const BridgeOperationForm: React.FC = () => {
   const openDialog = () => {
     setOpen(true);
   };
+
+  const labelSymbol = direction === 'In' ? 'CKB' : 'ETH';
 
   return (
     <>
@@ -223,7 +223,7 @@ export const BridgeOperationForm: React.FC = () => {
             id="recipient"
             name="recipient"
             onBlur={formik.handleBlur}
-            label={'To ETH Address'}
+            label={`To ${labelSymbol} Address`}
             error={statusOf('recipient').validateStatus === 'error'}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
@@ -241,7 +241,14 @@ export const BridgeOperationForm: React.FC = () => {
         />
       </Transfer>
       {selectedAsset && (
-        <TransferModal open={open} onClose={handleClose} submitForm={submitForm} selectedAsset={selectedAsset} />
+        <TransferModal
+          open={open}
+          onClose={handleClose}
+          submitForm={submitForm}
+          selectedAsset={selectedAsset}
+          recipient={recipient}
+          loadingDialog={loadingDialog}
+        />
       )}
     </>
   );

@@ -1,11 +1,11 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import React, { useMemo } from 'react';
-import { BridgeDirection } from 'containers/ForceBridgeContainer';
-import { Avatar, Button, Grid } from '@mui/material';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
-import nervoslogo from '../../assets/images/nervos-logo-mark.jpg';
+import { Avatar, Button, Grid } from '@mui/material';
+import React, { useMemo } from 'react';
 import ethereumlogo from '../../assets/images/ethereum-logo.png';
+import nervoslogo from '../../assets/images/nervos-logo-mark.jpg';
 import { Switcher } from './styled';
+import { BridgeDirection } from 'containers/ForceBridgeContainer';
 
 interface NetworkDirectionPreviewProps {
   networks: string[];

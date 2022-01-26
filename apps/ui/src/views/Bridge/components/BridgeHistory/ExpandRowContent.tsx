@@ -1,14 +1,13 @@
-import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
-import { Space } from 'antd';
+import { BridgeTransactionStatus, TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/apiv1';
 import React from 'react';
 import { RetryBurnButton } from './RetryBurnButton';
-import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
+import { Typography } from '@mui/material';
 
 interface ExpandRowContentProps {
-  record: TransactionWithKey;
-  xchainConfirmNumber: number;
-  nervosConfirmNumber: number;
+  record: TransactionSummaryWithStatus;
+  xchainConfirmNumber?: number;
+  nervosConfirmNumber?: number;
 }
 
 export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
@@ -25,12 +24,12 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
         : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${confirmNumber})`;
   }
   const fromTransactionDescription =
-    (record.txSummary.fromAsset.network === 'Nervos' ? '1. burn asset on ' : '1. lock asset on ') +
+    (record.txSummary.fromAsset.network === 'Nervos' ? 'burn asset on ' : 'lock asset on ') +
     record.txSummary.fromAsset.network +
     confirmStatus;
 
   let toTransactionDescription =
-    (record.txSummary.toAsset.network === 'Nervos' ? '2. mint asset on ' : '2. unlock asset on ') +
+    (record.txSummary.toAsset.network === 'Nervos' ? 'mint asset on ' : 'unlock asset on ') +
     record.txSummary.toAsset.network;
   if (record.status === BridgeTransactionStatus.Failed) {
     toTransactionDescription = toTransactionDescription + ` (error: ${record.message})`;
@@ -49,23 +48,29 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
       record.txSummary.fromTransaction.confirmStatus === 'confirmed');
 
   return (
-    <div>
-      <div>
-        <Space>
-          <TransactionLink network={record.txSummary.fromAsset.network} txId={record.txSummary.fromTransaction.txId}>
-            {fromTransactionDescription}
-          </TransactionLink>
-          {isDisplayRetry && <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />}
-        </Space>
-      </div>
-      {isDisplayToTransactionText && <div>{toTransactionDescription}</div>}
+    <>
+      <TransactionLink
+        color="text.primary"
+        variant="body2"
+        network={record.txSummary.fromAsset.network}
+        txId={record.txSummary.fromTransaction.txId}
+      >
+        {fromTransactionDescription}
+      </TransactionLink>
+      {isDisplayRetry && <RetryBurnButton burnTxId={record.txSummary.fromTransaction.txId} />}
+      <Typography variant="body2" color="text.primary">
+        {isDisplayToTransactionText && toTransactionDescription}
+      </Typography>
       {record.status === BridgeTransactionStatus.Successful && record.txSummary?.toTransaction?.txId && (
-        <div>
-          <TransactionLink network={record.txSummary.toAsset.network} txId={record.txSummary.toTransaction.txId}>
-            {toTransactionDescription}
-          </TransactionLink>
-        </div>
+        <TransactionLink
+          color="text.primary"
+          variant="body2"
+          network={record.txSummary.toAsset.network}
+          txId={record.txSummary.toTransaction.txId}
+        >
+          {toTransactionDescription}
+        </TransactionLink>
       )}
-    </div>
+    </>
   );
 };
