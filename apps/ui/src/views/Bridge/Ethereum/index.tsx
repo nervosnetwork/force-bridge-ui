@@ -54,6 +54,8 @@ const EthereumBridge: React.FC = () => {
         ckbRpcUrl: ckbRpcUrl,
         ckbChainID: pwChainId,
         contractAddress: config.xchains.Ethereum.contractAddress,
+        omniLockscriptHashType: config.nervos.omniLockHashType,
+        omniLockscriptCodeHash: config.nervos.omniLockCodeHash,
       });
 
       setWallet(wallet);

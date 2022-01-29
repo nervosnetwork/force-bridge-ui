@@ -3,4 +3,5 @@ module.exports = {
   settings: {
     'import/resolver': { node: { paths: ['src'] } },
   },
+  ignorePatterns: ['**/generated', '**/*.js'],
 };
