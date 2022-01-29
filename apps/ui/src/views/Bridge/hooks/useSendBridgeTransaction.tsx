@@ -1,5 +1,5 @@
 import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
-import { Box, Button, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Box, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -30,34 +30,26 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
   const [openDialog, closeDialog] = useDialog();
   const onOpenDialog = (status: string, description: string) => {
     const fromNetwork = direction === BridgeDirection.In ? network : NERVOS_NETWORK;
+    const title = status === 'success' ? 'Bridge Tx sent' : 'Tx failed';
+    const dialogContent = (
+      <DialogContent>
+        <Box flexDirection="column" alignItems="center">
+          {status === 'success' ? (
+            <>
+              <Typography>The transaction has been sent, check it in</Typography>
+              <TransactionLink color="text.primary" variant="body1" network={fromNetwork} txId={description}>
+                explorer
+              </TransactionLink>
+              <Typography>transaction id: {formatAddress(description)}</Typography>
+            </>
+          ) : (
+            <Typography>{description}</Typography>
+          )}
+        </Box>
+      </DialogContent>
+    );
     openDialog({
-      children: (
-        <>
-          <DialogTitle sx={{ textAlign: 'center' }}>
-            {status === 'success' ? 'Bridge Tx sent' : 'Tx failed'}
-          </DialogTitle>
-          <DialogContent>
-            <Box flexDirection="column" alignItems="center">
-              {status === 'success' ? (
-                <>
-                  <Typography>The transaction has been sent, check it in</Typography>
-                  <TransactionLink color="text.primary" variant="body1" network={fromNetwork} txId={description}>
-                    explorer
-                  </TransactionLink>
-                  <Typography>transaction id: {formatAddress(description)}</Typography>
-                </>
-              ) : (
-                <Typography>{description}</Typography>
-              )}
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button color="primary" onClick={() => closeDialog()}>
-              Close
-            </Button>
-          </DialogActions>
-        </>
-      ),
+      children: { title, dialogContent, closeDialog },
     });
   };
 

@@ -5,7 +5,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
+import { useChainId } from '../hooks/useChainId';
 import { SubmitButton } from './SubmitButton';
+import { SwitchMetaMaskNetworkButton } from './SwitchMetaMaskNetworkButton';
 import { ForceBridgeLogo, Transfer } from './styled';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
 import { AssetSelector } from 'components/AssetSelector';
@@ -159,6 +161,32 @@ export const BridgeOperationForm: React.FC = () => {
     setOpen(true);
   };
 
+  const metamaskChainId = useChainId();
+  const bridgeChainInfo =
+    network === 'Ethereum'
+      ? {
+          chainId: Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID),
+          chainName: process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME,
+        }
+      : {
+          chainId: Number(process.env.REACT_APP_BSC_ENABLE_CHAIN_ID),
+          chainName: process.env.REACT_APP_BSC_ENABLE_CHAIN_NAME,
+        };
+
+  const actionButton =
+    metamaskChainId !== null && metamaskChainId !== bridgeChainInfo.chainId ? (
+      <SwitchMetaMaskNetworkButton
+        chainId={`0x${bridgeChainInfo.chainId.toString(16)}`}
+        chainName={bridgeChainInfo.chainName}
+      />
+    ) : (
+      <SubmitButton
+        disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
+        onClick={() => openDialog()}
+        allowanceStatus={allowance}
+      />
+    );
+
   const labelSymbol = direction === 'In' ? 'CKB' : 'ETH';
 
   return (
@@ -234,11 +262,7 @@ export const BridgeOperationForm: React.FC = () => {
 
         {recipient && bridgeFromAmount && selectedAsset && <TransferAccordion selectedAsset={selectedAsset} />}
 
-        <SubmitButton
-          disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
-          onClick={() => openDialog()}
-          allowanceStatus={allowance}
-        />
+        {actionButton}
       </Transfer>
       {selectedAsset && (
         <TransferModal

@@ -1,3 +1,4 @@
+import { Button, DialogActions, DialogTitle } from '@mui/material';
 import React from 'react';
 import { CustomizedDialog } from 'components/TransferModal/styled';
 
@@ -7,8 +8,16 @@ const EMPTY_FUNC = () => undefined;
 const DialogContext = React.createContext<ProviderContext>([EMPTY_FUNC, EMPTY_FUNC]);
 export const useDialog = (): ProviderContext => React.useContext(DialogContext);
 
+type ChildrenParams = {
+  fromNetwork?: string;
+  submitForm?: boolean;
+  dialogContent: React.ReactNode;
+  title: string;
+  closeDialog(): void;
+};
+
 type DialogParams = {
-  children: React.ReactNode;
+  children: ChildrenParams;
   open: boolean;
   onClose?(): void;
   onExited?(): void;
@@ -24,7 +33,15 @@ function DialogContainer(props: DialogContainerProps) {
 
   return (
     <CustomizedDialog open={open} onClose={onClose} TransitionProps={{ onExited: onKill }}>
-      {children}
+      <>
+        <DialogTitle sx={{ textAlign: 'center' }}>{children.title}</DialogTitle>
+        {children.dialogContent}
+        <DialogActions>
+          <Button color="primary" onClick={() => children.closeDialog()}>
+            Close
+          </Button>
+        </DialogActions>
+      </>
     </CustomizedDialog>
   );
 }
