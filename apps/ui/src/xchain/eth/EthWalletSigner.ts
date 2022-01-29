@@ -4,7 +4,7 @@ import { ExternalProvider, Web3Provider } from '@ethersproject/providers/src.ts/
 import { EthereumNetwork, NervosNetwork, utils } from '@force-bridge/commons';
 import { BigNumber, ethers } from 'ethers';
 import { ConnectorConfig } from './EthereumWalletConnector';
-import { SerializeRcLockWitnessLock } from './generated/omni';
+import * as omni from './generated/omni';
 import { boom, unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 
@@ -59,7 +59,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
     const signedWitness = new toolkit.Reader(
       core.SerializeWitnessArgs({
-        lock: SerializeRcLockWitnessLock({
+        lock: omni.SerializeRcLockWitnessLock({
           signature: new toolkit.Reader(sigs),
         }),
       }),
