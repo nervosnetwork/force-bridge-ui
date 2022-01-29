@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@ckb-lumos/lumos": "^0.18.0-rc4",
+    "@ckitjs/rc-lock": "^0.0.2",
     "@craco/craco": "^6.1.1",
     "@force-bridge/commons": "*",
     "@metamask/detect-provider": "^1.2.0",

@@ -25,9 +25,9 @@ export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryW
     [direction, signer],
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const query = useQuery(
     ['getBridgeTransactionSummaries', filter, network],
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     () => api.getBridgeTransactionSummaries(filter!),
     {
       enabled: filter != null,
