@@ -1,3 +1,4 @@
+import { HashType } from '@ckb-lumos/lumos';
 import { NervosNetwork, NetworkBase, NetworkTypes, RequiredAsset } from './network';
 
 export enum BridgeTransactionStatus {
@@ -122,6 +123,8 @@ export interface GetConfigResponse {
   nervos: {
     network: 'mainnet' | 'testnet';
     confirmNumber: number;
+    omniLockCodeHash: string;
+    omniLockHashType: HashType;
   };
   xchains: {
     Ethereum: EthereumConfig;
@@ -156,7 +159,7 @@ export interface ForceBridgeAPIV1 {
   getBalance: (payload: GetBalancePayload) => Promise<GetBalanceResponse>;
 
   // prettier-ignore
-  getMinimalBridgeAmount: (payload: GetMinimalBridgeAmountPayload) => Promise<GetMinimalBridgeAmountResponse>
+  getMinimalBridgeAmount: (payload: GetMinimalBridgeAmountPayload) => Promise<GetMinimalBridgeAmountResponse>;
 
   // prettier-ignore
   getBridgeInNervosBridgeFee: (payload: GetBridgeInNervosBridgeFeePayload) => Promise<GetBridgeInNervosBridgeFeeResponse>;
