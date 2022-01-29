@@ -82,6 +82,7 @@ export const BridgeOperationForm: React.FC = () => {
 
   const allowance = useAllowance(selectedAsset);
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
+  const needApprove = allowance && allowance.status === 'NeedApprove';
 
   const { mutateAsync: sendBridgeTransaction } = useSendBridgeTransaction();
   const { mutateAsync: sendApproveTransaction } = useApproveTransaction();
@@ -96,18 +97,12 @@ export const BridgeOperationForm: React.FC = () => {
   useEffect(resetForm, [direction, reset, setRecipient, signer]);
 
   function onSubmit() {
-    const needApprove = allowance && allowance.status === 'NeedApprove';
     if (!selectedAsset || (!recipient && !needApprove) || !selectedAsset.shadow) return;
 
-    if (needApprove) {
-      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(afterSubmit);
-    } else {
-      const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
-      if (asset.info?.decimals == null) boom('asset info is not loaded');
-
-      asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
-      sendBridgeTransaction({ asset, recipient }).then(afterSubmit);
-    }
+    const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
+    if (asset.info?.decimals == null) boom('asset info is not loaded');
+    asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
+    sendBridgeTransaction({ asset, recipient }).then(afterSubmit);
     setLoadingDialog(true);
   }
 
@@ -156,8 +151,12 @@ export const BridgeOperationForm: React.FC = () => {
     formik.submitForm();
   };
 
-  const openDialog = () => {
-    setOpen(true);
+  const handleSubmitButtonClick = () => {
+    if (needApprove) {
+      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(afterSubmit);
+    } else {
+      setOpen(true);
+    }
   };
 
   const metamaskChainId = useChainId();
@@ -181,7 +180,7 @@ export const BridgeOperationForm: React.FC = () => {
     ) : (
       <SubmitButton
         disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
-        onClick={() => openDialog()}
+        onClick={() => handleSubmitButtonClick()}
         allowanceStatus={allowance}
       />
     );

@@ -39,7 +39,7 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
       content = 'Approving';
       break;
     case 'Approved':
-      content = 'Bridge';
+      content = 'Transfer';
       break;
     default:
       content = ' ';
