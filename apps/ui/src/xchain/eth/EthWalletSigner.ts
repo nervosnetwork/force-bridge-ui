@@ -1,10 +1,10 @@
 import { helpers, toolkit, core, RPC } from '@ckb-lumos/lumos';
+import { SerializeRcLockWitnessLock } from '@ckitjs/rc-lock';
 import { JsonRpcSigner } from '@ethersproject/providers/src.ts/json-rpc-provider';
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 import { EthereumNetwork, NervosNetwork, utils } from '@force-bridge/commons';
 import { BigNumber, ethers } from 'ethers';
 import { ConnectorConfig } from './EthereumWalletConnector';
-import * as omni from './generated/omni';
 import { boom, unimplemented } from 'errors';
 import { AbstractWalletSigner } from 'interfaces/WalletConnector/AbstractWalletSigner';
 
@@ -59,7 +59,7 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
 
     const signedWitness = new toolkit.Reader(
       core.SerializeWitnessArgs({
-        lock: omni.SerializeRcLockWitnessLock({
+        lock: SerializeRcLockWitnessLock({
           signature: new toolkit.Reader(sigs),
         }),
       }),
