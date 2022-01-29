@@ -13,7 +13,12 @@ cd force-bridge-ui
 yarn install
 # build commons libraries
 yarn build:lib
+# craco start
 yarn workspace @force-bridge/ui run start
+# build ui
+cd apps/ui
+yarn build
+# serve -s build
 ```
 
 ## Build the User Interface
@@ -21,34 +26,39 @@ yarn workspace @force-bridge/ui run start
 ### Create .env
 
 Create an `.env.local` at [apps/ui/](apps/ui) to declare required environment variables, the below env config shows how
-force-bridge-ui works with Rinkeby network and Ethereum network
+force-bridge-ui works with Rinkeby network and Bsc network
 
 <details>
   <summary>Testnet</summary>
 
 ```
-# Force-Bridge RPC
+# Force-Bridge Ethereum Backend RPC
 REACT_APP_BRIDGE_RPC_URL=/api/force-bridge/api/v1
-# CKB node RPC
-REACT_APP_CKB_RPC_URL=//aggron.ckb.dev/rpc
+# Force-Bridge Bsc Backend RPC
+REACT_APP_BRIDGE_BSC_RPC_URL=
 
-# Nervos explorer for exploring transaction
-REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/aggron/transaction/
-# Ethereum explorer for exploring transaction
-REACT_APP_TX_EXPLORER_ETHEREUM=https://rinkeby.etherscan.io/tx/
+# CKB node RPC
+REACT_APP_CKB_RPC_URL=https://testnet.ckbapp.dev/rpc
 
 # 0: mainnet
 # 1: testnet
 # 2: devnet
 REACT_APP_CKB_CHAIN_ID=1
 
+# Nervos explorer for exploring transaction
+REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/aggron/transaction/
+# Ethereum explorer for exploring transaction
+REACT_APP_TX_EXPLORER_ETHEREUM=https://rinkeby.etherscan.io/tx/
+# Bsc explorer for exploring transaction
+REACT_APP_TX_EXPLORER_BSC=https://testnet.bscscan.com/tx/
+
 # Rinkeby
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=4
 REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Rinkeby
 
-# Godwoken
-REACT_APP_GODWOKEN_ETH_LOCKHASH=0xdeec13a7b8e100579541384ccaf4b5223733e4a5483c3aec95ddc4c1d5ea5b22
-REACT_APP_GODWOKEN_ROLLUP_TYPEHASH=0x4cc2e6526204ae6a2e8fcf12f7ad472f41a1606d5b9624beebd215d780809f6a
+# Bsc Testnet
+REACT_APP_BSC_ENABLE_CHAIN_ID=97
+REACT_APP_BSC_ENABLE_CHAIN_NAME=Bsc-Testnet
 ```
 
 </details>
@@ -57,28 +67,33 @@ REACT_APP_GODWOKEN_ROLLUP_TYPEHASH=0x4cc2e6526204ae6a2e8fcf12f7ad472f41a1606d5b9
   <summary>Mainnet</summary>
 
 ```
-# Force-Bridge RPC
+# Force-Bridge Ethereum Backend RPC
 REACT_APP_BRIDGE_RPC_URL=/api/force-bridge/api/v1
+# Force-Bridge Bsc Backend RPC
+REACT_APP_BRIDGE_BSC_RPC_URL=
+
 # CKB node RPC
 REACT_APP_CKB_RPC_URL=//lina.ckb.dev/rpc
-
-# Nervos explorer for exploring transaction
-REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/transaction/
-# Ethereum explorer for exploring transaction
-REACT_APP_TX_EXPLORER_ETHEREUM=https://etherscan.io/tx/
 
 # 0: mainnet
 # 1: testnet
 # 2: devnet
 REACT_APP_CKB_CHAIN_ID=0
 
-# Mainnet
+# Nervos explorer for exploring transaction
+REACT_APP_TX_EXPLORER_NERVOS=https://explorer.nervos.org/transaction/
+# Ethereum explorer for exploring transaction
+REACT_APP_TX_EXPLORER_ETHEREUM=https://etherscan.io/tx/
+# Bsc explorer for exploring transaction
+REACT_APP_TX_EXPLORER_BSC=https://bscscan.com/tx/
+
+# Ethereum Mainnet
 REACT_APP_ETHEREUM_ENABLE_CHAIN_ID=1
 REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME=Ethereum
 
-# Godwoken
-REACT_APP_GODWOKEN_ETH_LOCKHASH=
-REACT_APP_GODWOKEN_ROLLUP_TYPEHASH=
+# Bsc Mainnet
+REACT_APP_BSC_ENABLE_CHAIN_ID=56
+REACT_APP_BSC_ENABLE_CHAIN_NAME=Bsc-Mainnet
 ```
 
 </details>

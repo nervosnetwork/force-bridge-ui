@@ -12,6 +12,7 @@ export const TransactionLink: React.FC<TransactionLinkProps> = (props) => {
   let href = '';
   if (network === 'Nervos') href = process.env.REACT_APP_TX_EXPLORER_NERVOS + `${txId}`;
   if (network === 'Ethereum') href = process.env.REACT_APP_TX_EXPLORER_ETHEREUM + `${txId}`;
+  if (network === 'Bsc') href = process.env.REACT_APP_TX_EXPLORER_BSC + `${txId}`;
 
   return (
     <Link {...linkProps} href={href} target="_blank" rel="noreferrer">

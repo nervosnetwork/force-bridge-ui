@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "@ckb-lumos/lumos": "^0.18.0-rc4",
+    "@ckitjs/rc-lock": "^0.0.2",
     "@craco/craco": "^6.1.1",
     "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",

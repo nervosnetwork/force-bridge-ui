@@ -1,0 +1,20 @@
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+     y="0px"
+     viewBox="0 0 60 60" style="enable-background:new 0 0 60 60;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#F0B90B;}
+</style>
+  <g>
+	<path class="st0" d="M30,0L14.1,9.2l5.9,3.4L30,6.8l10.1,5.8l5.9-3.4L30,0z"/>
+    <path class="st0"
+          d="M40.1,17.4l5.9,3.4v6.8l-10.1,5.8V45L30,48.4L24.1,45V33.4l-10.1-5.8v-6.8l5.9-3.4L30,23.2L40.1,17.4z"/>
+    <path class="st0" d="M45.9,32.4v6.8l-5.9,3.4v-6.8L45.9,32.4z"/>
+    <path class="st0" d="M40,47.4l10.1-5.8V30l5.9-3.4V45L40,54.1V47.4z"/>
+    <path class="st0" d="M50.1,18.4L44.2,15l5.9-3.4L56,15v6.8l-5.9,3.4V18.4z"/>
+    <path class="st0" d="M24.1,56.6v-6.8l5.9,3.4l5.9-3.4v6.8L30,60L24.1,56.6z"/>
+    <path class="st0" d="M19.9,42.6l-5.9-3.4v-6.8l5.9,3.4V42.6z"/>
+    <path class="st0" d="M30,18.4L24.1,15l5.9-3.4l5.9,3.4L30,18.4z"/>
+    <path class="st0" d="M15.8,15l-5.9,3.4v6.8L4,21.8V15l5.9-3.4L15.8,15z"/>
+    <path class="st0" d="M4,26.6L9.9,30v11.6L20,47.4v6.8L4,45V26.6z"/>
+</g>
+</svg>

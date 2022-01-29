@@ -16,7 +16,7 @@ export interface BridgeInputValues {
 }
 
 export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
-  const { api, signer, direction, network } = ForceBridgeContainer.useContainer();
+  const { api, signer, network, direction } = ForceBridgeContainer.useContainer();
   const { addTransaction } = useSentTransactionStorage();
   const history = useHistory();
   const location = useLocation();
@@ -82,7 +82,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
         };
       } else {
         generated = await api.generateBridgeOutNervosTransaction({
-          network,
+          network: ethereumNetwork,
           amount: input.asset.amount,
           asset: input.asset.ident,
           recipient: input.recipient,

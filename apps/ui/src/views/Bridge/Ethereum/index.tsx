@@ -1,11 +1,8 @@
-import PWCore, { CHAIN_SPECS, ChainID, EthProvider, PwCollector } from '@lay2/pw-core';
 import Container from '@mui/material/Container';
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
-import { ChainIdWarning } from './ChainIdWarning';
 import DialogProvider from 'components/ConfirmMessage';
 import { Footer } from 'components/Footer';
-import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useSearchParams } from 'hooks/useSearchParams';
 import { BridgeHistory } from 'views/Bridge/components/BridgeHistory';
@@ -33,26 +30,15 @@ const EthereumBridge: React.FC = () => {
 
     api.getBridgeConfig().then(async (config) => {
       const ckbRpcUrl = process.env.REACT_APP_CKB_RPC_URL;
-      const pwChainId = ckbChainID === 0 ? ChainID.ckb : ChainID.ckb_testnet;
 
       const wallet = new EthereumWalletConnector({
         ckbRpcUrl: ckbRpcUrl,
-        ckbChainID: pwChainId,
+        ckbChainID: ckbChainID,
         contractAddress: config.xchains.Ethereum.contractAddress,
+        omniLockscriptHashType: config.nervos.omniLockHashType,
+        omniLockscriptCodeHash: config.nervos.omniLockCodeHash,
       });
-
       setWallet(wallet);
-
-      await new PWCore(ckbRpcUrl).init(
-        new EthProvider(),
-        new PwCollector(ckbRpcUrl),
-        // FIXME pw-lock has a bug here, remove the type convert after pw-core upgrade to 0.4.x
-        (String(pwChainId) as unknown) as ChainID,
-        [CHAIN_SPECS.Lina, CHAIN_SPECS.Aggron][ckbChainID],
-      );
-
-      // FIXME remove me when pw-core upgrade to 0.4.x
-      PWCore.chainId = ckbChainID;
       await wallet.init();
 
       setConfirmNumberConfig({
@@ -70,28 +56,22 @@ const EthereumBridge: React.FC = () => {
   const isBridge = searchParams.get('isBridge') === 'true';
 
   return (
-    <EthereumProviderContainer.Provider>
-      <DialogProvider>
-        <ChainIdWarning
-          chainId={Number(process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_ID)}
-          chainName={process.env.REACT_APP_ETHEREUM_ENABLE_CHAIN_NAME}
-        />
-        {wallet instanceof EthereumWalletConnector && (
-          <Container maxWidth="sm">
-            {isBridge && <BridgeOperationForm />}
+    <DialogProvider>
+      {wallet instanceof EthereumWalletConnector && (
+        <Container maxWidth="sm">
+          {isBridge && <BridgeOperationForm />}
 
-            {!isBridge && (
-              <BridgeHistory
-                asset={selectedAsset}
-                xchainConfirmNumber={confirmNumberConfig?.xchainConfirmNumber}
-                nervosConfirmNumber={confirmNumberConfig?.nervosConfirmNumber}
-              />
-            )}
-            <Footer />
-          </Container>
-        )}
-      </DialogProvider>
-    </EthereumProviderContainer.Provider>
+          {!isBridge && (
+            <BridgeHistory
+              asset={selectedAsset}
+              xchainConfirmNumber={confirmNumberConfig?.xchainConfirmNumber}
+              nervosConfirmNumber={confirmNumberConfig?.nervosConfirmNumber}
+            />
+          )}
+          <Footer />
+        </Container>
+      )}
+    </DialogProvider>
   );
 };
 

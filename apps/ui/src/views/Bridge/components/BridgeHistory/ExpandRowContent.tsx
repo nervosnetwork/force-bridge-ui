@@ -3,6 +3,7 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionLink } from 'components/TransactionLink';
+import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
 interface ExpandRowContentProps {
   record: TransactionSummaryWithStatus;
@@ -12,6 +13,7 @@ interface ExpandRowContentProps {
 
 export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
   const { record, xchainConfirmNumber, nervosConfirmNumber } = props;
+  const { network } = ForceBridgeContainer.useContainer();
   let confirmStatus;
   const confirmNumber = record.txSummary.fromAsset.network === 'Nervos' ? nervosConfirmNumber : xchainConfirmNumber;
   if (record.status === BridgeTransactionStatus.Successful) {
@@ -24,13 +26,11 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
         : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${confirmNumber})`;
   }
   const fromTransactionDescription =
-    (record.txSummary.fromAsset.network === 'Nervos' ? 'burn asset on ' : 'lock asset on ') +
-    record.txSummary.fromAsset.network +
+    (record.txSummary.fromAsset.network === 'Nervos' ? `burn asset on Nervos` : `lock asset on ${network}`) +
     confirmStatus;
 
   let toTransactionDescription =
-    (record.txSummary.toAsset.network === 'Nervos' ? 'mint asset on ' : 'unlock asset on ') +
-    record.txSummary.toAsset.network;
+    record.txSummary.toAsset.network === 'Nervos' ? `mint asset on Nervos` : `unlock asset on ${network}`;
   if (record.status === BridgeTransactionStatus.Failed) {
     toTransactionDescription = toTransactionDescription + ` (error: ${record.message})`;
   } else if (
@@ -52,7 +52,7 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
       <TransactionLink
         color="text.primary"
         variant="body2"
-        network={record.txSummary.fromAsset.network}
+        network={record.txSummary.fromAsset.network === 'Nervos' ? 'Nervos' : network}
         txId={record.txSummary.fromTransaction.txId}
       >
         {fromTransactionDescription}
@@ -65,7 +65,7 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
         <TransactionLink
           color="text.primary"
           variant="body2"
-          network={record.txSummary.toAsset.network}
+          network={record.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
           txId={record.txSummary.toTransaction.txId}
         >
           {toTransactionDescription}
