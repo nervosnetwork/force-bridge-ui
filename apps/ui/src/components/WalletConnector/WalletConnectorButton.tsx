@@ -33,6 +33,11 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
 
   function onClick() {
     wallet?.connect();
+    if (signer) {
+      direction === BridgeDirection.In
+        ? navigator.clipboard.writeText(signer.identityXChain())
+        : navigator.clipboard.writeText(signer.identityNervos());
+    }
   }
 
   const isConnected = walletConnectStatus === ConnectStatus.Connected;

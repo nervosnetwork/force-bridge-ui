@@ -1,15 +1,14 @@
 import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
-import { Modal } from 'antd';
+import { Box, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
+import { useDialog } from 'components/ConfirmMessage';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
+import { formatAddress } from 'utils';
 import { ApproveInfo } from 'views/Bridge/Ethereum/hooks/useAllowance';
 import { EthWalletSigner } from 'xchain/eth/EthWalletSigner';
-import { useDialog } from 'components/ConfirmMessage';
-import { Box, DialogContent, Typography } from '@mui/material';
-import { formatAddress } from 'utils';
 
 export interface ApproveInputValues {
   asset: Asset;

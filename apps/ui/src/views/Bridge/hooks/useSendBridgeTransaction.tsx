@@ -20,6 +20,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
   const { addTransaction } = useSentTransactionStorage();
   const history = useHistory();
   const location = useLocation();
+  const ethereumNetwork = 'Ethereum';
 
   const setParams = (isBridge: string) => {
     const params = new URLSearchParams(location.search);

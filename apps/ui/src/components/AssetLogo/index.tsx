@@ -1,5 +1,6 @@
 import { AvatarProps } from '@mui/material';
 import React from 'react';
+import bscSmalllogo from '../../assets/images/bsc_logo.jpg';
 import ckbSmallLogo from '../../assets/images/ckb-small-logo.png';
 import ethSmallLogo from '../../assets/images/eth-small-logo.png';
 import { CustomizedAvatar } from './styled';
@@ -19,6 +20,9 @@ export const AssetLogo: React.FC<AssetLogoProps> = (props) => {
         break;
       case 'Nervos':
         result = <CustomizedAvatar {...avatarProps} src={ckbSmallLogo} />;
+        break;
+      case 'Bsc':
+        result = <CustomizedAvatar {...avatarProps} src={bscSmalllogo} />;
         break;
     }
     return result;

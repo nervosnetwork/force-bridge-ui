@@ -50,11 +50,11 @@ export const TransferModal: React.FC<TransferDialogProps> = (props) => {
           </Box>
           <DialogContent>
             <Typography color="primary.light" variant="h2">
-              {selectedAsset.info?.name}
+              {selectedAsset.network}
             </Typography>
             <ChevronDoubleRightIcon />
             <Typography color="primary.light" variant="h2">
-              {selectedAsset.shadow?.info?.name}
+              {selectedAsset.shadow?.network} ({selectedAsset.info?.symbol})
             </Typography>
           </DialogContent>
           <TransferDetails selectedAsset={selectedAsset} />

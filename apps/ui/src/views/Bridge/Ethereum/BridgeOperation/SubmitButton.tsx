@@ -46,7 +46,14 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   }
 
   return (
-    <Button variant="contained" color="secondary" fullWidth sx={{ marginTop: 5, padding: 2 }} {...buttonProps}>
+    <Button
+      variant="contained"
+      color="secondary"
+      startIcon={allowanceStatus.status === 'Approved' && <SwitchHorizontalIcon />}
+      fullWidth
+      sx={{ marginTop: 5, padding: 2 }}
+      {...buttonProps}
+    >
       {content}
     </Button>
   );

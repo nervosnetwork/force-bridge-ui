@@ -102,12 +102,17 @@ export const BridgeOperationForm: React.FC = () => {
     const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
     if (asset.info?.decimals == null) boom('asset info is not loaded');
     asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
-    sendBridgeTransaction({ asset, recipient }).then(afterSubmit);
+    sendBridgeTransaction({ asset, recipient }).then(afterSubmit).catch(declineTransaction);
     setLoadingDialog(true);
   }
 
   const afterSubmit = () => {
     resetForm();
+  };
+
+  const declineTransaction = () => {
+    setLoadingDialog(false);
+    handleClose();
   };
 
   const assetList = useMemo(() => {
