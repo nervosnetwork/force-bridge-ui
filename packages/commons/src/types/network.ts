@@ -4,6 +4,7 @@
 // XIdent: the ident of the X resource, e.g. type ERC20Ident = { address: '0x...' }
 // XInfo: the ident with network e.g. type type ERC20Info = { network: 'Ethereum', address: '0x...' }
 
+import { helpers } from '@ckb-lumos/lumos';
 import { ethers } from 'ethers';
 import { NetworkKeyNervos } from '../constatns';
 
@@ -45,7 +46,7 @@ export type NervosNetwork = NetworkTypes<{
   NativeAssetIdent: string;
   DerivedAssetIdent: string;
   UserIdent: string;
-  RawTransaction: CKBComponents.RawTransactionToSign;
+  RawTransaction: helpers.TransactionSkeletonObject;
   SignedTransaction: CKBComponents.RawTransaction;
 }>;
 

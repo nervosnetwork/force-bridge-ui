@@ -1,8 +1,7 @@
+import { helpers, Script, HashType } from '@ckb-lumos/lumos';
 import { EthereumNetwork } from '@force-bridge/commons';
-import { Address, AddressType } from '@lay2/pw-core';
 import detectEthereumProvider from '@metamask/detect-provider';
 import { MetaMaskInpageProvider } from '@metamask/inpage-provider';
-import { scriptToAddress } from '@nervosnetwork/ckb-sdk-utils';
 import warning from 'tiny-warning';
 import { EthWalletSigner } from './EthWalletSigner';
 import { unimplemented } from 'errors';
@@ -15,6 +14,8 @@ export interface ConnectorConfig {
     | 2; // devnet
   ckbRpcUrl: string;
   contractAddress: string;
+  omniLockscriptCodeHash: string;
+  omniLockscriptHashType: HashType;
 }
 
 function retrySync(retry: () => boolean, options: { times: number; interval: number }): void {
@@ -69,16 +70,17 @@ export class EthereumWalletConnector extends AbstractWalletConnector<EthereumNet
 
     const address = Array.isArray(accounts) ? accounts[0] : accounts;
     if (typeof address !== 'string') return super.changeSigner(undefined);
-    const pwLockscript = new Address(address, AddressType.eth).toLockScript();
-    const pwCKBAddress = scriptToAddress(
-      {
-        args: pwLockscript.args,
-        codeHash: pwLockscript.codeHash,
-        hashType: pwLockscript.hashType,
-      },
-      this.config.ckbChainID === 0,
-    );
-    const signer = new EthWalletSigner(pwCKBAddress, address, this.config);
+
+    const omniLock: Script = {
+      code_hash: this.config.omniLockscriptCodeHash,
+      hash_type: this.config.omniLockscriptHashType,
+      args: `0x01${address.substring(2)}00`,
+    };
+
+    const omniAddr = helpers.encodeToAddress(omniLock, {
+      config: { PREFIX: this.config.ckbChainID === 0 ? 'ckb' : 'ckt', SCRIPTS: {} },
+    });
+    const signer = new EthWalletSigner(omniAddr, address, this.config);
     super.changeSigner(signer);
   }
 }
