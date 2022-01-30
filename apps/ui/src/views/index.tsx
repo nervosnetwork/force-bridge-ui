@@ -10,7 +10,7 @@ import { BridgeView } from 'views/Bridge';
 BigNumber.set({ EXPONENTIAL_AT: 99 });
 
 const MainWrapper = styled.div`
-  padding-top: 96px;
+  padding-top: 140px;
   padding-bottom: 32px;
   min-height: 100vh;
   background: linear-gradient(111.44deg, #dcf2ed 0%, #d3d9ec 100%);
