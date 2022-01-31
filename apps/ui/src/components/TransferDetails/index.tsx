@@ -5,6 +5,7 @@ import { Details } from './styled';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { useBridgeFeeQuery } from 'hooks/bridge-operation';
+import { formatAddress } from 'utils';
 
 interface TransferDetailsProps {
   selectedAsset: Asset;
@@ -15,10 +16,6 @@ export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
 
   const { bridgeToAmount, bridgeFromAmount, recipient } = BridgeOperationFormContainer.useContainer();
   const feeQuery = useBridgeFeeQuery();
-
-  const formatAddress = (address: string) => {
-    return `${address.substring(0, 5)}...${address.substring(address.length - 5)}`;
-  };
 
   return (
     <Details>

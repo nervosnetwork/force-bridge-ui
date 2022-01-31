@@ -13,6 +13,7 @@ type ChildrenParams = {
   submitForm?: boolean;
   dialogContent: React.ReactNode;
   title: string;
+  onOk?(): void;
   closeDialog(): void;
 };
 
@@ -37,9 +38,14 @@ function DialogContainer(props: DialogContainerProps) {
         <DialogTitle sx={{ textAlign: 'center' }}>{children.title}</DialogTitle>
         {children.dialogContent}
         <DialogActions>
-          <Button color="primary" onClick={() => children.closeDialog()}>
+          <Button color="secondary" variant="contained" onClick={() => children.closeDialog()}>
             Close
           </Button>
+          {children.onOk && (
+            <Button color="primary" variant="contained" onClick={() => children.onOk && children.onOk()}>
+              Ok
+            </Button>
+          )}
         </DialogActions>
       </>
     </CustomizedDialog>

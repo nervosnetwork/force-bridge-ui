@@ -6,6 +6,7 @@ import load from '../../assets/images/load.gif';
 import { CustomizedDialog, LoadingAnimation } from './styled';
 import { AssetLogo } from 'components/AssetLogo';
 import { TransferDetails } from 'components/TransferDetails';
+import { formatAddress } from 'utils';
 
 interface TransferDialogProps extends DialogProps {
   recipient: string;
@@ -17,10 +18,6 @@ interface TransferDialogProps extends DialogProps {
 
 export const TransferModal: React.FC<TransferDialogProps> = (props) => {
   const { recipient, loadingDialog, selectedAsset, submitForm, onClose, ...modalProps } = props;
-
-  const formatAddress = (address: string) => {
-    return `${address.substring(0, 5)}...${address.substring(address.length - 5)}`;
-  };
 
   return (
     <CustomizedDialog
