@@ -106,7 +106,7 @@ export const RetryBurnButton: React.FC<RetryBurnButtonProps> = (props) => {
   const onClick = () => mutation.mutate();
 
   return (
-    <Button size="small" color="primary" variant="contained" onClick={onClick} sx={{ margin: 0 }}>
+    <Button size="small" color="primary" variant="contained" onClick={onClick}>
       retry
     </Button>
   );

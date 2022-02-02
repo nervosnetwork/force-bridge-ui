@@ -40,6 +40,10 @@ export const History = styled(Box)(
         color: #000000;
       }
     }
+    .MuiButton-containedSizeSmall{
+      margin:0;
+      line-height: 1.25;
+    }
     .MuiOutlinedInput-root {
       width:94%;
       margin-bottom: 24px;

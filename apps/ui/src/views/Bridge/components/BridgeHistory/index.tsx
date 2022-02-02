@@ -6,7 +6,6 @@ import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import React, { useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 import { ExpandRowContent } from './ExpandRowContent';
 import { History } from './styled';
 import { useQueryWithCache } from './useQueryWithCache';
@@ -15,6 +14,7 @@ import { AssetLogo } from 'components/AssetLogo';
 import { AssetSelector } from 'components/AssetSelector';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useAssetQuery } from 'hooks/useAssetQuery';
+import { useBridgeParams } from 'hooks/useBridgeParams';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { formatAddress } from 'utils';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
@@ -27,10 +27,9 @@ interface BridgeHistoryProps {
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   const { nervosModule, walletConnectStatus, direction } = ForceBridgeContainer.useContainer();
-  const history = useHistory();
-  const location = useLocation();
   const query = useAssetQuery();
   const { selectedAsset, setSelectedAsset } = useSelectBridgeAsset();
+  const { setParams } = useBridgeParams();
   const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   const asset = useMemo(() => {
@@ -41,11 +40,6 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   }, [nervosModule.assetModel, props.asset]);
 
   const transactionSummaries = useQueryWithCache(asset);
-  const setParams = (isBridge: string) => {
-    const params = new URLSearchParams(location.search);
-    params.set('isBridge', isBridge);
-    history.replace({ search: params.toString() });
-  };
 
   moment.locale('en', {
     relativeTime: {
@@ -98,7 +92,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
               onSelect={(_id, asset) => setSelectedAsset(asset)}
               disabled={false}
             />
-            {transactionSummaries?.map((item, index) => (
+            {transactionSummaries?.map((item) => (
               <>
                 <Grid container key={item.txSummary.fromTransaction.txId}>
                   <Grid item xs display="flex">

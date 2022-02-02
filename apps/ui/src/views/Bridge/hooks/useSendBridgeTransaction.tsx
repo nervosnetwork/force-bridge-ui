@@ -2,11 +2,11 @@ import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Box, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
-import { useHistory, useLocation } from 'react-router-dom';
 import { useDialog } from 'components/ConfirmMessage';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
+import { useBridgeParams } from 'hooks/useBridgeParams';
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 import { formatAddress } from 'utils';
 
@@ -18,15 +18,8 @@ export interface BridgeInputValues {
 export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
   const { api, signer, network, direction } = ForceBridgeContainer.useContainer();
   const { addTransaction } = useSentTransactionStorage();
-  const history = useHistory();
-  const location = useLocation();
+  const { setParams } = useBridgeParams();
   const ethereumNetwork = 'Ethereum';
-
-  const setParams = (isBridge: string) => {
-    const params = new URLSearchParams(location.search);
-    params.set('isBridge', isBridge);
-    history.replace({ search: params.toString() });
-  };
 
   const [openDialog, closeDialog] = useDialog();
   const onOpenDialog = (status: string, description: string) => {

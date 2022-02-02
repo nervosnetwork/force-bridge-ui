@@ -1,9 +1,9 @@
 import { XIcon } from '@heroicons/react/outline';
 import { Box, Grid, Grow, Link, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { expandedMenuItems, IMenuItems } from '../../../../interfaces/Header/ExpandedMenuItems';
-import logo from '../../logo.png';
 import { CustomizedExpandedMenu } from './styled';
+import logo from 'assets/images/force-logo.png';
+import { expandedMenuItems, IMenuItems } from 'interfaces/Header/ExpandedMenuItems';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedIconButton } from 'shared-styled/styled';
 

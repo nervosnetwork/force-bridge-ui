@@ -1,29 +1,22 @@
 import { MenuIcon } from '@heroicons/react/outline';
 import { Box, Container, MenuItem, MenuList, Toolbar } from '@mui/material';
 import React, { useRef } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
-import logo from './logo.png';
 import { CustomizedAppBar } from './styled';
+import logo from 'assets/images/force-logo.png';
 import { WalletConnectorButton } from 'components/WalletConnector';
+import { useBridgeParams } from 'hooks/useBridgeParams';
 import { menuItems } from 'interfaces/Header/MenuItems';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const AppHeader: React.FC = () => {
   const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
-  const history = useHistory();
-  const location = useLocation();
+  const { setParams } = useBridgeParams();
 
   const handleOpenExpandedMenu = () => {
     return expandedMenuRef.current?.openExpandedMenu();
-  };
-
-  const setParams = (isBridge: string) => {
-    const params = new URLSearchParams(location.search);
-    params.set('isBridge', isBridge);
-    history.replace({ search: params.toString() });
   };
 
   const handleMenuItemClick = (item: string) => {

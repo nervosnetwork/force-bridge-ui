@@ -1,5 +1,5 @@
 import { styled } from '@mui/material';
-import image from '../assets/images/cell-pattern-static.webp';
+import image from 'assets/images/cell-pattern-static.webp';
 
 export const AppContainer = styled('div')(
   ({ theme }) => `

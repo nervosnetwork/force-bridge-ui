@@ -2,7 +2,6 @@ import { Button, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import forcebridge from '../../../../assets/images/forcebridge-white.png';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
 import { useChainId } from '../hooks/useChainId';
@@ -10,6 +9,7 @@ import { SubmitButton } from './SubmitButton';
 import { SwitchMetaMaskNetworkButton } from './SwitchMetaMaskNetworkButton';
 import { ForceBridgeLogo, Transfer } from './styled';
 import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
+import forcebridge from 'assets/images/forcebridge-white.png';
 import { AssetSelector } from 'components/AssetSelector';
 
 import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview/NetworkDirectionPreview';
@@ -112,7 +112,7 @@ export const BridgeOperationForm: React.FC = () => {
 
   const declineTransaction = () => {
     setLoadingDialog(false);
-    handleClose();
+    handleCloseModal();
   };
 
   const assetList = useMemo(() => {
@@ -149,18 +149,18 @@ export const BridgeOperationForm: React.FC = () => {
     return { help, validateStatus: status };
   };
 
-  const [open, setOpen] = useState<boolean>(false);
-  const handleClose = () => setOpen(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const handleCloseModal = () => setOpenModal(false);
 
   const submitForm = () => {
     formik.submitForm();
   };
 
   const handleSubmitButtonClick = () => {
-    if (needApprove) {
+    if (needApprove && selectedAsset) {
       sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(afterSubmit);
     } else {
-      setOpen(true);
+      setOpenModal(true);
     }
   };
 
@@ -269,8 +269,8 @@ export const BridgeOperationForm: React.FC = () => {
       </Transfer>
       {selectedAsset && (
         <TransferModal
-          open={open}
-          onClose={handleClose}
+          open={openModal}
+          onClose={handleCloseModal}
           submitForm={submitForm}
           selectedAsset={selectedAsset}
           recipient={recipient}

@@ -1,5 +1,5 @@
 import { Dialog, styled } from '@mui/material';
-import nervosLogo from '../../assets/images/nervos-logo-mark-transparent.png';
+import nervosLogo from 'assets/images/nervos-logo-mark-transparent.png';
 
 export const CustomizedDialog = styled(Dialog)(
   ({ theme }) => `

@@ -1,9 +1,9 @@
 import { AvatarProps } from '@mui/material';
 import React from 'react';
-import bscSmalllogo from '../../assets/images/bsc_logo.jpg';
-import ckbSmallLogo from '../../assets/images/ckb-small-logo.png';
-import ethSmallLogo from '../../assets/images/eth-small-logo.png';
 import { CustomizedAvatar } from './styled';
+import bscSmalllogo from 'assets/images/bsc_logo.jpg';
+import ckbSmallLogo from 'assets/images/ckb-small-logo.png';
+import ethSmallLogo from 'assets/images/eth-small-logo.png';
 
 export interface AssetLogoProps extends AvatarProps {
   network: string;
