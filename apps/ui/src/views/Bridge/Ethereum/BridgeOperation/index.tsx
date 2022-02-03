@@ -12,8 +12,8 @@ import { useAutoSetBridgeToAmount } from './useAutoSetBridgeToAmount';
 import forcebridge from 'assets/images/forcebridge-white.png';
 import { AssetSelector } from 'components/AssetSelector';
 
-import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview/NetworkDirectionPreview';
-import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector/NetworkDirectionSelector';
+import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview';
+import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector';
 import { TransferAccordion } from 'components/TransferAccordion';
 import { TransferModal } from 'components/TransferModal';
 import { UserInput } from 'components/UserInput';

@@ -2,7 +2,7 @@ import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
 import { Box, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
-import { useDialog } from 'components/ConfirmMessage';
+import { useDialog } from 'components/Dialog/index';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';

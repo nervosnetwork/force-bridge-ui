@@ -2,7 +2,7 @@ import { Box, DialogContent, Link, Typography } from '@mui/material';
 import { providers } from 'ethers';
 import React from 'react';
 import { createContainer } from 'unstated-next';
-import { useDialog } from 'components/ConfirmMessage';
+import { useDialog } from 'components/Dialog/index';
 
 export const EthereumProviderContainer = createContainer<providers.Web3Provider>(() => {
   const ethereum = window.ethereum;

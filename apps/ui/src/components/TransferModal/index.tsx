@@ -20,12 +20,7 @@ export const TransferModal: React.FC<TransferDialogProps> = (props) => {
   const { recipient, loadingDialog, selectedAsset, submitForm, onClose, ...modalProps } = props;
 
   return (
-    <CustomizedDialog
-      {...modalProps}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
+    <CustomizedDialog {...modalProps} onClose={onClose}>
       {loadingDialog ? (
         <>
           <Box>

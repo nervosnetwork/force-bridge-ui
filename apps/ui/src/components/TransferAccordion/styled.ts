@@ -3,14 +3,14 @@ import { Accordion, styled } from '@mui/material';
 
 export const CustomizedAccordion = styled(Accordion)(
   ({ theme }) => `
-    background: #232323;
+    background: ${theme.palette.secondary.light};
     border-radius: 0.375rem;
 
     ::before {
         display:none;
     }
 
-    & .MuiAccordionSummary-content {
+    .MuiAccordionSummary-content {
       justify-content:center;
     }
 

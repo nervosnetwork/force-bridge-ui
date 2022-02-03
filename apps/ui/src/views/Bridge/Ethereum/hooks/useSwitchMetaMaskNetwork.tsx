@@ -1,7 +1,7 @@
 import { utils } from '@force-bridge/commons';
 import { Box, DialogContent, Typography } from '@mui/material';
 import { useMutation, UseMutationResult } from 'react-query';
-import { useDialog } from 'components/ConfirmMessage';
+import { useDialog } from 'components/Dialog/index';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 

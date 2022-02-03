@@ -5,7 +5,7 @@ export const CustomizedDialog = styled(Dialog)(
   ({ theme }) => `
     .MuiDialog-paper {
         box-sizing: border-box;
-        background: #232323;
+        background: ${theme.palette.secondary.light};
         border-radius: 0.5rem;
         padding: 1.5rem;
         max-width: 24rem;
@@ -36,8 +36,8 @@ export const CustomizedDialog = styled(Dialog)(
             padding: 9px 16px;
             line-height: 1.25rem;
             :first-of-type {
-              color: #232323;
-              background-color: #ffffff;
+              color: ${theme.palette.secondary.light};
+              background-color: ${theme.palette.primary.light};
               margin-right:0.25rem;
             }
           }
@@ -74,7 +74,7 @@ export const CustomizedDialog = styled(Dialog)(
 );
 
 export const LoadingAnimation = styled('img')(
-  ({ theme }) => `
+  () => `
     background: url('${nervosLogo}');
     background-size:contain;
     width:160px;

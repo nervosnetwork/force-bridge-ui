@@ -1,6 +1,6 @@
-import { Button, DialogActions, DialogTitle } from '@mui/material';
 import React from 'react';
-import { CustomizedDialog } from 'components/TransferModal/styled';
+import { DialogContainer } from './DialogContainer';
+import { DialogParams } from 'interfaces/Dialog/DialogParams';
 
 type ProviderContext = readonly [(option: DialogOption) => void, () => void];
 
@@ -8,55 +8,13 @@ const EMPTY_FUNC = () => undefined;
 const DialogContext = React.createContext<ProviderContext>([EMPTY_FUNC, EMPTY_FUNC]);
 export const useDialog = (): ProviderContext => React.useContext(DialogContext);
 
-type ChildrenParams = {
-  fromNetwork?: string;
-  submitForm?: boolean;
-  dialogContent: React.ReactNode;
-  title: string;
-  onOk?(): void;
-  closeDialog(): void;
-};
-
-type DialogParams = {
-  children: ChildrenParams;
-  open: boolean;
-  onClose?(): void;
-  onExited?(): void;
-};
 type DialogOption = Omit<DialogParams, 'open'>;
-type DialogContainerProps = DialogParams & {
-  onClose: () => void;
-  onKill: () => void;
-};
-
-function DialogContainer(props: DialogContainerProps) {
-  const { children, open, onClose, onKill } = props;
-
-  return (
-    <CustomizedDialog open={open} onClose={onClose} TransitionProps={{ onExited: onKill }}>
-      <>
-        <DialogTitle sx={{ textAlign: 'center' }}>{children.title}</DialogTitle>
-        {children.dialogContent}
-        <DialogActions>
-          <Button color="secondary" variant="contained" onClick={() => children.closeDialog()}>
-            Close
-          </Button>
-          {children.onOk && (
-            <Button color="primary" variant="contained" onClick={() => children.onOk && children.onOk()}>
-              Ok
-            </Button>
-          )}
-        </DialogActions>
-      </>
-    </CustomizedDialog>
-  );
-}
 
 interface DialogProviderProps {
   children: React.ReactNode;
 }
 
-export default function DialogProvider(props: DialogProviderProps): JSX.Element {
+const DialogProvider: React.FC<DialogProviderProps> = (props): JSX.Element => {
   const { children } = props;
   const [dialogs, setDialogs] = React.useState<DialogParams[]>([]);
   const createDialog = (option: DialogOption) => {
@@ -87,4 +45,6 @@ export default function DialogProvider(props: DialogProviderProps): JSX.Element 
       })}
     </DialogContext.Provider>
   );
-}
+};
+
+export default DialogProvider;

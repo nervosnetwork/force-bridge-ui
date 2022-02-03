@@ -1,7 +1,7 @@
 import { MenuItem, styled } from '@mui/material';
 
 export const NetworkDirectionMenu = styled('div')(
-  ({ theme }) => `
+  () => `
     display: flex;
     justify-content:center;
     .MuiButton-root {
@@ -16,7 +16,7 @@ export const NetworkItem = styled(MenuItem)(
     
     svg {
       width: 1.75rem;
-      color: #484D4E;
+      color: ${theme.palette.text.secondary};
     }
     .MuiAvatar-root {
       margin-right: 4px;

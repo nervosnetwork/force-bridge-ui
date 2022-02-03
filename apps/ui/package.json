@@ -15,6 +15,7 @@
     "@material-ui/styles": "^4.11.4",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/inpage-provider": "^8.0.4",
+    "@mui/icons-material": "^5.3.1",
     "@mui/material": "^5.2.2",
     "@mui/styles": "^5.2.2",
     "@nervosnetwork/ckb-sdk-utils": "^0.101.0",

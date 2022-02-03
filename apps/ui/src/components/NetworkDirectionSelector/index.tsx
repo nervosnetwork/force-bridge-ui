@@ -39,26 +39,10 @@ export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> =
 
   return (
     <NetworkDirectionMenu>
-      <Button
-        id="basic-button"
-        variant="contained"
-        color="secondary"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
+      <Button variant="contained" color="secondary" onClick={handleClick}>
         Change network direction
       </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         {directionItems.map((item) => (
           <NetworkItem key={item.key} onClick={() => handleMenuItemClick(item)}>
             <AssetLogo sx={{ width: 20, height: 20 }} network={item.from} />

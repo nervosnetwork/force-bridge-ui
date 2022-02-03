@@ -3,7 +3,7 @@ import { Box, Button, DialogContent, Typography } from '@mui/material';
 import { ButtonProps } from 'antd';
 import React from 'react';
 import { useMutation } from 'react-query';
-import { useDialog } from 'components/ConfirmMessage';
+import { useDialog } from 'components/Dialog/index';
 import { TransactionLink } from 'components/TransactionLink';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';

@@ -1,11 +1,6 @@
-import { Tooltip, Typography } from 'antd';
+import { Tooltip, Typography } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 import { truncateMiddle } from 'utils';
-
-const AddressTip = styled(Typography.Text)`
-  color: '#000000';
-`;
 
 interface UserIdentProps {
   ident: string;
@@ -13,5 +8,9 @@ interface UserIdentProps {
 }
 
 export const UserIdent: React.FC<UserIdentProps> = ({ ident, truncateLength = 10 }) => {
-  return <Tooltip title={<AddressTip copyable>{ident}</AddressTip>}>{truncateMiddle(ident, truncateLength)}</Tooltip>;
+  return (
+    <Tooltip title={ident}>
+      <Typography>{truncateMiddle(ident, truncateLength)}</Typography>
+    </Tooltip>
+  );
 };

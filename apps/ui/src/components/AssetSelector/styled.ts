@@ -12,11 +12,11 @@ export const CustomizedSelect = styled(Select)(
       border-color: #484D4E;
     }
 
-    & .MuiOutlinedInput-notchedOutline {
+    .MuiOutlinedInput-notchedOutline {
         border:none;
     }
 
-    & .MuiOutlinedInput-input {
+    .MuiOutlinedInput-input {
       padding: 0.5rem 2.5rem 0.5rem 0.75rem;
       display:flex;
       flex-direction: row;

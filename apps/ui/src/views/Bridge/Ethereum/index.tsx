@@ -1,7 +1,7 @@
 import Container from '@mui/material/Container';
 import React, { useEffect, useState } from 'react';
 import { BridgeOperationForm } from './BridgeOperation';
-import DialogProvider from 'components/ConfirmMessage';
+import DialogProvider from 'components/Dialog/index';
 import { Footer } from 'components/Footer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useSearchParams } from 'hooks/useSearchParams';

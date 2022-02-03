@@ -1,5 +1,5 @@
 import { AvatarProps } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CustomizedAvatar } from './styled';
 import bscSmalllogo from 'assets/images/bsc_logo.jpg';
 import ckbSmallLogo from 'assets/images/ckb-small-logo.png';
@@ -11,22 +11,23 @@ export interface AssetLogoProps extends AvatarProps {
 
 export const AssetLogo: React.FC<AssetLogoProps> = (props) => {
   const { network, ...avatarProps } = props;
+  const [assetLogo, setAssetLogo] = useState<string>();
 
-  const getAssetLogo = (network: string) => {
+  useEffect(() => {
     let result;
     switch (network) {
       case 'Ethereum':
-        result = <CustomizedAvatar {...avatarProps} src={ethSmallLogo} />;
+        result = ethSmallLogo;
         break;
       case 'Nervos':
-        result = <CustomizedAvatar {...avatarProps} src={ckbSmallLogo} />;
+        result = ckbSmallLogo;
         break;
       case 'Bsc':
-        result = <CustomizedAvatar {...avatarProps} src={bscSmalllogo} />;
+        result = bscSmalllogo;
         break;
     }
-    return result;
-  };
+    setAssetLogo(result);
+  }, [network]);
 
-  return <>{getAssetLogo(network)}</>;
+  return <CustomizedAvatar {...avatarProps} src={assetLogo} />;
 };

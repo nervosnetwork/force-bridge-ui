@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import logo from './nervos-logo-white.svg';
 import { NervosLogo } from './styled';
+import logo from 'assets/images/nervos-logo-white.svg';
 
 export const Footer: React.FC = () => {
   return (
