@@ -6,7 +6,7 @@ import { useDialog } from 'components/Dialog/index';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
-import { useBridgeParams } from 'hooks/useBridgeParams';
+import { useBridgePath } from 'hooks/useBridgePath';
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 import { formatAddress } from 'utils';
 
@@ -18,7 +18,7 @@ export interface BridgeInputValues {
 export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
   const { api, signer, network, direction } = ForceBridgeContainer.useContainer();
   const { addTransaction } = useSentTransactionStorage();
-  const { setParams } = useBridgeParams();
+  const { setPath } = useBridgePath();
   const ethereumNetwork = 'Ethereum';
 
   const [openDialog, closeDialog] = useDialog();
@@ -105,7 +105,7 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
     },
     {
       onSuccess({ txId }) {
-        setParams('false');
+        setPath('history');
         onOpenDialog('success', txId);
       },
       onError(error) {

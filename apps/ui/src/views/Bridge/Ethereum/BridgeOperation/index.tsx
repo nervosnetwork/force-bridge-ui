@@ -124,7 +124,6 @@ export const BridgeOperationForm: React.FC = () => {
   // bind url query with the input
   useEffect(() => {
     if (!initRecipient && !initAmount) return;
-
     setRecipient(initRecipient ?? '');
     setBridgeFromAmount(initAmount ?? '');
   }, [initAmount, initRecipient, setBridgeFromAmount, setRecipient, signer]);
@@ -259,6 +258,7 @@ export const BridgeOperationForm: React.FC = () => {
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
             disabled={selectedAsset == null || signer == null}
+            tooltip={direction === BridgeDirection.In}
           />
           <Help {...statusOf('recipient')} />
         </div>

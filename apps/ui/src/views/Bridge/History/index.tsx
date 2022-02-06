@@ -1,4 +1,3 @@
-import { Asset } from '@force-bridge/commons';
 import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { CheckCircleIcon, ChevronDoubleRightIcon, ClockIcon, SwitchHorizontalIcon } from '@heroicons/react/solid';
 import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
@@ -14,30 +13,30 @@ import { AssetLogo } from 'components/AssetLogo';
 import { AssetSelector } from 'components/AssetSelector';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useAssetQuery } from 'hooks/useAssetQuery';
-import { useBridgeParams } from 'hooks/useBridgeParams';
+import { useBridgePath } from 'hooks/useBridgePath';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { formatAddress } from 'utils';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 
 interface BridgeHistoryProps {
-  asset?: Asset;
   xchainConfirmNumber?: number;
   nervosConfirmNumber?: number;
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { nervosModule, walletConnectStatus, direction } = ForceBridgeContainer.useContainer();
+  const { direction, walletConnectStatus, nervosModule } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const { selectedAsset, setSelectedAsset } = useSelectBridgeAsset();
-  const { setParams } = useBridgeParams();
+  const { setPath } = useBridgePath();
   const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   const asset = useMemo(() => {
-    if (!props.asset) return;
-    const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(props.asset);
-    if (isNervosAsset) return props.asset.shadow;
-    return props.asset;
-  }, [nervosModule.assetModel, props.asset]);
+    if (selectedAsset) {
+      const isNervosAsset = nervosModule.assetModel.isCurrentNetworkAsset(selectedAsset);
+      if (isNervosAsset) return selectedAsset?.shadow;
+    }
+    return selectedAsset;
+  }, [nervosModule.assetModel, selectedAsset]);
 
   const transactionSummaries = useQueryWithCache(asset);
 
@@ -72,7 +71,6 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     }
     return result;
   };
-
   const assetList = useMemo(() => {
     if (!query.data) return [];
     if (direction === BridgeDirection.In) return query.data.xchain;
@@ -83,7 +81,22 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     <>
       <Typography variant="h1">History</Typography>
       <History textAlign="center">
-        {asset && transactionSummaries?.length ? (
+        {!isConnected && (
+          <>
+            <Typography variant="h2" color="text.secondary" marginTop={18}>
+              You need to connect wallet first.
+            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => setPath('transfer')}
+              startIcon={<SwitchHorizontalIcon />}
+            >
+              Transfer Now
+            </Button>
+          </>
+        )}
+        {transactionSummaries?.length ? (
           <>
             <AssetSelector
               options={assetList}
@@ -140,36 +153,18 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
             ))}
           </>
         ) : (
-          <>
-            {isConnected ? (
-              <Box marginTop={18} marginBottom={18}>
-                <AssetSelector
-                  options={assetList}
-                  rowKey={(asset) => asset.identity()}
-                  selected={selectedAsset?.identity()}
-                  onSelect={(_id, asset) => setSelectedAsset(asset)}
-                  disabled={false}
-                />
-                <Typography variant="h2" color="text.secondary">
-                  {selectedAsset ? 'No results' : 'Please select an asset first'}.
-                </Typography>
-              </Box>
-            ) : (
-              <>
-                <Typography variant="h2" color="text.secondary" marginTop={18}>
-                  You need to connect wallet first.
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => setParams('true')}
-                  startIcon={<SwitchHorizontalIcon />}
-                >
-                  Transfer Now
-                </Button>
-              </>
-            )}
-          </>
+          <Box marginTop={18} marginBottom={18} sx={!isConnected ? { display: 'none' } : null}>
+            <AssetSelector
+              options={assetList}
+              rowKey={(asset) => asset.identity()}
+              selected={selectedAsset?.identity()}
+              onSelect={(_id, asset) => setSelectedAsset(asset)}
+              disabled={!isConnected}
+            />
+            <Typography variant="h2" color="text.secondary">
+              {selectedAsset ? 'No results' : 'Please select an asset first'}.
+            </Typography>
+          </Box>
         )}
       </History>
     </>

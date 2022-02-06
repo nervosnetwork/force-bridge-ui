@@ -6,14 +6,14 @@ import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
 import { CustomizedAppBar } from './styled';
 import logo from 'assets/images/force-logo.png';
 import { WalletConnectorButton } from 'components/WalletConnector';
-import { useBridgeParams } from 'hooks/useBridgeParams';
+import { useBridgePath } from 'hooks/useBridgePath';
 import { menuItems } from 'interfaces/Header/MenuItems';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const AppHeader: React.FC = () => {
   const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
-  const { setParams } = useBridgeParams();
+  const { setPath } = useBridgePath();
 
   const handleOpenExpandedMenu = () => {
     return expandedMenuRef.current?.openExpandedMenu();
@@ -22,10 +22,10 @@ export const AppHeader: React.FC = () => {
   const handleMenuItemClick = (item: string) => {
     switch (item) {
       case 'Transfer':
-        setParams('true');
+        setPath('transfer');
         break;
       case 'History':
-        setParams('false');
+        setPath('history');
         break;
       case 'More':
         expandedMenuRef.current?.openExpandedMenu();
