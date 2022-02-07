@@ -47,6 +47,7 @@ export const BridgeOperationForm: React.FC = () => {
     switchBridgeDirection,
     switchNetwork,
     supportedNetworks,
+    walletConnectStatus,
   } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const location = useLocation();
@@ -77,7 +78,6 @@ export const BridgeOperationForm: React.FC = () => {
     recipient,
   } = BridgeOperationFormContainer.useContainer();
 
-  const { walletConnectStatus } = ForceBridgeContainer.useContainer();
   const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   const allowance = useAllowance(selectedAsset);

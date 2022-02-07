@@ -6,10 +6,10 @@ export const CustomizedSelect = styled(Select)(
     border: none;
     border-radius: 0.375rem;
     transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #232323;
+    border: 1px solid ${theme.palette.secondary.light};
 
     :hover {
-      border-color: #484D4E;
+      border-color: ${theme.palette.text.secondary};
     }
 
     .MuiOutlinedInput-notchedOutline {

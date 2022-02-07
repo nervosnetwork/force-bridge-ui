@@ -26,7 +26,7 @@ export const CustomizedExpandedMenu = styled(Paper)(
     .item-icon {
       width: 3rem;
       height: 3rem;
-      background-color: #00cc9b;
+      background-color: ${theme.palette.secondary.main};
       border-radius: 0.375rem;
       display: inline-flex;
       justify-content: center;
@@ -46,7 +46,7 @@ export const CustomizedExpandedMenu = styled(Paper)(
       border-radius: 0.5rem;
       padding: 0.75rem;
       &:hover {
-        background: #232323;
+        background: ${theme.palette.secondary.light};
         cursor: pointer;
       }
     }
@@ -63,7 +63,7 @@ export const CustomizedExpandedMenu = styled(Paper)(
   @media only screen and (max-width: 900px) {
     & {
       top: 0;
-      background-color: #000000;
+      background-color: ${theme.palette.primary.light};
       border-radius: 0.5rem;
       margin: 0 0.5rem;
 

@@ -16,7 +16,7 @@ export const Switcher = styled('div')(
             .MuiAvatar-root {
                 width: 80px;
                 height: 80px;
-                background-color: #000000;
+                background-color: ${theme.palette.primary.dark};
             }
         }
         .MuiButton-root {
@@ -27,7 +27,7 @@ export const Switcher = styled('div')(
         transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
             &:hover {
                 background: #00cc9b;
-                color: #000000;
+                color: ${theme.palette.primary.dark};
             }
         }
 

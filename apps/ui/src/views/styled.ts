@@ -2,7 +2,7 @@ import { styled } from '@mui/material';
 import image from 'assets/images/cell-pattern-static.webp';
 
 export const AppContainer = styled('div')(
-  ({ theme }) => `
+  () => `
     background: url(${image}) center no-repeat fixed;
     background-size: cover;
     min-height: 100vh;

@@ -43,6 +43,7 @@ export function useApproveTransaction(): UseMutationResult<{ txId: string }, unk
       children: { title, dialogContent, closeDialog },
     });
   };
+
   return useMutation(
     ['approveTransaction'],
     async (input: ApproveInputValues) => {

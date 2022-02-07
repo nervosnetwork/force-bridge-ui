@@ -1,5 +1,4 @@
-import { AppBar } from '@mui/material';
-import styled from 'styled-components';
+import { AppBar, styled } from '@mui/material';
 
 export const CustomizedAppBar = styled(AppBar)(
   ({ theme }) => `
@@ -15,7 +14,7 @@ export const CustomizedAppBar = styled(AppBar)(
     .MuiList-root {
       display:flex;
       .MuiMenuItem-root {
-        color: #6b7280;
+        color: ${theme.palette.primary.main};
         display: flex;
         margin-left: 2.5rem;
         transition: all 600ms cubic-bezier(0.645, 0.045, 0.095, 1.08);
