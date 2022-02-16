@@ -1,5 +1,5 @@
 import { MenuOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, Row } from 'antd';
+import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd';
 import React from 'react';
 import styled from 'styled-components';
 import { About } from './About';
@@ -16,7 +16,7 @@ const AppHeaderWrapper = styled.header`
   right: 0;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
   padding: 16px 100px;
-  height: 64px;
+  //height: 64px;
   background: ${(props) => props.theme.palette.common.white};
 
   @media (max-width: 768px) {
@@ -57,6 +57,25 @@ export const AppHeader: React.FC = () => {
 
   return (
     <AppHeaderWrapper>
+      <Alert
+        closable
+        message={
+          <div style={{ textAlign: 'center' }}>
+            <Typography.Text>
+              The CKB wallet have been switched from pw-lock to omni-lock. If you have assets locked in previous wallet,
+              please visit{' '}
+              <Typography.Link
+                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
+                target="_blank"
+              >
+                Asset Migration Guide
+              </Typography.Link>
+            </Typography.Text>
+          </div>
+        }
+        type="warning"
+        style={{ marginBottom: '18px' }}
+      />
       <Row justify="space-between" align="middle" gutter={16}>
         <Col md={3} sm={2} xs={2}>
           <div>
