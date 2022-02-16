@@ -13,3 +13,5 @@ jobs:
         run: yarn build:lib
       - name: Lint
         run: yarn lint && yarn workspace @force-bridge/ui run lint
+      - name: Build
+        run: cd apps/ui && yarn build
