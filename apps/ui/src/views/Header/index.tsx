@@ -65,7 +65,7 @@ export const AppHeader: React.FC = () => {
               The CKB wallet have been switched from pw-lock to omni-lock. If you have assets locked in previous wallet,
               please visit{' '}
               <Typography.Link
-                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration.md"
+                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
                 target="_blank"
               >
                 Asset Migration Guide
