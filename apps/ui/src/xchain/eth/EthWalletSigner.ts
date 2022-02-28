@@ -51,7 +51,9 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
     let skeleton = helpers.objectToTransactionSkeleton(raw);
     const messageToSign = skeleton.signingEntries.get(0)?.message;
     if (!messageToSign) throw new Error('Invalid burn tx: no signingEntries');
-    let sigs = await this.provider.send('personal_sign', [this.identityXChain(), messageToSign]);
+    if (!window.ethereum) throw new Error('Could not find ethereum wallet');
+    const paramsToSign = window.ethereum.isSafePal ? [messageToSign] : [this.identityXChain(), messageToSign];
+    let sigs = await this.provider.send('personal_sign', paramsToSign);
 
     let v = Number.parseInt(sigs.slice(-2), 16);
     if (v >= 27) v -= 27;
