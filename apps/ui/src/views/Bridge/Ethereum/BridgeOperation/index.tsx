@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useAllowance } from '../hooks/useAllowance';
 import { useApproveTransaction } from '../hooks/useApproveTransaction';
 import { useChainId } from '../hooks/useChainId';
+import { BridgeReminder } from './BridgeReminder';
 import { SubmitButton } from './SubmitButton';
 import { SwitchMetaMaskNetworkButton } from './SwitchMetaMaskNetworkButton';
 import { ForceBridgeLogo, Transfer } from './styled';
@@ -58,6 +59,8 @@ export const BridgeOperationForm: React.FC = () => {
   const initRecipient = searchParams.get('recipient');
   const initAmount = searchParams.get('amount');
 
+  const [toNetworkLabel, setToNetworkLabel] = useState<string>('');
+  const [disabledSubmitButton, setDisabledSubmitButton] = useState<boolean>(false);
   const { validate, status: validateStatus, reset, result: errors } = useValidateBridgeOperationForm();
 
   useEffect(() => {
@@ -98,7 +101,7 @@ export const BridgeOperationForm: React.FC = () => {
 
   function onSubmit() {
     if (!selectedAsset || (!recipient && !needApprove) || !selectedAsset.shadow) return;
-
+    setDisabledSubmitButton(true);
     const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
     if (asset.info?.decimals == null) boom('asset info is not loaded');
     asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
@@ -113,6 +116,7 @@ export const BridgeOperationForm: React.FC = () => {
   const declineTransaction = () => {
     setLoadingDialog(false);
     handleCloseModal();
+    setDisabledSubmitButton(false);
   };
 
   const assetList = useMemo(() => {
@@ -157,7 +161,10 @@ export const BridgeOperationForm: React.FC = () => {
 
   const handleSubmitButtonClick = () => {
     if (needApprove && selectedAsset) {
-      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove }).then(afterSubmit);
+      setDisabledSubmitButton(true);
+      sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove })
+        .then(afterSubmit)
+        .catch(declineTransaction);
     } else {
       setOpenModal(true);
     }
@@ -183,13 +190,21 @@ export const BridgeOperationForm: React.FC = () => {
       />
     ) : (
       <SubmitButton
-        disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
+        disabled={(validateStatus !== 'success' && !enableApproveButton && isConnected) || disabledSubmitButton}
         onClick={() => handleSubmitButtonClick()}
         allowanceStatus={allowance}
       />
     );
 
-  const labelSymbol = direction === 'In' ? 'CKB' : 'ETH';
+  useEffect(() => {
+    let networkLabel;
+    if (network === 'Ethereum') {
+      networkLabel = direction === BridgeDirection.In ? 'CKB' : 'ETH';
+    } else {
+      networkLabel = direction === BridgeDirection.In ? 'CKB' : 'Bsc';
+    }
+    setToNetworkLabel(networkLabel);
+  }, [network, direction]);
 
   return (
     <>
@@ -253,7 +268,7 @@ export const BridgeOperationForm: React.FC = () => {
             id="recipient"
             name="recipient"
             onBlur={formik.handleBlur}
-            label={`To ${labelSymbol} Address`}
+            label={`To ${toNetworkLabel} Address`}
             error={statusOf('recipient').validateStatus === 'error'}
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
@@ -264,6 +279,7 @@ export const BridgeOperationForm: React.FC = () => {
         </div>
 
         {recipient && bridgeFromAmount && selectedAsset && <TransferAccordion selectedAsset={selectedAsset} />}
+        <BridgeReminder />
 
         {actionButton}
       </Transfer>

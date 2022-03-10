@@ -37,7 +37,7 @@ export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
       <Grid container justifyContent="space-between">
         <Grid item>
           <Typography fontWeight={400} color="text.secondary">
-            Gas fee
+            Bridge fee
           </Typography>
         </Grid>
         <Grid item>{feeQuery.data && <HumanizeAmount asset={feeQuery.data.fee} />}</Grid>

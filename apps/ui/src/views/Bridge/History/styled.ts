@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/material';
+import { Box, Table, styled } from '@mui/material';
 import { darkBox } from 'shared-styled/styled';
 
 export const History = styled(Box)(
@@ -42,6 +42,29 @@ export const History = styled(Box)(
     .MuiOutlinedInput-root {
       width:94%;
       margin-bottom: 24px;
+    }
+  `,
+);
+
+export const CustomizedTable = styled(Table)(
+  ({ theme }) => `
+    .MuiTableCell-root {
+      border-bottom: none;
+    }
+    .MuiTableRow-root:nth-of-type(odd):not(:last-child) {
+      display: table;
+      border-top: 1px solid ${theme.palette.secondary.light};
+      display="flex";
+    }
+    .MuiTableRow-root:nth-of-type(even) .MuiTableCell-root {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 16px 16px 0;
+    }
+    .MuiTablePagination-toolbar {
+      border-top: 1px solid ${theme.palette.secondary.light};
     }
   `,
 );

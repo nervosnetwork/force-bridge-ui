@@ -6,8 +6,8 @@ import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
 
 interface HumanizeAmountProps {
-  humanize?: HumanizeOptions;
   asset: Partial<AssetType>;
+  humanize?: HumanizeOptions;
   showSymbol?: boolean;
 }
 
