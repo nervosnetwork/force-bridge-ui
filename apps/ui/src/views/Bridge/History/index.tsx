@@ -21,6 +21,7 @@ import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetLogo } from 'components/AssetLogo';
 import { AssetSelector } from 'components/AssetSelector';
+import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector';
 import { TablePaginationActions } from 'components/TablePaginationActions';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { useAssetQuery } from 'hooks/useAssetQuery';
@@ -35,7 +36,15 @@ interface BridgeHistoryProps {
 }
 
 export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
-  const { direction, walletConnectStatus, nervosModule } = ForceBridgeContainer.useContainer();
+  const {
+    direction,
+    walletConnectStatus,
+    nervosModule,
+    network,
+    supportedNetworks,
+    switchBridgeDirection,
+    switchNetwork,
+  } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const { selectedAsset, setSelectedAsset } = useSelectBridgeAsset();
   const { setPath } = useBridgePath();
@@ -100,13 +109,34 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
     setPage(0);
   };
 
+  const historySelectors = (
+    <>
+      <NetworkDirectionSelector
+        networks={supportedNetworks}
+        network={network}
+        direction={direction}
+        onSelect={({ network, direction }) => {
+          switchNetwork(network);
+          switchBridgeDirection(direction);
+        }}
+      />
+      <AssetSelector
+        options={assetList}
+        rowKey={(asset) => asset.identity()}
+        selected={selectedAsset?.identity()}
+        onSelect={(_id, asset) => setSelectedAsset(asset)}
+        disabled={!isConnected}
+      />
+    </>
+  );
+
   return (
     <>
       <Typography variant="h1">History</Typography>
       <History textAlign="center">
         {!isConnected && (
-          <>
-            <Typography variant="h2" color="text.secondary" marginTop={18}>
+          <Box marginBottom={18} marginTop={18}>
+            <Typography variant="h2" color="text.secondary">
               You need to connect wallet first.
             </Typography>
             <Button
@@ -117,17 +147,12 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
             >
               Transfer Now
             </Button>
-          </>
+          </Box>
         )}
+
         {transactionSummaries?.length ? (
           <>
-            <AssetSelector
-              options={assetList}
-              rowKey={(asset) => asset.identity()}
-              selected={selectedAsset?.identity()}
-              onSelect={(_id, asset) => setSelectedAsset(asset)}
-              disabled={false}
-            />
+            {historySelectors}
             <TableContainer>
               <CustomizedTable aria-label="custom pagination table">
                 <TableBody>
@@ -139,9 +164,17 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                       <TableRow key={item.txSummary.fromTransaction.txId}>
                         <TableCell style={{ width: 50 }}>
                           <Box display="flex">
-                            <AssetLogo sx={{ width: 32, height: 32 }} network={item.txSummary.fromAsset.network} />
+                            <AssetLogo
+                              sx={{ width: 32, height: 32 }}
+                              network={item.txSummary.fromAsset.network === 'Nervos' ? 'Nervos' : network}
+                              isSmall
+                            />
                             <ChevronDoubleRightIcon />
-                            <AssetLogo sx={{ width: 32, height: 32 }} network={item.txSummary.toAsset.network} />
+                            <AssetLogo
+                              sx={{ width: 32, height: 32 }}
+                              network={item.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
+                              isSmall
+                            />
                           </Box>
                         </TableCell>
                         <TableCell style={{ width: 360 }}>
@@ -152,7 +185,11 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                             <Typography color="primary.light">{formatAddress(item.txSummary.toAsset.ident)}</Typography>
                           </Box>
                           <Box display="flex">
-                            <AssetLogo sx={{ width: 20, height: 20 }} network={item.txSummary.fromAsset.network} />{' '}
+                            <AssetLogo
+                              sx={{ width: 20, height: 20 }}
+                              network={item.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
+                              isSmall
+                            />
                             <HumanizeAmount showSymbol asset={item.txSummary.toAsset} />
                           </Box>
                         </TableCell>
@@ -211,13 +248,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
           </>
         ) : (
           <Box marginTop={18} marginBottom={18} sx={!isConnected ? { display: 'none' } : null}>
-            <AssetSelector
-              options={assetList}
-              rowKey={(asset) => asset.identity()}
-              selected={selectedAsset?.identity()}
-              onSelect={(_id, asset) => setSelectedAsset(asset)}
-              disabled={!isConnected}
-            />
+            {historySelectors}
             <Typography variant="h2" color="text.secondary">
               {selectedAsset ? 'No results' : 'Please select an asset first'}.
             </Typography>

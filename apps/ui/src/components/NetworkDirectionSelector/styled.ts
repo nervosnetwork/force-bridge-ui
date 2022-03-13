@@ -5,7 +5,6 @@ export const NetworkDirectionMenu = styled('div')(
     display: flex;
     justify-content:center;
     .MuiButton-root {
-        margin-bottom: 24px;
         width:227px;
     }
   `,

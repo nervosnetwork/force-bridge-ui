@@ -60,7 +60,6 @@ export const ExpandedMenu = forwardRef<CanOpenExpandedMenu, ExpandedMenuProps>((
         <span className="item-icon">{item.icon}</span>
         <Typography> {item.name}</Typography>
         <Typography color="primary" variant="body2" sx={{ display: { xs: 'none', md: 'block' } }}>
-          {' '}
           {item.description}
         </Typography>
       </Grid>

@@ -27,7 +27,7 @@ export const History = styled(Box)(
       color: #34D399;
     }
     & .MuiButton-root {
-      margin: 16px 0 144px 0;
+      margin: 24px 0 0 0;
       font-weight: 600;
       color: ${theme.palette.primary.dark};
       align-items:center;
@@ -54,14 +54,13 @@ export const CustomizedTable = styled(Table)(
     .MuiTableRow-root:nth-of-type(odd):not(:last-child) {
       display: table;
       border-top: 1px solid ${theme.palette.secondary.light};
-      display="flex";
     }
     .MuiTableRow-root:nth-of-type(even) .MuiTableCell-root {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
-      padding: 0 16px 16px 0;
+      padding: 0 16px 16px 16px;
     }
     .MuiTablePagination-toolbar {
       border-top: 1px solid ${theme.palette.secondary.light};

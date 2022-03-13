@@ -14,7 +14,7 @@ export const UserInput: React.FC<UserInputProps> = (props) => {
 
   return (
     <>
-      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={1}>
+      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={0.5}>
         {label}
       </Typography>
       {tooltip ? (

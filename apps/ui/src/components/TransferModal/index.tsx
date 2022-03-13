@@ -38,7 +38,7 @@ export const TransferModal: React.FC<TransferDialogProps> = (props) => {
       ) : (
         <>
           <Box>
-            <AssetLogo network={selectedAsset.network} sx={{ width: 48, height: 48 }} />
+            <AssetLogo network={selectedAsset.network} sx={{ width: 48, height: 48 }} isSmall />
           </Box>
           <DialogContent>
             <Typography color="primary.light" variant="h2">

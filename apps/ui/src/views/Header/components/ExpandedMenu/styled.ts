@@ -63,7 +63,6 @@ export const CustomizedExpandedMenu = styled(Paper)(
   @media only screen and (max-width: 900px) {
     & {
       top: 0;
-      background-color: ${theme.palette.primary.light};
       border-radius: 0.5rem;
       margin: 0 0.5rem;
 

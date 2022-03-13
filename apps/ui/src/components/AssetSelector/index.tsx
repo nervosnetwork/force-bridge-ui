@@ -30,7 +30,7 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
 
   return (
     <>
-      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={1}>
+      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={0.5}>
         Asset
       </Typography>
       <CustomizedSelect fullWidth value={selectedAsset || ''} disabled={disabled}>

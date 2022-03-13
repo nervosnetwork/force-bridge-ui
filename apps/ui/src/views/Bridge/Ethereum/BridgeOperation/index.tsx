@@ -60,7 +60,6 @@ export const BridgeOperationForm: React.FC = () => {
   const initAmount = searchParams.get('amount');
 
   const [toNetworkLabel, setToNetworkLabel] = useState<string>('');
-  const [disabledSubmitButton, setDisabledSubmitButton] = useState<boolean>(false);
   const { validate, status: validateStatus, reset, result: errors } = useValidateBridgeOperationForm();
 
   useEffect(() => {
@@ -87,8 +86,10 @@ export const BridgeOperationForm: React.FC = () => {
   const enableApproveButton = allowance && allowance.status === 'NeedApprove';
   const needApprove = allowance && allowance.status === 'NeedApprove';
 
-  const { mutateAsync: sendBridgeTransaction } = useSendBridgeTransaction();
-  const { mutateAsync: sendApproveTransaction } = useApproveTransaction();
+  const { mutateAsync: sendBridgeTransaction, isLoading: isBridgeLoading } = useSendBridgeTransaction();
+  const { mutateAsync: sendApproveTransaction, isLoading: isApproveLoading } = useApproveTransaction();
+  const isLoading = isBridgeLoading || isApproveLoading;
+
   const [loadingDialog, setLoadingDialog] = useState<boolean>(false);
 
   function resetForm() {
@@ -101,7 +102,6 @@ export const BridgeOperationForm: React.FC = () => {
 
   function onSubmit() {
     if (!selectedAsset || (!recipient && !needApprove) || !selectedAsset.shadow) return;
-    setDisabledSubmitButton(true);
     const asset = direction === BridgeDirection.In ? selectedAsset.copy() : selectedAsset.shadow?.copy();
     if (asset.info?.decimals == null) boom('asset info is not loaded');
     asset.amount = BeautyAmount.fromHumanize(bridgeFromAmount, asset.info.decimals).val.toString();
@@ -116,7 +116,6 @@ export const BridgeOperationForm: React.FC = () => {
   const declineTransaction = () => {
     setLoadingDialog(false);
     handleCloseModal();
-    setDisabledSubmitButton(false);
   };
 
   const assetList = useMemo(() => {
@@ -161,7 +160,6 @@ export const BridgeOperationForm: React.FC = () => {
 
   const handleSubmitButtonClick = () => {
     if (needApprove && selectedAsset) {
-      setDisabledSubmitButton(true);
       sendApproveTransaction({ asset: selectedAsset, addApprove: allowance.addApprove })
         .then(afterSubmit)
         .catch(declineTransaction);
@@ -190,9 +188,10 @@ export const BridgeOperationForm: React.FC = () => {
       />
     ) : (
       <SubmitButton
-        disabled={(validateStatus !== 'success' && !enableApproveButton && isConnected) || disabledSubmitButton}
+        disabled={(validateStatus !== 'success' && !enableApproveButton && isConnected) || isLoading}
         onClick={() => handleSubmitButtonClick()}
         allowanceStatus={allowance}
+        isloading={isLoading}
       />
     );
 

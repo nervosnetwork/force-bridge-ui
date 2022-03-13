@@ -7,17 +7,18 @@ export const Switcher = styled('div')(
         flex-direction: column;
         align-items: center;
         cursor: pointer;
+        margin-top: 24px;
         .bg-gradient {
-        padding: 0.125rem;
-        position: relative;
-        background: linear-gradient(to right, #00cc9b, #18efb1);
-        border-radius: 9999px;
-        line-height: 1px;
-            .MuiAvatar-root {
-                width: 80px;
-                height: 80px;
-                background-color: ${theme.palette.primary.dark};
-            }
+            padding: 0.125rem;
+            position: relative;
+            background: linear-gradient(to right, #00cc9b, #18efb1);
+            border-radius: 9999px;
+            line-height: 1px;
+                .MuiAvatar-root {
+                    width: 80px;
+                    height: 80px;
+                    background-color: ${theme.palette.primary.dark};
+                }
         }
         .MuiButton-root {
         margin-top: 0.25rem;

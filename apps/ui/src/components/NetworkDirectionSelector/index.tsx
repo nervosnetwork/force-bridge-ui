@@ -45,10 +45,10 @@ export const NetworkDirectionSelector: React.FC<NetworkDirectionSelectorProps> =
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         {directionItems.map((item) => (
           <NetworkItem key={item.key} onClick={() => handleMenuItemClick(item)}>
-            <AssetLogo sx={{ width: 20, height: 20 }} network={item.from} />
+            <AssetLogo sx={{ width: 20, height: 20 }} network={item.from} isSmall />
             <Typography>{item.from}</Typography>
             <ChevronDoubleRightIcon />
-            <AssetLogo sx={{ width: 20, height: 20 }} network={item.to} />
+            <AssetLogo sx={{ width: 20, height: 20 }} network={item.to} isSmall />
             <Typography>{item.to}</Typography>
           </NetworkItem>
         ))}

@@ -2,7 +2,8 @@ import { MenuIcon } from '@heroicons/react/outline';
 import { Box, Container, MenuItem, MenuList, Toolbar } from '@mui/material';
 import React, { useRef } from 'react';
 
-import { ExpandedMenu } from './components/ExpandedMenu/ExpandedMenu';
+import { ExpandedMenu } from './components/ExpandedMenu/index';
+import { SwitchAlert } from './components/SwitchAlert';
 import { CustomizedAppBar } from './styled';
 import logo from 'assets/images/force-logo.png';
 import { WalletConnectorButton } from 'components/WalletConnector';
@@ -37,6 +38,7 @@ export const AppHeader: React.FC = () => {
     <>
       <CustomizedAppBar position="fixed" className="app-bar">
         <Container maxWidth="xl">
+          <SwitchAlert />
           <Toolbar disableGutters>
             <img src={logo} alt="logo" />
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

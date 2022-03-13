@@ -14,7 +14,7 @@ interface TransferDetailsProps {
 export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
   const { selectedAsset } = props;
 
-  const { bridgeToAmount, bridgeFromAmount, recipient } = BridgeOperationFormContainer.useContainer();
+  const { asset, bridgeToAmount, bridgeFromAmount, recipient } = BridgeOperationFormContainer.useContainer();
   const feeQuery = useBridgeFeeQuery();
 
   return (
@@ -30,7 +30,7 @@ export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
         </Grid>
         <Grid item>
           <Typography fontWeight={400} color="primary.light">
-            {bridgeFromAmount}
+            {bridgeFromAmount} {selectedAsset.info?.name}
           </Typography>
         </Grid>
       </Grid>
@@ -40,7 +40,9 @@ export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
             Bridge fee
           </Typography>
         </Grid>
-        <Grid item>{feeQuery.data && <HumanizeAmount asset={feeQuery.data.fee} />}</Grid>
+        <Grid item>
+          {feeQuery.data && <HumanizeAmount asset={{ ...asset, amount: feeQuery.data.fee.amount }} showSymbol />}
+        </Grid>
       </Grid>
       <Divider />
       <Grid container justifyContent="space-between">

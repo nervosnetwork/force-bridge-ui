@@ -1,10 +1,10 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
-import { Avatar, Button, Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import React, { useMemo } from 'react';
 import { Switcher } from './styled';
-import ethereumlogo from 'assets/images/ethereum-logo.png';
-import nervoslogo from 'assets/images/nervos-logo-mark.jpg';
+
+import { AssetLogo } from 'components/AssetLogo/index';
 import { BridgeDirection } from 'containers/ForceBridgeContainer';
 
 interface NetworkDirectionPreviewProps {
@@ -22,9 +22,8 @@ export const NetworkDirectionPreview: React.FC<NetworkDirectionPreviewProps> = (
     return { from: NERVOS_NETWORK, to: network };
   }, [direction, network]);
 
-  const fromLogo = selected.from === 'Ethereum' ? ethereumlogo : nervoslogo;
-  const toLogo = selected.to === 'Nervos' ? nervoslogo : ethereumlogo;
   const directionChangeNetwork = direction === BridgeDirection.In ? BridgeDirection.Out : BridgeDirection.In;
+
   return (
     <Switcher>
       <Grid container justifyContent="center">
@@ -34,12 +33,12 @@ export const NetworkDirectionPreview: React.FC<NetworkDirectionPreviewProps> = (
           onClick={() =>
             onSelect({
               direction: directionChangeNetwork,
-              network: 'Ethereum',
+              network: network,
             })
           }
         >
           <div className="bg-gradient">
-            <Avatar alt="Remy Sharp" src={fromLogo} />
+            <AssetLogo network={selected.from} isSmall={false} />
           </div>
           <Button variant="contained" size="small">
             {selected.from}
@@ -48,9 +47,9 @@ export const NetworkDirectionPreview: React.FC<NetworkDirectionPreviewProps> = (
         <Grid item order={2}>
           <ChevronDoubleRightIcon />
         </Grid>
-        <Grid item order={3} onClick={() => onSelect({ direction: directionChangeNetwork, network: 'Ethereum' })}>
+        <Grid item order={3} onClick={() => onSelect({ direction: directionChangeNetwork, network: network })}>
           <div className="bg-gradient">
-            <Avatar alt="Remy Sharp" src={toLogo} />
+            <AssetLogo network={selected.to} isSmall={false} />
           </div>
           <Button variant="contained" size="small">
             {selected.to}

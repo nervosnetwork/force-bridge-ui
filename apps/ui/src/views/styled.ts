@@ -7,7 +7,7 @@ export const AppContainer = styled('div')(
     background-size: cover;
     min-height: 100vh;
       & .MuiContainer-root {
-      padding-top: 7rem;
+      padding-top: 7.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;   
