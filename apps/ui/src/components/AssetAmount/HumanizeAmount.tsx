@@ -1,18 +1,18 @@
 import { AssetType } from '@force-bridge/commons';
-import { Typography } from '@mui/material';
+import { Typography, TypographyProps } from '@mui/material';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import { useAssetInfoListQuery } from 'hooks/useAssetInfoListQuery';
 import { BeautyAmount, HumanizeOptions } from 'libs';
 
-interface HumanizeAmountProps {
+interface HumanizeAmountProps extends TypographyProps {
   asset: Partial<AssetType>;
   humanize?: HumanizeOptions;
   showSymbol?: boolean;
 }
 
 export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
-  const { asset, humanize, showSymbol } = props;
+  const { asset, humanize, showSymbol, ...typographyProps } = props;
   const { infoOf } = useAssetInfoListQuery();
 
   const info = useMemo(() => {
@@ -29,7 +29,7 @@ export const HumanizeAmount: React.FC<HumanizeAmountProps> = (props) => {
 
   return (
     <Tooltip title={beauty.humanize() + ' ' + info?.symbol}>
-      <Typography color="primary.light" variant="body2" fontWeight={400} marginLeft={1.5}>
+      <Typography {...typographyProps}>
         {beauty.humanize({ decimalPlaces: humanize?.decimalPlaces ?? 8, separator: humanize?.separator })}
         {showSymbol && ' ' + info?.symbol}
       </Typography>

@@ -51,17 +51,21 @@ export const CustomizedTable = styled(Table)(
     .MuiTableCell-root {
       border-bottom: none;
     }
-    .MuiTableRow-root:nth-of-type(odd):not(:last-child) {
-      display: table;
-      border-top: 1px solid ${theme.palette.secondary.light};
-    }
-    .MuiTableRow-root:nth-of-type(even) .MuiTableCell-root {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-      padding: 0 16px 16px 16px;
-    }
+
+    .MuiTableRow-root {
+      width: 100%;
+      &:nth-of-type(odd):not(:last-child) {
+        display: table;
+        border-top: 1px solid ${theme.palette.secondary.light};
+      };
+      &:nth-of-type(even) .MuiTableCell-root {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 0 16px 16px 16px;
+      };
+    };
     .MuiTablePagination-toolbar {
       border-top: 1px solid ${theme.palette.secondary.light};
     }

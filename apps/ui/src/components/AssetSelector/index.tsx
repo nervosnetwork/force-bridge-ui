@@ -37,7 +37,7 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
         {options.map((item) => (
           <MenuItem value={item.info?.name} key={item.info?.name} onClick={() => onSelectInternal(item)}>
             <AssetSymbol info={item.info} />
-            <HumanizeAmount asset={item} />
+            <HumanizeAmount asset={item} marginLeft={1.5} variant="body2" fontWeight={700} />
           </MenuItem>
         ))}
       </CustomizedSelect>

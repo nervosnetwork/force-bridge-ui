@@ -188,7 +188,7 @@ export const BridgeOperationForm: React.FC = () => {
       />
     ) : (
       <SubmitButton
-        disabled={(validateStatus !== 'success' && !enableApproveButton && isConnected) || isLoading}
+        disabled={validateStatus !== 'success' && !enableApproveButton && isConnected}
         onClick={() => handleSubmitButtonClick()}
         allowanceStatus={allowance}
         isloading={isLoading}

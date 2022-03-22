@@ -36,7 +36,14 @@ export const BridgeReminder: React.FC = () => {
 
   const minimalBridgeAmount = (
     <>
-      {query.data && <HumanizeAmount showSymbol asset={{ ...asset, amount: query.data.minimalAmount }} />}
+      {query.data && (
+        <HumanizeAmount
+          showSymbol
+          color="text.secondary"
+          marginLeft={0.5}
+          asset={{ ...asset, amount: query.data.minimalAmount }}
+        />
+      )}
       {query.isLoading && <LoadingOutlined />}
       {query.isError && <Typography>failed to get data</Typography>}
     </>

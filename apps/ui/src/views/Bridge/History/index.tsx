@@ -162,7 +162,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                   ).map((item) => (
                     <>
                       <TableRow key={item.txSummary.fromTransaction.txId}>
-                        <TableCell style={{ width: 50 }}>
+                        <TableCell>
                           <Box display="flex">
                             <AssetLogo
                               sx={{ width: 32, height: 32 }}
@@ -177,23 +177,39 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                             />
                           </Box>
                         </TableCell>
-                        <TableCell style={{ width: 360 }}>
+                        <TableCell>
                           <Box display="flex">
                             <Typography color="text.secondary" marginRight={0.5} fontWeight={400}>
-                              To
+                              Sender:
+                            </Typography>
+                            <Typography color="primary.light">
+                              {formatAddress(item.txSummary.fromAsset.ident)}
+                            </Typography>
+                          </Box>
+                          <Box display="flex">
+                            <Typography color="text.secondary" marginRight={0.5} fontWeight={400}>
+                              Recipient:
                             </Typography>
                             <Typography color="primary.light">{formatAddress(item.txSummary.toAsset.ident)}</Typography>
                           </Box>
                           <Box display="flex">
+                            <Typography color="text.secondary" marginRight={0.5} fontWeight={400}>
+                              Amount:
+                            </Typography>
+                            <HumanizeAmount
+                              color="primary.light"
+                              marginRight={1}
+                              showSymbol
+                              asset={item.txSummary.toAsset}
+                            />
                             <AssetLogo
                               sx={{ width: 20, height: 20 }}
                               network={item.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
                               isSmall
                             />
-                            <HumanizeAmount showSymbol asset={item.txSummary.toAsset} />
                           </Box>
                         </TableCell>
-                        <TableCell style={{ width: 50 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                           <Typography
                             color={
                               item.status === BridgeTransactionStatus.Pending ? 'text.secondary' : 'secondary.main'
@@ -208,9 +224,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                             </Typography>
                           </Tooltip>
                         </TableCell>
-                        <TableCell style={{ width: 40 }} align="right">
-                          {getStatusIcon(item.status)}
-                        </TableCell>
+                        <TableCell align="right">{getStatusIcon(item.status)}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>
