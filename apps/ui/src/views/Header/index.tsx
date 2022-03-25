@@ -53,7 +53,7 @@ export const AppHeader: React.FC = () => {
             </Box>
 
             <Box sx={{ flexGrow: 1 }}>
-              <WalletConnectorButton block type="primary" />
+              <WalletConnectorButton />
             </Box>
 
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

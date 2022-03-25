@@ -2,6 +2,7 @@ import { SwitchHorizontalIcon } from '@heroicons/react/solid';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { ButtonProps } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { WalletConnectorButton } from 'components/WalletConnector/WalletConnectorButton';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { AllowanceState } from 'views/Bridge/Ethereum/hooks/useAllowance';
@@ -46,7 +47,9 @@ export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
 
   const showStartIcon = allowanceStatus ? allowanceStatus.status === 'Approved' : isConnected;
 
-  return (
+  return !isConnected ? (
+    <WalletConnectorButton sx={{ width: '100%', padding: 2, marginTop: 2 }} />
+  ) : (
     <LoadingButton
       loading={isLoading}
       loadingPosition="start"

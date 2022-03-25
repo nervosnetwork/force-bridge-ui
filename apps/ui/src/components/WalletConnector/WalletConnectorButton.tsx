@@ -1,6 +1,5 @@
 import { CashIcon } from '@heroicons/react/solid';
-import { Button } from '@mui/material';
-import { ButtonProps } from 'antd';
+import { Button, ButtonProps } from '@mui/material';
 import React, { useMemo } from 'react';
 import { UserIdent } from 'components/UserIdent';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
@@ -13,7 +12,7 @@ export interface WalletConnectorButtonProps extends ButtonProps {
 }
 
 export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (props) => {
-  const { disconnectedContent = 'Connect Wallet', connectingContent = 'Connecting...' } = props;
+  const { disconnectedContent = 'Connect Wallet', connectingContent = 'Connecting...', ...btnProps } = props;
   const { signer, walletConnectStatus, wallet, direction } = ForceBridgeContainer.useContainer();
   const [globalSetting] = useGlobalSetting();
 
@@ -49,6 +48,7 @@ export const WalletConnectorButton: React.FC<WalletConnectorButtonProps> = (prop
       color="secondary"
       startIcon={isConnected && <CashIcon />}
       sx={{ padding: '0.5rem 1rem' }}
+      {...btnProps}
     >
       {buttonContent}
     </Button>

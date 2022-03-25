@@ -16,6 +16,7 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import React, { useMemo, useState } from 'react';
 import { ExpandRowContent } from './ExpandRowContent';
+import { AddressLink } from './components/AddressLink';
 import { CustomizedTable, History } from './styled';
 import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
@@ -27,7 +28,6 @@ import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeCon
 import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useBridgePath } from 'hooks/useBridgePath';
 import { ConnectStatus } from 'interfaces/WalletConnector';
-import { formatAddress } from 'utils';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
 
 interface BridgeHistoryProps {
@@ -183,14 +183,22 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
                               Sender:
                             </Typography>
                             <Typography color="primary.light">
-                              {formatAddress(item.txSummary.fromAsset.ident)}
+                              <AddressLink
+                                address={item.txSummary.sender}
+                                network={item.txSummary.fromAsset.network === 'Nervos' ? 'Nervos' : network}
+                              />
                             </Typography>
                           </Box>
                           <Box display="flex">
                             <Typography color="text.secondary" marginRight={0.5} fontWeight={400}>
                               Recipient:
                             </Typography>
-                            <Typography color="primary.light">{formatAddress(item.txSummary.toAsset.ident)}</Typography>
+                            <Typography color="primary.light">
+                              <AddressLink
+                                address={item.txSummary.recipient}
+                                network={item.txSummary.toAsset.network === 'Nervos' ? 'Nervos' : network}
+                              />
+                            </Typography>
                           </Box>
                           <Box display="flex">
                             <Typography color="text.secondary" marginRight={0.5} fontWeight={400}>
