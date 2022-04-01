@@ -23,16 +23,33 @@ export const BridgeReminder: React.FC = () => {
 
   // FIXME use network from ForceBridgeContainer if backend support
   const ethereumNetwork = 'Ethereum';
+  const nervosNetwork = 'Nervos';
   const query = useQuery(
-    ['getMinimalBridgeAmount', { asset: asset?.identity(), network }],
+    ['getMinimalBridgeAmount', { asset: asset?.identity(), network, isNervosNative: asset?.isNervosNative }],
     () => {
       asserts(asset != null && asset.shadow != null);
 
-      if (direction === BridgeDirection.In) {
-        return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.ident });
-      }
+      if (asset.isNervosNative) {
+        if (direction === BridgeDirection.In) {
+          return api.getMinimalBridgeAmount({
+            network: nervosNetwork,
+            targetChain: ethereumNetwork,
+            xchainAssetIdent: asset.shadow.ident,
+          });
+        }
 
-      return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.shadow.ident });
+        return api.getMinimalBridgeAmount({
+          network: nervosNetwork,
+          targetChain: ethereumNetwork,
+          xchainAssetIdent: asset.ident,
+        });
+      } else {
+        if (direction === BridgeDirection.In) {
+          return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.ident });
+        }
+
+        return api.getMinimalBridgeAmount({ network: ethereumNetwork, xchainAssetIdent: asset.shadow.ident });
+      }
     },
     {
       enabled: !!asset,

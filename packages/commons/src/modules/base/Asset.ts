@@ -10,6 +10,7 @@ export interface FullAssetPayload {
   amount?: string;
   info?: FungibleBaseInfo;
   isNative?: boolean;
+  isNervosNative?: boolean;
 
   shadow?: Asset;
 }
@@ -19,6 +20,7 @@ export interface AssetPayload {
   shadow?: Asset;
   amount?: string;
   info?: FungibleBaseInfo;
+  isNervosNative?: boolean;
 }
 
 export abstract class Asset {
@@ -27,6 +29,8 @@ export abstract class Asset {
   amount: string;
 
   isNative: boolean;
+
+  isNervosNative: boolean;
 
   info?: FungibleBaseInfo;
   /**
@@ -40,6 +44,7 @@ export abstract class Asset {
 
     this.amount = options.amount ?? '0';
     this.isNative = options.isNative ?? false;
+    this.isNervosNative = options.isNervosNative ?? false;
     this.info = options.info;
     this.shadow = options.shadow;
   }

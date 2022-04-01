@@ -24,19 +24,66 @@ export function useBridgeFeeQuery(): QueryObserverResult<API.GetBridgeInNervosBr
   }, [asset, bridgeInAmount]);
 
   return useQuery(
-    ['getBridgeFee', { direction, asset: asset?.identity(), amount, network }],
+    ['getBridgeFee', { direction, asset: asset?.identity(), amount, network, isNervosNative: asset?.isNervosNative }],
     () => {
       asserts(asset != null && asset.shadow != null);
+      const shadow = asset.shadow;
 
-      if (direction === BridgeDirection.In) {
-        return api.getBridgeInNervosBridgeFee({ network: ethereumNetwork, amount, xchainAssetIdent: asset.ident });
+      if (asset.isNervosNative) {
+        if (direction === BridgeDirection.In) {
+          return new Promise((resolve, reject) => {
+            api
+              .getBridgeNervosToXchainBurnBridgeFee({
+                xchain: ethereumNetwork,
+                typescriptHash: shadow.ident,
+                amount,
+              })
+              .then((resp) => {
+                resolve({
+                  fee: {
+                    ...resp,
+                    ident: shadow.ident,
+                    network: asset.shadow?.network,
+                  },
+                });
+              })
+              .catch((e) => {
+                reject(e);
+              });
+          });
+        }
+
+        return new Promise((resolve, reject) => {
+          api
+            .getBridgeNervosToXchainLockBridgeFee({
+              xchain: ethereumNetwork,
+              typescriptHash: asset.ident,
+              amount,
+            })
+            .then((resp) => {
+              resolve({
+                fee: {
+                  ...resp,
+                  ident: asset.ident,
+                  network: asset.network,
+                },
+              });
+            })
+            .catch((e) => {
+              reject(e);
+            });
+        });
+      } else {
+        if (direction === BridgeDirection.In) {
+          return api.getBridgeInNervosBridgeFee({ network: ethereumNetwork, amount, xchainAssetIdent: asset.ident });
+        }
+
+        return api.getBridgeOutNervosBridgeFee({
+          network: ethereumNetwork,
+          amount,
+          xchainAssetIdent: asset.shadow.ident,
+        });
       }
-
-      return api.getBridgeOutNervosBridgeFee({
-        network: ethereumNetwork,
-        amount,
-        xchainAssetIdent: asset.shadow.ident,
-      });
     },
     {
       enabled: !!asset && !!amount && !validate()?.bridgeInInputAmount,

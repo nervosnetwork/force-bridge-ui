@@ -6,7 +6,7 @@
 
 import { helpers } from '@ckb-lumos/lumos';
 import { ethers } from 'ethers';
-import { NetworkKeyNervos } from '../constatns';
+import { AddressKeyNervos, NetworkKeyNervos } from '../constatns';
 
 // number without decimals, e.g. 0x123aaa(Hex), 12547(Decimal)
 // do NOT use such values like, 1.225, 0.22
@@ -43,7 +43,7 @@ export type NetworkTypes<T extends NetworkBase = NetworkBase> = Required<T>;
 
 export type NervosNetwork = NetworkTypes<{
   Network: NetworkKeyNervos;
-  NativeAssetIdent: string;
+  NativeAssetIdent: AddressKeyNervos;
   DerivedAssetIdent: string;
   UserIdent: string;
   RawTransaction: helpers.TransactionSkeletonObject;

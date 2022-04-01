@@ -5,6 +5,7 @@ type Options = {
   shadow?: Asset;
   amount?: string;
   info?: FungibleBaseInfo;
+  isNervosNative?: boolean;
 };
 
 export class Ether extends Asset {

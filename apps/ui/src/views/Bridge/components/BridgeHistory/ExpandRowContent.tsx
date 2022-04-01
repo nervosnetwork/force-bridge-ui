@@ -1,9 +1,11 @@
 import { BridgeTransactionStatus } from '@force-bridge/commons/lib/types/apiv1';
 import { Space } from 'antd';
 import React from 'react';
+import { asserts } from '../../../../errors';
 import { RetryBurnButton } from './RetryBurnButton';
 import { TransactionWithKey } from './index';
 import { TransactionLink } from 'components/TransactionLink';
+import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
 interface ExpandRowContentProps {
@@ -15,6 +17,9 @@ interface ExpandRowContentProps {
 export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
   const { record, xchainConfirmNumber, nervosConfirmNumber } = props;
   const { network } = ForceBridgeContainer.useContainer();
+  const { asset } = BridgeOperationFormContainer.useContainer();
+  asserts(asset != null && asset.shadow != null);
+  const isNervosNative = asset.isNervosNative;
   let confirmStatus;
   const confirmNumber = record.txSummary.fromAsset.network === 'Nervos' ? nervosConfirmNumber : xchainConfirmNumber;
   if (record.status === BridgeTransactionStatus.Successful) {
@@ -27,11 +32,14 @@ export const ExpandRowContent: React.FC<ExpandRowContentProps> = (props) => {
         : ` (${record.txSummary.fromTransaction.confirmStatus.toString()}/${confirmNumber})`;
   }
   const fromTransactionDescription =
-    (record.txSummary.fromAsset.network === 'Nervos' ? `1. burn asset on Nervos` : `1. lock asset on ${network}`) +
-    confirmStatus;
+    (record.txSummary.fromAsset.network === 'Nervos'
+      ? `1. ${isNervosNative ? 'lock' : 'burn'} asset on Nervos`
+      : `1. ${isNervosNative ? 'burn' : 'lock'} asset on ${network}`) + confirmStatus;
 
   let toTransactionDescription =
-    record.txSummary.toAsset.network === 'Nervos' ? `2. mint asset on Nervos` : `2. unlock asset on ${network}`;
+    record.txSummary.toAsset.network === 'Nervos'
+      ? `2. ${isNervosNative ? 'unlock' : 'mint'} asset on Nervos`
+      : `2. ${isNervosNative ? 'mint' : 'unlock'} asset on ${network}`;
   if (record.status === BridgeTransactionStatus.Failed) {
     toTransactionDescription = toTransactionDescription + ` (error: ${record.message})`;
   } else if (
