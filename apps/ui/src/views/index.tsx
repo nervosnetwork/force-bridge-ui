@@ -2,7 +2,7 @@ import { NERVOS_NETWORK } from '@force-bridge/commons';
 import { Container } from '@mui/material';
 import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { Route, useHistory, useLocation } from 'react-router-dom';
 import { AppHeader } from './Header';
 import { AppContainer } from './styled';
 import DialogProvider from 'components/Dialog';
@@ -31,7 +31,9 @@ export const AppView: React.FC = () => {
           <EthereumProviderContainer.Provider>
             <DialogProvider>
               <Container maxWidth="sm">
-                <BridgeView />
+                <Route path="/:view/:fromNetwork/:toNetwork">
+                  <BridgeView />
+                </Route>
                 <Footer />
               </Container>
             </DialogProvider>

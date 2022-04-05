@@ -1,5 +1,5 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { useMount } from 'react-use';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
@@ -9,8 +9,9 @@ export const BindNetworkDirectionWithRoute: React.FC = () => {
   const match = useRouteMatch<{ fromNetwork: string; toNetwork: string }>();
   const location = useLocation();
   const history = useHistory();
+  const { network, direction } = bridge;
+  const firstUpdate = useRef(true);
 
-  // first time
   useMount(() => {
     const { fromNetwork, toNetwork } = match.params;
     if (!fromNetwork || !toNetwork) return;
@@ -28,14 +29,19 @@ export const BindNetworkDirectionWithRoute: React.FC = () => {
     }
   });
 
-  const { network, direction } = bridge;
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
     const { fromNetwork, toNetwork } =
       direction === BridgeDirection.In
         ? { fromNetwork: network, toNetwork: NERVOS_NETWORK }
         : { fromNetwork: NERVOS_NETWORK, toNetwork: network };
-
-    const newPath = location.pathname.replace(/\/bridge\/\w+\/\w+/, () => `/bridge/${fromNetwork}/${toNetwork}`);
+    let newPath;
+    location.pathname.includes('bridge')
+      ? (newPath = location.pathname.replace(/\/bridge\/\w+\/\w+/, () => `/bridge/${fromNetwork}/${toNetwork}`))
+      : (newPath = location.pathname.replace(/\/history\/\w+\/\w+/, () => `/history/${fromNetwork}/${toNetwork}`));
     history.replace({ ...location, pathname: newPath });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

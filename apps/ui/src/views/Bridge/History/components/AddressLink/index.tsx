@@ -15,9 +15,11 @@ export const AddressLink: React.FC<AddressLinkProps> = (props) => {
   if (network === 'Ethereum') href = process.env.REACT_APP_ADDRESS_EXPLORER_ETHEREUM + `${address}`;
   if (network === 'Bsc') href = process.env.REACT_APP_ADDRESS_EXPLORER_BSC + `${address}`;
 
-  return (
+  return address ? (
     <Link href={href} color="primary.light" target="_blank" rel="noreferrer">
       {formatAddress(address)}
     </Link>
+  ) : (
+    <span>...</span>
   );
 };

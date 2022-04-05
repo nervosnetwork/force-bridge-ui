@@ -20,9 +20,9 @@ export function useBridgePath(): BridgePath {
   const setPath = (view: string) => {
     const params = new URLSearchParams(location.search);
     if (view === 'transfer') {
-      history.replace({ pathname: `/bridge/${fromNetwork}/${toNetwork}`, search: params.toString() });
+      history.push({ pathname: `/bridge/${fromNetwork}/${toNetwork}`, search: params.toString() });
     } else {
-      history.replace({ pathname: `/history`, search: params.toString() });
+      history.push({ pathname: `/history/${fromNetwork}/${toNetwork}`, search: params.toString() });
     }
   };
 

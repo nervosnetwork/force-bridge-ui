@@ -57,7 +57,14 @@ export const BridgeView: React.FC = () => {
               path={['/bridge/Ethereum/Nervos', '/bridge/Nervos/Ethereum', '/bridge/Bsc/Nervos', '/bridge/Nervos/Bsc']}
               component={EthereumBridge}
             />
-            <Route path="/history">
+            <Route
+              path={[
+                '/history/Ethereum/Nervos',
+                '/history/Nervos/Ethereum',
+                '/history/Bsc/Nervos',
+                '/history/Nervos/Bsc',
+              ]}
+            >
               <BridgeHistory
                 xchainConfirmNumber={confirmNumberConfig?.xchainConfirmNumber}
                 nervosConfirmNumber={confirmNumberConfig?.nervosConfirmNumber}

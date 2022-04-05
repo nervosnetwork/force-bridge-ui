@@ -50,10 +50,17 @@ export const CustomizedTable = styled(Table)(
   ({ theme }) => `
     .MuiTableCell-root {
       border-bottom: none;
+      padding: 16px 0;
+      &:first-of-type {
+        padding-left: 16px;
+      }
+      &:last-child {
+        padding-right: 16px;
+      }
     }
-
     .MuiTableRow-root {
       width: 100%;
+      padding: 0 16px;
       &:nth-of-type(odd):not(:last-child) {
         display: table;
         border-top: 1px solid ${theme.palette.secondary.light};
@@ -66,8 +73,13 @@ export const CustomizedTable = styled(Table)(
         padding: 0 16px 16px 16px;
       };
     };
-    .MuiTablePagination-toolbar {
+    .MuiTableFooter-root {
       border-top: 1px solid ${theme.palette.secondary.light};
+    }
+    @media only screen and (max-width: 768px) {
+        .MuiTableCell-root {
+          padding: 16px;
+        }
     }
   `,
 );
