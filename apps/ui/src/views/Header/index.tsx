@@ -1,38 +1,49 @@
 import { MenuIcon } from '@heroicons/react/outline';
 import { Box, Container, MenuItem, MenuList, Toolbar } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
+import { useLocation } from 'react-router-dom';
 import { ExpandedMenu } from './components/ExpandedMenu/index';
 import { SwitchAlert } from './components/SwitchAlert';
 import { CustomizedAppBar } from './styled';
 import logo from 'assets/images/force-logo.png';
 import { WalletConnectorButton } from 'components/WalletConnector';
 import { useBridgePath } from 'hooks/useBridgePath';
-import { menuItems } from 'interfaces/Header/MenuItems';
+import { ETransfer, menuItems } from 'interfaces/Header/MenuItems';
 import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
 import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const AppHeader: React.FC = () => {
   const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
   const { setPath } = useBridgePath();
+  const [activeTab, setActiveTab] = useState<ETransfer>();
+  const location = useLocation();
 
   const handleOpenExpandedMenu = () => {
     return expandedMenuRef.current?.openExpandedMenu();
   };
 
-  const handleMenuItemClick = (item: string) => {
+  const handleMenuItemClick = (item: ETransfer) => {
     switch (item) {
-      case 'Transfer':
+      case ETransfer.TRANSFER:
         setPath('transfer');
         break;
-      case 'History':
+      case ETransfer.HISTORY:
         setPath('history');
         break;
-      case 'More':
+      case ETransfer.MORE:
         expandedMenuRef.current?.openExpandedMenu();
         break;
     }
   };
+
+  useEffect(() => {
+    if (location.pathname.includes('bridge')) {
+      setActiveTab(ETransfer.TRANSFER);
+    } else {
+      setActiveTab(ETransfer.HISTORY);
+    }
+  }, [location]);
 
   return (
     <>
@@ -44,7 +55,11 @@ export const AppHeader: React.FC = () => {
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               <MenuList>
                 {menuItems.map((item) => (
-                  <MenuItem key={item.name} onClick={() => handleMenuItemClick(item.name)}>
+                  <MenuItem
+                    selected={item.value === activeTab}
+                    key={item.value}
+                    onClick={() => handleMenuItemClick(item.value)}
+                  >
                     {item.icon}
                     {item.name}
                   </MenuItem>

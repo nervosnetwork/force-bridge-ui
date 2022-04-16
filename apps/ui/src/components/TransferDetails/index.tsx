@@ -1,5 +1,5 @@
 import { Asset } from '@force-bridge/commons';
-import { Divider, Grid, Typography } from '@mui/material';
+import { Divider, Grid, Tooltip, Typography } from '@mui/material';
 import React from 'react';
 import { Details } from './styled';
 import { HumanizeAmount } from 'components/AssetAmount';
@@ -24,9 +24,11 @@ export const TransferDetails: React.FC<TransferDetailsProps> = (props) => {
           <Typography fontWeight={400} color="text.secondary">
             To
           </Typography>
-          <Typography marginLeft={0.5} fontWeight={700} color="primary.light">
-            {formatAddress(recipient)}
-          </Typography>
+          <Tooltip title={recipient}>
+            <Typography marginLeft={0.5} fontWeight={700} color="primary.light">
+              {formatAddress(recipient)}
+            </Typography>
+          </Tooltip>
         </Grid>
         <Grid item>
           <Typography fontWeight={400} color="primary.light">

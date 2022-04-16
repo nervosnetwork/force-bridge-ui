@@ -29,6 +29,7 @@ import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useBridgePath } from 'hooks/useBridgePath';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
+import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview';
 
 interface BridgeHistoryProps {
   xchainConfirmNumber?: number;
@@ -112,6 +113,15 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
   const historySelectors = (
     <>
       <NetworkDirectionSelector
+        networks={supportedNetworks}
+        network={network}
+        direction={direction}
+        onSelect={({ network, direction }) => {
+          switchNetwork(network);
+          switchBridgeDirection(direction);
+        }}
+      />
+      <NetworkDirectionPreview
         networks={supportedNetworks}
         network={network}
         direction={direction}
@@ -269,7 +279,7 @@ export const BridgeHistory: React.FC<BridgeHistoryProps> = (props) => {
             </TableContainer>
           </>
         ) : (
-          <Box marginTop={18} marginBottom={18} sx={!isConnected ? { display: 'none' } : null}>
+          <Box marginTop={9} marginBottom={9} sx={!isConnected ? { display: 'none' } : null}>
             {historySelectors}
             <Typography variant="h2" color="text.secondary">
               {selectedAsset ? 'No results' : 'Please select an asset first'}.

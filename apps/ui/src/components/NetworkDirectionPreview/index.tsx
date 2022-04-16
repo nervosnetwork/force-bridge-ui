@@ -24,6 +24,10 @@ export const NetworkDirectionPreview: React.FC<NetworkDirectionPreviewProps> = (
 
   const directionChangeNetwork = direction === BridgeDirection.In ? BridgeDirection.Out : BridgeDirection.In;
 
+  const changeNetworkDirection = () => {
+    onSelect({ direction: directionChangeNetwork, network: network });
+  };
+
   return (
     <Switcher>
       <Grid container justifyContent="center">
@@ -45,9 +49,9 @@ export const NetworkDirectionPreview: React.FC<NetworkDirectionPreviewProps> = (
           </Button>
         </Grid>
         <Grid item order={2}>
-          <ChevronDoubleRightIcon />
+          <ChevronDoubleRightIcon onClick={changeNetworkDirection} />
         </Grid>
-        <Grid item order={3} onClick={() => onSelect({ direction: directionChangeNetwork, network: network })}>
+        <Grid item order={3} onClick={changeNetworkDirection}>
           <div className="bg-gradient">
             <AssetLogo network={selected.to} isSmall={false} />
           </div>

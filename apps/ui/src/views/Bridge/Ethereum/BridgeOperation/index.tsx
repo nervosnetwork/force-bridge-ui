@@ -277,7 +277,7 @@ export const BridgeOperationForm: React.FC = () => {
           <Help {...statusOf('recipient')} />
         </div>
 
-        {recipient && bridgeFromAmount && selectedAsset && <TransferAccordion selectedAsset={selectedAsset} />}
+        {bridgeFromAmount && selectedAsset && <TransferAccordion selectedAsset={selectedAsset} />}
         <BridgeReminder />
 
         {actionButton}

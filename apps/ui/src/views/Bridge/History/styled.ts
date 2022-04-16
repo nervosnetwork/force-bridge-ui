@@ -4,27 +4,20 @@ import { darkBox } from 'shared-styled/styled';
 export const History = styled(Box)(
   ({ theme }) => `
     ${darkBox}
-    .MuiGrid-container {
-      padding: 1rem 0.5rem 1rem 0.75rem;
-      align-items:center;
-      &:not(:first-of-type) {
-        border-top: 1px solid ${theme.palette.secondary.light};
-      }
-      .MuiGrid-item {
-        padding:0 0.5rem;
-      }
-    }
-    
-    svg {
-      width: 1.75rem;
-      color: ${theme.palette.text.secondary}
-    }
     .status-icon {
       width: 1.25rem;
     }
     .status-icon-green {
       width: 1.25rem;
       color: #34D399;
+    }    
+    .MuiTableBody-root {
+      .MuiBox-root {
+        svg {
+          width: 1.75rem;
+          color: ${theme.palette.text.secondary}
+        }
+      }
     }
     & .MuiButton-root {
       margin: 24px 0 0 0;
@@ -34,10 +27,6 @@ export const History = styled(Box)(
       .MuiButton-startIcon svg {
         color: ${theme.palette.primary.dark};
       }
-    }
-    .MuiButton-containedSizeSmall{
-      margin:0;
-      line-height: 1.25;
     }
     .MuiOutlinedInput-root {
       width:94%;
@@ -75,6 +64,9 @@ export const CustomizedTable = styled(Table)(
     };
     .MuiTableFooter-root {
       border-top: 1px solid ${theme.palette.secondary.light};
+      .MuiTableCell-root {
+        padding: 0 16px;
+      }
     }
     @media only screen and (max-width: 768px) {
         .MuiTableCell-root {

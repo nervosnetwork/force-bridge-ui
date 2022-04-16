@@ -29,9 +29,10 @@ export const CustomizedAppBar = styled(AppBar)(
           font-weight: 500;
         }
     
-        &:hover {
+        &:hover, &.Mui-selected {
           color: #edf2f2;
           cursor: pointer;
+          background: none;
         }
       }
     }
