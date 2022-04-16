@@ -22,6 +22,7 @@ import { useQueryWithCache } from './useQueryWithCache';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { AssetLogo } from 'components/AssetLogo';
 import { AssetSelector } from 'components/AssetSelector';
+import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview';
 import { NetworkDirectionSelector } from 'components/NetworkDirectionSelector';
 import { TablePaginationActions } from 'components/TablePaginationActions';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
@@ -29,7 +30,6 @@ import { useAssetQuery } from 'hooks/useAssetQuery';
 import { useBridgePath } from 'hooks/useBridgePath';
 import { ConnectStatus } from 'interfaces/WalletConnector';
 import { useSelectBridgeAsset } from 'views/Bridge/hooks/useSelectBridgeAsset';
-import { NetworkDirectionPreview } from 'components/NetworkDirectionPreview';
 
 interface BridgeHistoryProps {
   xchainConfirmNumber?: number;
