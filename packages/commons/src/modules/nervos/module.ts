@@ -19,6 +19,9 @@ export const NervosModule: Module<NervosNetwork> = {
     validateUserIdent: (address) => {
       try {
         parseAddress(address);
+        if (process.env.REACT_APP_CKB_CHAIN_ID === '1') {
+          return address.startsWith('ckt');
+        }
         return true;
       } catch {
         return false;

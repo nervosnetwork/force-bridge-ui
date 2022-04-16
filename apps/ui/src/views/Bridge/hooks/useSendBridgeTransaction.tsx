@@ -1,11 +1,14 @@
 import { Asset, NERVOS_NETWORK, utils } from '@force-bridge/commons';
-import { Modal } from 'antd';
+import { Box, DialogContent, Typography } from '@mui/material';
 import React from 'react';
 import { useMutation, UseMutationResult } from 'react-query';
+import { useDialog } from 'components/Dialog/index';
 import { TransactionLink } from 'components/TransactionLink';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { boom } from 'errors';
+import { useBridgePath } from 'hooks/useBridgePath';
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
+import { formatAddress } from 'utils';
 
 export interface BridgeInputValues {
   asset: Asset;
@@ -15,8 +18,34 @@ export interface BridgeInputValues {
 export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, unknown, BridgeInputValues> {
   const { api, signer, network, direction } = ForceBridgeContainer.useContainer();
   const { addTransaction } = useSentTransactionStorage();
-  // FIXME use network from ForceBridgeContainer if backend support
+  const { setPath } = useBridgePath();
   const ethereumNetwork = 'Ethereum';
+
+  const [openDialog, closeDialog] = useDialog();
+  const onOpenDialog = (status: string, description: string) => {
+    const fromNetwork = direction === BridgeDirection.In ? network : NERVOS_NETWORK;
+    const title = status === 'success' ? 'Bridge Tx sent' : 'Tx failed';
+    const dialogContent = (
+      <DialogContent>
+        <Box flexDirection="column" alignItems="center">
+          {status === 'success' ? (
+            <>
+              <Typography>The transaction has been sent, check it in</Typography>
+              <TransactionLink color="text.primary" variant="body1" network={fromNetwork} txId={description}>
+                explorer
+              </TransactionLink>
+              <Typography>transaction id: {formatAddress(description)}</Typography>
+            </>
+          ) : (
+            <Typography>{description}</Typography>
+          )}
+        </Box>
+      </DialogContent>
+    );
+    openDialog({
+      children: { title, dialogContent, closeDialog },
+    });
+  };
 
   return useMutation(
     ['sendTransaction'],
@@ -76,27 +105,12 @@ export function useSendBridgeTransaction(): UseMutationResult<{ txId: string }, 
     },
     {
       onSuccess({ txId }) {
-        const fromNetwork = direction === BridgeDirection.In ? network : NERVOS_NETWORK;
-
-        Modal.success({
-          title: 'Bridge Tx sent',
-          content: (
-            <p>
-              The transaction has been sent, check it in&nbsp;
-              <TransactionLink network={fromNetwork} txId={txId}>
-                explorer
-              </TransactionLink>
-              <details>
-                <summary>transaction id</summary>
-                {txId}
-              </details>
-            </p>
-          ),
-        });
+        setPath('history');
+        onOpenDialog('success', txId);
       },
       onError(error) {
         const errorMsg: string = utils.hasProp(error, 'message') ? String(error.message) : 'Unknown error';
-        Modal.error({ title: 'Tx failed', content: errorMsg, width: 360 });
+        onOpenDialog('fail', errorMsg);
       },
     },
   );

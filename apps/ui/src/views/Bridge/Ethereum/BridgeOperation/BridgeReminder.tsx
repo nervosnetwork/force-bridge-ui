@@ -1,21 +1,12 @@
-import { AlertOutlined, LoadingOutlined, FrownOutlined } from '@ant-design/icons';
-import { Typography, Space } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { useQuery } from 'react-query';
-import styled from 'styled-components';
+import { CustomizedExclamationIcon } from './styled';
 import { HumanizeAmount } from 'components/AssetAmount';
 import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { asserts } from 'errors';
-
-export const StyledReminderWrapper = styled.div`
-  margin-top: 28px;
-  padding: 18px;
-  border-radius: 8px;
-  border-color: #f7d749;
-  border-width: thin;
-  border-style: solid;
-`;
 
 export const BridgeReminder: React.FC = () => {
   const { api, direction, network } = ForceBridgeContainer.useContainer();
@@ -45,36 +36,36 @@ export const BridgeReminder: React.FC = () => {
 
   const minimalBridgeAmount = (
     <>
-      {query.data && <HumanizeAmount showSymbol asset={{ ...asset, amount: query.data.minimalAmount }} />}
-      {query.isLoading && <LoadingOutlined />}
-      {query.isError && (
-        <Space>
-          <FrownOutlined />
-          <Typography.Text type="danger">failed to get data</Typography.Text>
-        </Space>
+      {query.data && (
+        <HumanizeAmount
+          showSymbol
+          color="text.secondary"
+          marginLeft={0.5}
+          asset={{ ...asset, amount: query.data.minimalAmount }}
+        />
       )}
+      {query.isLoading && <LoadingOutlined />}
+      {query.isError && <Typography>failed to get data</Typography>}
     </>
   );
 
   return (
-    <StyledReminderWrapper>
-      <Space>
-        <AlertOutlined style={{ position: 'relative', bottom: '1px', color: '#f7d749' }} />
-        <Typography.Text type="secondary">Reminder</Typography.Text>
-      </Space>
-      <Space direction="vertical" style={{ marginTop: '8px' }}>
-        <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-          1. Minimum amount is {minimalBridgeAmount}
-        </Typography.Text>
-        <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-          2. The cross chain fee may differ as the token price changes
-        </Typography.Text>
-        {direction === BridgeDirection.In && (
-          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-            3. You will get 400 CKBytes as the capacity of mirror token when you transfer to Nervos Network
-          </Typography.Text>
-        )}
-      </Space>
-    </StyledReminderWrapper>
+    <>
+      <Box display="flex" alignItems="center" flexDirection="column" marginTop={3}>
+        <CustomizedExclamationIcon />
+        <Box display="flex" alignItems="center">
+          <Typography color="text.secondary" textAlign="center" fontWeight={400}>
+            1. Minimum amount is
+          </Typography>
+          {minimalBridgeAmount}
+        </Box>
+        <Typography color="text.secondary" textAlign="center" fontWeight={400}>
+          2. The cross chain fee may differ as the token price changes <br />
+          {direction === BridgeDirection.In && (
+            <>3. You will get 400 CKBytes as the capacity of mirror token when you transfer to Nervos Network</>
+          )}
+        </Typography>
+      </Box>
+    </>
   );
 };

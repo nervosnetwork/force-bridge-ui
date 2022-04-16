@@ -1,6 +1,7 @@
 import { utils } from '@force-bridge/commons';
-import { Modal } from 'antd';
+import { Box, DialogContent, Typography } from '@mui/material';
 import { useMutation, UseMutationResult } from 'react-query';
+import { useDialog } from 'components/Dialog/index';
 import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
@@ -11,6 +12,22 @@ export interface SwitchInputValues {
 export function useSwitchMetaMaskNetwork(): UseMutationResult<void, unknown, SwitchInputValues> {
   const provider = EthereumProviderContainer.useContainer();
   const { network } = ForceBridgeContainer.useContainer();
+
+  const [openDialog, closeDialog] = useDialog();
+  const onOpenDialog = (description: string) => {
+    const title = 'Switch MetaMask Network failed';
+    const dialogContent = (
+      <DialogContent>
+        <Box flexDirection="column" alignItems="center">
+          <Typography>{description}</Typography>
+        </Box>
+      </DialogContent>
+    );
+    openDialog({
+      children: { title, dialogContent, closeDialog },
+    });
+  };
+
   return useMutation(
     ['switchMetaMaskNetwork'],
     async (input: SwitchInputValues) => {
@@ -38,7 +55,7 @@ export function useSwitchMetaMaskNetwork(): UseMutationResult<void, unknown, Swi
     {
       onError(error) {
         const errorMsg: string = utils.hasProp(error, 'message') ? String(error.message) : 'Unknown error';
-        Modal.error({ title: 'Switch MetaMask Network failed', content: errorMsg, width: 360 });
+        onOpenDialog(errorMsg);
       },
     },
   );

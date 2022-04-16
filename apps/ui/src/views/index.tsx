@@ -1,23 +1,18 @@
 import { NERVOS_NETWORK } from '@force-bridge/commons';
+import { Container } from '@mui/material';
 import { BigNumber } from 'bignumber.js';
 import React, { useEffect } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import { AppHeader } from './Header';
+import { AppContainer } from './styled';
+import DialogProvider from 'components/Dialog';
+import { Footer } from 'components/Footer';
+import { BridgeOperationFormContainer } from 'containers/BridgeOperationFormContainer';
+import { EthereumProviderContainer } from 'containers/EthereumProviderContainer';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { BridgeView } from 'views/Bridge';
 
 BigNumber.set({ EXPONENTIAL_AT: 99 });
-
-const MainWrapper = styled.div`
-  padding-top: 96px;
-  padding-bottom: 32px;
-  min-height: 100vh;
-  background: linear-gradient(111.44deg, #dcf2ed 0%, #d3d9ec 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
 
 export const AppView: React.FC = () => {
   const history = useHistory();
@@ -31,11 +26,20 @@ export const AppView: React.FC = () => {
   return (
     <>
       <AppHeader />
-      <MainWrapper>
-        <Route path="/bridge/:fromNetwork/:toNetwork">
-          <BridgeView />
-        </Route>
-      </MainWrapper>
+      <AppContainer>
+        <BridgeOperationFormContainer.Provider>
+          <EthereumProviderContainer.Provider>
+            <DialogProvider>
+              <Container maxWidth="sm">
+                <Route path="/:view/:fromNetwork/:toNetwork">
+                  <BridgeView />
+                </Route>
+                <Footer />
+              </Container>
+            </DialogProvider>
+          </EthereumProviderContainer.Provider>
+        </BridgeOperationFormContainer.Provider>
+      </AppContainer>
     </>
   );
 };

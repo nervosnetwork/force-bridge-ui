@@ -1,44 +1,66 @@
-import { Button, ButtonProps } from 'antd';
-import React from 'react';
+import { SwitchHorizontalIcon } from '@heroicons/react/solid';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { ButtonProps } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { WalletConnectorButton } from 'components/WalletConnector/WalletConnectorButton';
+import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { ConnectStatus } from 'interfaces/WalletConnector';
 import { AllowanceState } from 'views/Bridge/Ethereum/hooks/useAllowance';
 
 interface SubmitButtonProps extends ButtonProps {
-  isloading: boolean;
   allowanceStatus: AllowanceState | undefined;
+  isloading: boolean;
 }
 
 export const SubmitButton: React.FC<SubmitButtonProps> = (props) => {
   const { isloading, allowanceStatus, ...buttonProps } = props;
-  if (!allowanceStatus) {
-    return (
-      <Button loading={isloading} {...buttonProps}>
-        Bridge
-      </Button>
-    );
-  }
+  const [buttonText, setButtonText] = useState<string>();
+  const { walletConnectStatus } = ForceBridgeContainer.useContainer();
+  const isConnected = walletConnectStatus === ConnectStatus.Connected;
 
   let isLoading = false;
-  let content;
-  if (allowanceStatus.status === 'Querying' || allowanceStatus.status === 'Approving' || isloading) {
+  if (allowanceStatus?.status === 'Querying' || allowanceStatus?.status === 'Approving' || isloading) {
     isLoading = true;
   }
-  switch (allowanceStatus.status) {
-    case 'NeedApprove':
-      content = 'Approve';
-      break;
-    case 'Approving':
-      content = 'Approving';
-      break;
-    case 'Approved':
-      content = 'Bridge';
-      break;
-    default:
-      content = ' ';
-  }
 
-  return (
-    <Button loading={isLoading} {...buttonProps}>
-      {content}
-    </Button>
+  useEffect(() => {
+    let content;
+    if (allowanceStatus) {
+      switch (allowanceStatus.status) {
+        case 'NeedApprove':
+          content = 'Approve';
+          break;
+        case 'Approving':
+          content = 'Approving';
+          break;
+        case 'Approved':
+          content = 'Transfer';
+          break;
+        default:
+          content = ' ';
+      }
+    } else {
+      content = !isConnected ? 'Connect Wallet' : 'Transfer';
+    }
+    setButtonText(content);
+  }, [allowanceStatus, isConnected]);
+
+  const showStartIcon = allowanceStatus ? allowanceStatus.status === 'Approved' : isConnected;
+
+  return !isConnected ? (
+    <WalletConnectorButton sx={{ width: '100%', padding: 2, marginTop: 2 }} />
+  ) : (
+    <LoadingButton
+      loading={isLoading}
+      loadingPosition="start"
+      variant="contained"
+      color="secondary"
+      startIcon={showStartIcon && <SwitchHorizontalIcon />}
+      fullWidth
+      sx={{ marginTop: 2, padding: 2 }}
+      {...buttonProps}
+    >
+      {buttonText}
+    </LoadingButton>
   );
 };

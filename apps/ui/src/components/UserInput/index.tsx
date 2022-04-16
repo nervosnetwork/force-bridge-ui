@@ -1,39 +1,29 @@
-import { Input, InputProps, Row, Tooltip } from 'antd';
+import { InputBaseProps, Tooltip, Typography } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
+import { CustomInput } from './styled';
 
-export interface UserInputProps extends InputProps {
-  label?: React.ReactNode;
-  extra?: React.ReactNode;
-  tooltip?: string;
+export interface UserInputProps extends InputBaseProps {
+  label: React.ReactNode;
+  tooltip?: boolean;
 }
 
-const UserInputWrapper = styled.div`
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-  padding: 16px 12px;
-
-  .ant-input,
-  .ant-input-lg {
-    padding: 8px 0 0;
-    border-radius: 0;
-  }
-`;
-
 export const UserInput: React.FC<UserInputProps> = (props) => {
-  const { label, extra, tooltip, className, ...inputProps } = props;
+  const { label, tooltip, ...inputProps } = props;
+
+  const customInput = <CustomInput sx={{ flex: 1 }} {...inputProps} />;
+
   return (
-    <UserInputWrapper className={className}>
-      <Row justify="space-between" align="middle">
-        <div>{label}</div>
-        <div>{extra}</div>
-      </Row>
-      {tooltip && (
-        <Tooltip color="orange" mouseEnterDelay={0} title={tooltip}>
-          <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
+    <>
+      <Typography color="text.primary" variant="body1" marginTop={3} marginBottom={0.5}>
+        {label}
+      </Typography>
+      {tooltip ? (
+        <Tooltip title="Please make sure the filled address belong to a sUDT-compatible application, otherwise your funds may be locked until the application adds sUDT support.">
+          {customInput}
         </Tooltip>
+      ) : (
+        customInput
       )}
-      {!tooltip && <Input bordered={false} autoComplete="off" size="large" {...inputProps} />}
-    </UserInputWrapper>
+    </>
   );
 };

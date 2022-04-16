@@ -1,87 +1,92 @@
-import { MenuOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, Row } from 'antd';
-import React from 'react';
-import styled from 'styled-components';
-import { About } from './About';
-import { NetworkDirectionSelector } from './NetworkDirectionSelector';
-import { ReactComponent as Logo } from './logo.svg';
-import { LinearGradientButton } from 'components/Styled';
-import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { MenuIcon } from '@heroicons/react/outline';
+import { Box, Container, MenuItem, MenuList, Toolbar } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 
-const AppHeaderWrapper = styled.header`
-  z-index: 1;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
-  padding: 16px 100px;
-  height: 64px;
-  background: ${(props) => props.theme.palette.common.white};
-
-  @media (max-width: 768px) {
-    padding: 16px 24px;
-  }
-`;
+import { useLocation } from 'react-router-dom';
+import { ExpandedMenu } from './components/ExpandedMenu/index';
+import { SwitchAlert } from './components/SwitchAlert';
+import { CustomizedAppBar } from './styled';
+import logo from 'assets/images/force-logo.png';
+import { WalletConnectorButton } from 'components/WalletConnector';
+import { useBridgePath } from 'hooks/useBridgePath';
+import { ETransfer, menuItems } from 'interfaces/Header/MenuItems';
+import { CanOpenExpandedMenu } from 'interfaces/Header/OpenExpandedMenu';
+import { CustomizedIconButton } from 'shared-styled/styled';
 
 export const AppHeader: React.FC = () => {
-  const {
-    network,
-    direction,
-    switchBridgeDirection,
-    switchNetwork,
-    supportedNetworks,
-  } = ForceBridgeContainer.useContainer();
+  const expandedMenuRef = useRef<CanOpenExpandedMenu>(null);
+  const { setPath } = useBridgePath();
+  const [activeTab, setActiveTab] = useState<ETransfer>();
+  const location = useLocation();
 
-  const referenceLinks = (
-    <Menu>
-      <Menu.Item>
-        <a
-          href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/dapp-user-guide.md"
-          target="_blank"
-          rel="noreferrer"
-        >
-          User Guide
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a href="https://github.com/nervosnetwork/force-bridge" target="_blank" rel="noreferrer">
-          GitHub
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <About />
-      </Menu.Item>
-    </Menu>
-  );
+  const handleOpenExpandedMenu = () => {
+    return expandedMenuRef.current?.openExpandedMenu();
+  };
+
+  const handleMenuItemClick = (item: ETransfer) => {
+    switch (item) {
+      case ETransfer.TRANSFER:
+        setPath('transfer');
+        break;
+      case ETransfer.HISTORY:
+        setPath('history');
+        break;
+      case ETransfer.MORE:
+        expandedMenuRef.current?.openExpandedMenu();
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname.includes('bridge')) {
+      setActiveTab(ETransfer.TRANSFER);
+    } else {
+      setActiveTab(ETransfer.HISTORY);
+    }
+  }, [location]);
 
   return (
-    <AppHeaderWrapper>
-      <Row justify="space-between" align="middle" gutter={16}>
-        <Col md={3} sm={2} xs={2}>
-          <div>
-            <Logo height="32px" width="62px" />
-          </div>
-        </Col>
-        <Col md={18} sm={22} xs={22}>
-          <div style={{ maxWidth: '300px', margin: '0 auto' }}>
-            <NetworkDirectionSelector
-              networks={supportedNetworks}
-              network={network}
-              direction={direction}
-              onSelect={({ network, direction }) => {
-                switchNetwork(network);
-                switchBridgeDirection(direction);
-              }}
-            />
-          </div>
-        </Col>
-        <Col md={3} sm={0} xs={0} style={{ textAlign: 'right' }}>
-          <Dropdown overlay={referenceLinks}>
-            <LinearGradientButton icon={<MenuOutlined />} size="small" />
-          </Dropdown>
-        </Col>
-      </Row>
-    </AppHeaderWrapper>
+    <>
+      <CustomizedAppBar position="fixed" className="app-bar">
+        <Container maxWidth="xl">
+          <SwitchAlert />
+          <Toolbar disableGutters>
+            <img src={logo} alt="logo" />
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              <MenuList>
+                {menuItems.map((item) => (
+                  <MenuItem
+                    selected={item.value === activeTab}
+                    key={item.value}
+                    onClick={() => handleMenuItemClick(item.value)}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }}>
+              <WalletConnectorButton />
+            </Box>
+
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <CustomizedIconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+                onClick={() => handleOpenExpandedMenu()}
+              >
+                <MenuIcon />
+              </CustomizedIconButton>
+            </Box>
+          </Toolbar>
+        </Container>
+      </CustomizedAppBar>
+      <ExpandedMenu ref={expandedMenuRef} handleMenuItemClick={handleMenuItemClick} />
+    </>
   );
 };

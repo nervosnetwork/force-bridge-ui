@@ -1,21 +1,27 @@
-import { Button, ButtonProps, Tooltip } from 'antd';
+import { Button, Tooltip } from '@mui/material';
 import React from 'react';
 import { useSwitchMetaMaskNetwork } from '../hooks/useSwitchMetaMaskNetwork';
 
-interface SwitchMetaMaskNetworkButtonProps extends ButtonProps {
+interface SwitchMetaMaskNetworkButtonProps {
   chainId: string;
-  chainName: string;
+  chainName?: string;
 }
 
 export const SwitchMetaMaskNetworkButton: React.FC<SwitchMetaMaskNetworkButtonProps> = (props) => {
   const { chainId, chainName } = props;
-  const { mutateAsync: switchMetaMaskNetwork, isLoading } = useSwitchMetaMaskNetwork();
+  const { mutateAsync: switchMetaMaskNetwork } = useSwitchMetaMaskNetwork();
   const title = `Switch metamask connected
     network to current bridge network(${chainName})`;
 
   return (
     <Tooltip title={title}>
-      <Button loading={isLoading} block type="primary" size="large" onClick={() => switchMetaMaskNetwork({ chainId })}>
+      <Button
+        variant="contained"
+        color="secondary"
+        fullWidth
+        sx={{ marginTop: 5, padding: 2 }}
+        onClick={() => switchMetaMaskNetwork({ chainId })}
+      >
         Switch MetaMask Network
       </Button>
     </Tooltip>
