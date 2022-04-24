@@ -43,6 +43,18 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     return Promise.resolve(Promise.resolve(this.client.request('getBridgeOutNervosBridgeFee', payload)));
   }
 
+  getBridgeNervosToXchainLockBridgeFee(
+    payload: API.GetBridgeNervosToXchainLockBridgeFeePayload,
+  ): Promise<API.GetBridgeNervosToXchainLockBridgeFeeResponse> {
+    return Promise.resolve(this.client.request('getBridgeNervosToXchainLockBridgeFee', payload));
+  }
+
+  getBridgeNervosToXchainBurnBridgeFee(
+    payload: API.GetBridgeNervosToXchainBurnBridgeFeePayload,
+  ): Promise<API.GetBridgeNervosToXchainBurnBridgeFeeResponse> {
+    return Promise.resolve(Promise.resolve(this.client.request('getBridgeNervosToXchainBurnBridgeFee', payload)));
+  }
+
   async generateBridgeInNervosTransaction<T extends NetworkTypes>(
     payload: API.GenerateBridgeInTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {
@@ -66,6 +78,31 @@ export class ForceBridgeAPIV1Handler implements API.ForceBridgeAPIV1 {
     payload: API.GenerateBridgeOutNervosTransactionPayload,
   ): Promise<API.GenerateTransactionResponse<T>> {
     return this.client.request('generateBridgeOutNervosTransaction', payload);
+  }
+
+  async generateBridgeNervosToXchainLockTx<T extends NetworkTypes>(
+    payload: API.GenerateBridgeNervosToXchainLockTxPayload,
+  ): Promise<API.GenerateTransactionResponse<T>> {
+    return this.client.request('generateBridgeNervosToXchainLockTx', payload);
+  }
+
+  async generateBridgeNervosToXchainBurnTx<T extends NetworkTypes>(
+    payload: API.GenerateBridgeNervosToXchainBurnTxPayload,
+  ): Promise<API.GenerateTransactionResponse<T>> {
+    const result = await this.client.request('generateBridgeNervosToXchainBurnTx', payload);
+    switch (result.network) {
+      case 'Ethereum':
+        {
+          const rawTx = result.rawTransaction;
+          rawTx.value = ethers.BigNumber.from(rawTx.value?.hex ?? 0);
+          result.rawTransaction = rawTx;
+        }
+        break;
+      default:
+        //TODO add other chains
+        Promise.reject(new Error('not yet'));
+    }
+    return result;
   }
 
   async sendSignedTransaction<T extends NetworkBase>(

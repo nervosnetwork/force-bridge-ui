@@ -67,7 +67,13 @@ export class EthWalletSigner extends AbstractWalletSigner<EthereumNetwork> {
       }),
     ).serializeJson();
 
-    skeleton = skeleton.update('witnesses', (witnesses) => witnesses.push(signedWitness));
+    skeleton = skeleton.update('witnesses', (witnesses) => {
+      if (witnesses.isEmpty()) {
+        return witnesses.push(signedWitness);
+      } else {
+        return witnesses.set(0, signedWitness);
+      }
+    });
 
     const signedTx = helpers.createTransactionFromSkeleton(skeleton);
     const txHash = await new RPC(process.env.REACT_APP_CKB_RPC_URL).send_transaction(signedTx, 'passthrough');

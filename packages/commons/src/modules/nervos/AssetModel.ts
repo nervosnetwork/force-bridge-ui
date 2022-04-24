@@ -1,16 +1,12 @@
-import { NERVOS_NETWORK } from '../../constatns';
+import { NERVOS_NETWORK, NATIVE_CKB_ADDRESS } from '../../constatns';
 import { NervosNetwork } from '../../types';
-import { propEq } from '../../utils';
-import { createAssetModel } from '../helper';
+import { createAssetModel, isValidHexStr } from '../helper';
 
 export const NervosAssetModel = createAssetModel<NervosNetwork>({
   network: NERVOS_NETWORK,
 
-  isNativeAsset(asset) {
-    return propEq(asset, 'network', NERVOS_NETWORK) && asset.ident == null;
-  },
+  isDerivedAsset: (asset) =>
+    asset.network === NERVOS_NETWORK && isValidHexStr(asset.ident) && asset.ident !== NATIVE_CKB_ADDRESS,
 
-  isDerivedAsset(asset) {
-    return propEq(asset, 'network', NERVOS_NETWORK);
-  },
+  isNativeAsset: (asset) => asset.network === NERVOS_NETWORK && asset.ident === NATIVE_CKB_ADDRESS,
 });

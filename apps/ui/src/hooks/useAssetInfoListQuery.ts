@@ -10,10 +10,11 @@ interface UseAssetInfoState {
 }
 
 export function useAssetInfoListQuery(): UseAssetInfoState {
-  const { network, api, xchainModule } = ForceBridgeContainer.useContainer();
+  const { network, api, xchainModule, nervosModule } = ForceBridgeContainer.useContainer();
   const assetNameConventionPostfix = ` | ${network.toLowerCase().slice(0, 3)}`;
 
   const X = xchainModule.assetModel;
+  const Y = nervosModule.assetModel;
   const query = useQuery(['getAssetAssetWithInfo', { network }], async () => {
     const infoList = await api.getAssetList();
 
@@ -57,15 +58,55 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
       return xchainAsset.shadow;
     });
 
+    const nervosOriginXchainAssetsInfo = infoList
+      .filter((info) => info.network === NERVOS_NETWORK)
+      .map<Asset>((assetWithInfo) => {
+        const shadow = assetWithInfo.info.shadow;
+        const ident = shadow.ident;
+
+        let nervosShadow: Asset;
+        if (Y.isDerivedAsset(assetWithInfo)) {
+          nervosShadow = new nervos.SUDT({ ...assetWithInfo, isNervosNative: true });
+        } else if (Y.isNativeAsset(assetWithInfo)) {
+          nervosShadow = new nervos.CKB({ ...assetWithInfo, isNervosNative: true });
+        } else {
+          boom(`asset is not valid ${JSON.stringify(assetWithInfo)}`);
+        }
+
+        const info = {
+          ...assetWithInfo.info,
+          shadow: assetWithInfo,
+          name: `${assetWithInfo.info.name} | ckb`,
+          symbol: `${assetWithInfo.info.symbol} | ckb`,
+        };
+
+        let xchainAsset: Asset;
+        if (X.isDerivedAsset(assetWithInfo.info.shadow)) {
+          xchainAsset = new eth.ERC20({ ident, info, shadow: nervosShadow, isNervosNative: true });
+        } else if (X.isNativeAsset(assetWithInfo.info.shadow)) {
+          xchainAsset = new eth.Ether({ info, shadow: nervosShadow, isNervosNative: true });
+        } else {
+          boom(`asset is not valid ${JSON.stringify(assetWithInfo)}`);
+        }
+
+        nervosShadow.setShadow(xchainAsset);
+
+        return xchainAsset;
+      });
+
+    // xchain asset.shadow
+    const nervosOriginNervosAssetsInfo = nervosOriginXchainAssetsInfo.map<nervos.CKB | nervos.SUDT>((xchainAsset) => {
+      asserts(xchainAsset.shadow != null);
+      return xchainAsset.shadow;
+    });
+
     return {
-      xchain: xchainAssetsInfo.reduce<Record<string, Asset>>(
-        (result, asset) => Object.assign(result, { [asset.ident]: asset }),
-        {},
-      ),
-      nervos: nervosAssetsInfo.reduce<Record<string, nervos.SUDT>>(
-        (result, asset) => Object.assign(result, { [asset.ident]: asset }),
-        {},
-      ),
+      xchain: xchainAssetsInfo
+        .concat(nervosOriginXchainAssetsInfo)
+        .reduce<Record<string, Asset>>((result, asset) => Object.assign(result, { [asset.ident]: asset }), {}),
+      nervos: nervosAssetsInfo
+        .concat(nervosOriginNervosAssetsInfo)
+        .reduce<Record<string, nervos.SUDT>>((result, asset) => Object.assign(result, { [asset.ident]: asset }), {}),
     };
   });
 

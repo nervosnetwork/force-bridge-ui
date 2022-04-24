@@ -4,22 +4,25 @@ import { TransactionSummaryWithStatus } from '@force-bridge/commons/lib/types/ap
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { asserts } from 'errors';
 import { useSentTransactionStorage } from 'hooks/useSentTransactionStorage';
 
 export function useQueryWithCache(asset: Asset | undefined): TransactionSummaryWithStatus[] | null | undefined {
   const { signer, direction, nervosModule, api, network } = ForceBridgeContainer.useContainer();
   // FIXME use network from ForceBridgeContainer if backend support
   const ethereumNetwork = 'Ethereum';
+  const nervosNetwork = 'Nervos';
   const filter = useMemo<API.GetBridgeTransactionSummariesPayload | undefined>(() => {
     if (!asset || !signer) return undefined;
+    asserts(asset.shadow != null);
     const userNetwork = direction === BridgeDirection.In ? ethereumNetwork : nervosModule.network;
     const userIdent = direction === BridgeDirection.In ? signer.identityXChain() : signer.identityNervos();
     return {
-      network: ethereumNetwork,
-      xchainAssetIdent: asset.ident,
+      network: asset.isNervosNative ? nervosNetwork : ethereumNetwork,
+      xchainAssetIdent: asset.isNervosNative ? asset.shadow?.ident : asset.ident,
       user: { network: userNetwork, ident: userIdent },
     };
-  }, [asset, signer, direction, ethereumNetwork, nervosModule.network]);
+  }, [asset, signer, direction, ethereumNetwork, nervosNetwork, nervosModule.network]);
   const signerIdent = useMemo(
     () => (direction === BridgeDirection.In ? signer?.identityXChain() : signer?.identityNervos()),
     [direction, signer],
