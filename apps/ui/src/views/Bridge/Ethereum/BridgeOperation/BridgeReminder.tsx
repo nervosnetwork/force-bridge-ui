@@ -74,6 +74,12 @@ export const BridgeReminder: React.FC = () => {
             3. You will get 400 CKBytes as the capacity of mirror token when you transfer to Nervos Network
           </Typography.Text>
         )}
+        {direction === BridgeDirection.Out && (
+          <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+            3. If the recipient address is an exchange deposit address, please confirm in advance that the exchange
+            supports contract deposit
+          </Typography.Text>
+        )}
       </Space>
     </StyledReminderWrapper>
   );
