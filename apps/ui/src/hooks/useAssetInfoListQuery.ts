@@ -1,7 +1,7 @@
 import { Asset, AssetType, eth, FungibleBaseInfo, nervos, NERVOS_NETWORK } from '@force-bridge/commons';
 import { useCallback } from 'react';
 import { QueryObserverResult, useQuery } from 'react-query';
-import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { asserts, boom } from 'errors';
 
 interface UseAssetInfoState {
@@ -10,12 +10,19 @@ interface UseAssetInfoState {
 }
 
 export function useAssetInfoListQuery(): UseAssetInfoState {
-  const { network, api, xchainModule } = ForceBridgeContainer.useContainer();
-  const assetNameConventionPostfix = ` | ${network.toLowerCase().slice(0, 3)}`;
+  const { network, api, xchainModule, direction } = ForceBridgeContainer.useContainer();
+  const current_chain = direction === BridgeDirection.In ? `${network.toLowerCase().slice(0, 3)}` : 'ckb';
+  const source_chain = `${network.toLowerCase().slice(0, 3)}`;
+  const assetNameConventionPostfix = `|fb.${source_chain}`;
 
   const X = xchainModule.assetModel;
-  const query = useQuery(['getAssetAssetWithInfo', { network }], async () => {
+  const query = useQuery(['getAssetAssetWithInfo', { current_chain }], async () => {
     const infoList = await api.getAssetList();
+    infoList.map((asset) => {
+      asset.info.name = `${asset.info.name}.${current_chain}`;
+      asset.info.symbol = `${asset.info.symbol}.${current_chain}`;
+      return asset;
+    });
 
     // xchain asset info: asset.info
     const xchainAssetsInfo = infoList.filter(X.isCurrentNetworkAsset).map<Asset>((assetWithInfo) => {
