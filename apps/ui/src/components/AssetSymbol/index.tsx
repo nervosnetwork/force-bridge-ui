@@ -6,6 +6,8 @@ type AssetSymbolProps = {
   info?: {
     logoURI?: string;
     symbol?: string;
+    uan?: string;
+    displayName?: string;
   };
 };
 

@@ -1,7 +1,7 @@
 import { Asset, AssetType, eth, FungibleBaseInfo, nervos, NERVOS_NETWORK } from '@force-bridge/commons';
 import { useCallback } from 'react';
 import { QueryObserverResult, useQuery } from 'react-query';
-import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+import { BridgeDirection, ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 import { asserts, boom } from 'errors';
 
 interface UseAssetInfoState {
@@ -10,11 +10,15 @@ interface UseAssetInfoState {
 }
 
 export function useAssetInfoListQuery(): UseAssetInfoState {
-  const { network, api, xchainModule } = ForceBridgeContainer.useContainer();
+  const { network, api, xchainModule, direction } = ForceBridgeContainer.useContainer();
   const assetNameConventionPostfix = ` | ${network.toLowerCase().slice(0, 3)}`;
+  const current_chain = direction === BridgeDirection.In ? `${network.toLowerCase().slice(0, 3)}` : 'ckb';
+  const source_chain = `${network.toLowerCase().slice(0, 3)}`;
+  const uanConventionPostfix = `|fb.${source_chain}`;
+  const displayNameConventionPostfix = ` (via Forcebridge from ${source_chain.toUpperCase()})`;
 
   const X = xchainModule.assetModel;
-  const query = useQuery(['getAssetAssetWithInfo', { network }], async () => {
+  const query = useQuery(['getAssetAssetWithInfo', { current_chain }], async () => {
     const infoList = await api.getAssetList();
 
     // xchain asset info: asset.info
@@ -24,6 +28,9 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
         const ident = assetWithInfo.ident;
         const info = assetWithInfo.info;
 
+        info.uan = `${assetWithInfo.info.symbol}.${source_chain}`;
+        info.displayName = `${assetWithInfo.info.symbol}`;
+
         const sudt = new nervos.SUDT({
           ...info.shadow,
           info: {
@@ -31,6 +38,8 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
             shadow: assetWithInfo,
             name: `${assetWithInfo.info.name}${assetNameConventionPostfix}`,
             symbol: `${assetWithInfo.info.symbol}${assetNameConventionPostfix}`,
+            uan: `${assetWithInfo.info.symbol}.${current_chain}${uanConventionPostfix}`,
+            displayName: `${assetWithInfo.info.symbol}${displayNameConventionPostfix}`,
           },
         });
 
