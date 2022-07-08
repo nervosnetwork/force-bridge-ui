@@ -189,7 +189,6 @@ export const BridgeOperationForm: React.FC = () => {
           name="bridgeInInputAmount"
           onBlur={formik.handleBlur}
           value={bridgeFromAmount}
-          assetInfo={selectedAsset && selectedAsset?.info?.uan + '  -  ' + selectedAsset?.info?.displayName}
           onChange={(e) => setBridgeFromAmount(e.target.value)}
           label={
             <span>
@@ -246,9 +245,6 @@ export const BridgeOperationForm: React.FC = () => {
           placeholder="0.0"
           disabled
           value={bridgeToAmount}
-          assetInfo={
-            selectedAsset && selectedAsset?.shadow?.info?.uan + '  -  ' + selectedAsset?.shadow?.info?.displayName
-          }
           extra={
             <Button type="link" size="small">
               {feeQuery.data && (

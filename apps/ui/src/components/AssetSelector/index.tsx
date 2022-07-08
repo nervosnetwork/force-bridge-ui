@@ -61,13 +61,13 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
       <Button type="primary" size="small" {...btnProps} onClick={onButtonClick}>
         {selectedAsset ? (
           <div>
-            <AssetSymbol info={selectedAsset.info} />
+            <AssetSymbol info={selectedAsset.info} inSelect={false} />
           </div>
         ) : (
           'Select'
         )}
       </Button>
-      <StyledModal closable width={312} visible={visible} onCancel={() => setModalVisible(false)} footer={null}>
+      <StyledModal closable width={420} visible={visible} onCancel={() => setModalVisible(false)} footer={null}>
         <ModalBorderWrapper>
           <List
             pagination={false}
@@ -75,7 +75,7 @@ export function AssetSelector<T extends AssetWithInfoLike>(props: AssetSelectorP
             rowKey={rowKey}
             renderItem={(item) => (
               <List.Item onClick={() => onSelectInternal(item)}>
-                <AssetSymbol info={item.info} />
+                <AssetSymbol info={item.info} inSelect={true} />
                 <HumanizeAmount asset={item} />
               </List.Item>
             )}

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 export interface UserInputProps extends InputProps {
   label?: React.ReactNode;
   extra?: React.ReactNode;
-  assetInfo?: string;
   tooltip?: string;
 }
 
@@ -22,14 +21,13 @@ const UserInputWrapper = styled.div`
 `;
 
 export const UserInput: React.FC<UserInputProps> = (props) => {
-  const { label, extra, assetInfo, tooltip, className, ...inputProps } = props;
+  const { label, extra, tooltip, className, ...inputProps } = props;
   return (
     <UserInputWrapper className={className}>
       <Row justify="space-between" align="middle">
         <div>{label}</div>
         <div>{extra}</div>
       </Row>
-      {assetInfo && <label style={{ fontSize: 'smaller' }}>{assetInfo}</label>}
       {tooltip && (
         <Tooltip color="orange" mouseEnterDelay={0} title={tooltip}>
           <Input bordered={false} autoComplete="off" size="large" {...inputProps} />
