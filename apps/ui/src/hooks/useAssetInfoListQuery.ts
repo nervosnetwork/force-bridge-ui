@@ -15,7 +15,7 @@ export function useAssetInfoListQuery(): UseAssetInfoState {
   const current_chain = direction === BridgeDirection.In ? `${network.toLowerCase().slice(0, 3)}` : 'ckb';
   const source_chain = `${network.toLowerCase().slice(0, 3)}`;
   const uanConventionPostfix = `|fb.${source_chain}`;
-  const displayNameConventionPostfix = ` (via Forcebridge from ${source_chain.toUpperCase()})`;
+  const displayNameConventionPostfix = ` (via Force Bridge from ${source_chain.toUpperCase()})`;
 
   const X = xchainModule.assetModel;
   const query = useQuery(['getAssetAssetWithInfo', { current_chain }], async () => {
