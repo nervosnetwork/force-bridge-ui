@@ -26,6 +26,8 @@ export type FungibleBaseInfo = {
   decimals: number;
   name: string;
   symbol: string;
+  uan?: string;
+  displayName?: string;
   logoURI: string;
   shadow: { network: string; ident: string };
 };
