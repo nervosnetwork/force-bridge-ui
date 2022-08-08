@@ -21,6 +21,9 @@ interface ForceBridgeState extends WalletState {
   network: string;
   switchNetwork: (network: string) => void;
 
+  envNetwork: 'mainnet' | 'testnet';
+  setEnvNetwork: (envNetwork: 'mainnet' | 'testnet') => void;
+
   direction: BridgeDirection;
   switchBridgeDirection: (direction?: BridgeDirection) => void;
 
@@ -44,6 +47,7 @@ export const ForceBridgeContainer = createContainer<ForceBridgeState>(() => {
 
   const [network, switchNetwork] = useState<string>('Ethereum');
   const [direction, setDirection] = useState<BridgeDirection>(BridgeDirection.In);
+  const [envNetwork, setEnvNetwork] = useState<'mainnet' | 'testnet'>('mainnet');
 
   const api = useMemo<API.ForceBridgeAPIV1>(
     () =>
@@ -78,6 +82,8 @@ export const ForceBridgeContainer = createContainer<ForceBridgeState>(() => {
     xchainModule: xchainModule,
     nervosModule: nervos.module,
     version: fromEnv(),
+    envNetwork,
+    setEnvNetwork,
   };
 
   return state;

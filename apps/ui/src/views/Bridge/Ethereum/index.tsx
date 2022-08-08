@@ -15,7 +15,7 @@ function checkChainId(chainId: number): asserts chainId is ConnectorConfig['ckbC
 const EthereumBridge: React.FC = () => {
   const chainId = useChainId();
   const { selectedAsset } = useSelectBridgeAsset();
-  const { setWallet, api, wallet } = ForceBridgeContainer.useContainer();
+  const { setWallet, api, wallet, setEnvNetwork } = ForceBridgeContainer.useContainer();
   const [confirmNumberConfig, setConfirmNumberConfig] = useState<{
     xchainConfirmNumber: number;
     nervosConfirmNumber: number;
@@ -37,6 +37,7 @@ const EthereumBridge: React.FC = () => {
         omniLockscriptCodeHash: config.nervos.omniLockCodeHash,
       });
       setWallet(wallet);
+      setEnvNetwork(config.nervos.network);
       await wallet.init();
 
       setConfirmNumberConfig({
@@ -48,7 +49,7 @@ const EthereumBridge: React.FC = () => {
     return () => {
       setWallet(undefined);
     };
-  }, [api, setWallet, chainId]);
+  }, [api, setWallet, setEnvNetwork, chainId]);
 
   return (
     <>
