@@ -53,7 +53,7 @@ const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ valid
 export const BridgeOperationForm: React.FC = () => {
   useAutoSetBridgeToAmount();
 
-  const { signer, direction, switchBridgeDirection, network } = ForceBridgeContainer.useContainer();
+  const { signer, direction, switchBridgeDirection, network, envNetwork } = ForceBridgeContainer.useContainer();
   const query = useAssetQuery();
   const history = useHistory();
   const location = useLocation();
@@ -160,6 +160,9 @@ export const BridgeOperationForm: React.FC = () => {
           chainId: Number(process.env.REACT_APP_BSC_ENABLE_CHAIN_ID),
           chainName: process.env.REACT_APP_BSC_ENABLE_CHAIN_NAME,
         };
+
+  const faucetUrl =
+    network === 'Ethereum' ? 'https://gliaswap-faucet-rinkeby.ckbapp.dev/' : 'https://testnet.binance.org/faucet-smart';
 
   const actionButton =
     metamaskChainId !== null && metamaskChainId !== bridgeChainInfo.chainId ? (
@@ -287,6 +290,14 @@ export const BridgeOperationForm: React.FC = () => {
 
       {actionButton}
 
+      {envNetwork === 'testnet' && (
+        <>
+          <div style={{ margin: '1rem 0 0 1rem' }}>Need Force Bridge test tokens?</div>
+          <Button type="link" onClick={() => window.open(faucetUrl, '_blank')}>
+            Get test tokens from faucet
+          </Button>
+        </>
+      )}
       <BridgeReminder />
     </BridgeViewWrapper>
   );
