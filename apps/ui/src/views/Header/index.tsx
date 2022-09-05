@@ -1,12 +1,18 @@
 import { MenuOutlined } from '@ant-design/icons';
 import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd';
-import React from 'react';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { About } from './About';
 import { NetworkDirectionSelector } from './NetworkDirectionSelector';
 import { ReactComponent as Logo } from './logo.svg';
 import { LinearGradientButton } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const AppHeaderWrapper = styled.header`
   z-index: 1001;
@@ -32,6 +38,23 @@ export const AppHeader: React.FC = () => {
     switchNetwork,
     supportedNetworks,
   } = ForceBridgeContainer.useContainer();
+
+  const [time6, setTime6] = useState<string>('');
+  const [date6, setDate6] = useState<string>('');
+  const [time15, setTime15] = useState<string>('');
+  const [date15, setDate15] = useState<string>('');
+  const [tz, setTz] = useState<string>('');
+
+  useEffect(() => {
+    const tz = dayjs.tz.guess();
+    const startMerge6 = dayjs.utc('2022-09-06 11:00', 'YYYY-MM-DD HH:mm');
+    setTime6(startMerge6.tz(tz).format('HH:mm'));
+    setDate6(startMerge6.tz(tz).get('date').toString());
+    const startMerge15 = dayjs.utc('2022-09-15 00:00', 'YYYY-MM-DD HH:mm');
+    setTime15(startMerge15.tz(tz).format('HH:mm'));
+    setDate15(startMerge15.tz(tz).get('date').toString());
+    setTz(tz);
+  }, []);
 
   const referenceLinks = (
     <Menu>
@@ -62,8 +85,9 @@ export const AppHeader: React.FC = () => {
         message={
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
-              During "The Merge" upgrade of Ethereum, Force Bridge will be suspended on September 6 and September 15,
-              please use it at other times
+              Due to the "The Merge" upgrade of Ethereum, Force Bridge has to be out of service at {time6} on {date6}th
+              Sept. and {time15} on {date15}th Sept. in {tz} timezone for 6 hours respectively. Thanks and please be
+              patient during the maintenance.
             </Typography.Text>
           </div>
         }
