@@ -9,7 +9,7 @@ import { LinearGradientButton } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
 const AppHeaderWrapper = styled.header`
-  z-index: 1;
+  z-index: 1001;
   position: fixed;
   top: 0;
   left: 0;
@@ -62,14 +62,8 @@ export const AppHeader: React.FC = () => {
         message={
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
-              The CKB wallet have been switched from pw-lock to omni-lock. If you have assets locked in previous wallet,
-              please visit{' '}
-              <Typography.Link
-                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
-                target="_blank"
-              >
-                Asset Migration Guide
-              </Typography.Link>
+              During "The Merge" upgrade of Ethereum, Force Bridge will be suspended on September 6 and September 15,
+              please use it at other times
             </Typography.Text>
           </div>
         }
