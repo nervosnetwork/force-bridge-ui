@@ -50,7 +50,7 @@ export const AppView: React.FC = () => {
       const startMerge6 = dayjs.utc('2022-09-06 11:00', 'YYYY-MM-DD HH:mm');
       const endMerge6 = startMerge6.add(2, 'hours');
       const startMerge15 = dayjs.utc('2022-09-15 00:00', 'YYYY-MM-DD HH:mm');
-      const endMerge15 = startMerge15.add(6, 'hours');
+      const endMerge15 = startMerge15.add(14, 'hours');
       if (
         (utcTime.isAfter(startMerge6) && utcTime.isBefore(endMerge6)) ||
         (utcTime.isAfter(startMerge15) && utcTime.isBefore(endMerge15))
