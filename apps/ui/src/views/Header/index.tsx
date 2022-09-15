@@ -86,7 +86,7 @@ export const AppHeader: React.FC = () => {
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
               Due to the "The Merge" upgrade of Ethereum, Force Bridge has to be out of service at {time6} on {date6}th
-              Sept. and {time15} on {date15}th Sept. in {tz} timezone for 6 hours respectively. Thanks and please be
+              Sept. and {time15} on {date15}th Sept. in {tz} timezone for 14 hours respectively. Thanks and please be
               patient during the maintenance.
             </Typography.Text>
           </div>
