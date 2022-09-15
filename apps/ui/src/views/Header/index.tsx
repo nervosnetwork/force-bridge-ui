@@ -1,9 +1,6 @@
 import { MenuOutlined } from '@ant-design/icons';
 import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { About } from './About';
 import { NetworkDirectionSelector } from './NetworkDirectionSelector';
@@ -11,11 +8,8 @@ import { ReactComponent as Logo } from './logo.svg';
 import { LinearGradientButton } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 const AppHeaderWrapper = styled.header`
-  z-index: 1001;
+  z-index: 1;
   position: fixed;
   top: 0;
   left: 0;
@@ -38,23 +32,6 @@ export const AppHeader: React.FC = () => {
     switchNetwork,
     supportedNetworks,
   } = ForceBridgeContainer.useContainer();
-
-  const [time6, setTime6] = useState<string>('');
-  const [date6, setDate6] = useState<string>('');
-  const [time15, setTime15] = useState<string>('');
-  const [date15, setDate15] = useState<string>('');
-  const [tz, setTz] = useState<string>('');
-
-  useEffect(() => {
-    const tz = dayjs.tz.guess();
-    const startMerge6 = dayjs.utc('2022-09-06 11:00', 'YYYY-MM-DD HH:mm');
-    setTime6(startMerge6.tz(tz).format('HH:mm'));
-    setDate6(startMerge6.tz(tz).get('date').toString());
-    const startMerge15 = dayjs.utc('2022-09-15 00:00', 'YYYY-MM-DD HH:mm');
-    setTime15(startMerge15.tz(tz).format('HH:mm'));
-    setDate15(startMerge15.tz(tz).get('date').toString());
-    setTz(tz);
-  }, []);
 
   const referenceLinks = (
     <Menu>
@@ -85,9 +62,14 @@ export const AppHeader: React.FC = () => {
         message={
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
-              Due to the "The Merge" upgrade of Ethereum, Force Bridge has to be out of service at {time6} on {date6}th
-              Sept. and {time15} on {date15}th Sept. in {tz} timezone for 14 hours respectively. Thanks and please be
-              patient during the maintenance.
+              The CKB wallet have been switched from pw-lock to omni-lock. If you have assets locked in previous wallet,
+              please visit{' '}
+              <Typography.Link
+                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
+                target="_blank"
+              >
+                Asset Migration Guide
+              </Typography.Link>
             </Typography.Text>
           </div>
         }
