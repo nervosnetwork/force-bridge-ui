@@ -162,7 +162,7 @@ export const BridgeOperationForm: React.FC = () => {
         };
 
   const faucetUrl =
-    network === 'Ethereum' ? 'https://gliaswap-faucet-rinkeby.ckbapp.dev/' : 'https://testnet.binance.org/faucet-smart';
+    network === 'Ethereum' ? 'https://faucet-eth-goerli.ckbapp.dev/' : 'https://testnet.binance.org/faucet-smart';
 
   const actionButton =
     metamaskChainId !== null && metamaskChainId !== bridgeChainInfo.chainId ? (
