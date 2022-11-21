@@ -27,6 +27,7 @@
     "ckb-js-toolkit": "^0.9.1",
     "craco-less": "^1.17.1",
     "dayjs": "^1.10.4",
+    "dotbit": "^0.4.11",
     "ethers": "^5.0.32",
     "eventemitter3": "^4.0.7",
     "formik": "^2.2.6",
