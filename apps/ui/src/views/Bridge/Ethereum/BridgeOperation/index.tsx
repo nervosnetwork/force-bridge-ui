@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons';
 import { Button, Divider, Row, Spin, Typography } from 'antd';
+import { createInstance } from 'dotbit/lib/index';
 import { useFormik } from 'formik';
 import React, { useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -280,10 +281,30 @@ export const BridgeOperationForm: React.FC = () => {
               : undefined
           }
           placeholder={
-            direction === BridgeDirection.In ? 'input ckb address' : `input ${network.toLowerCase()} address`
+            direction === BridgeDirection.In
+              ? 'input ckb address or .bit domain'
+              : `input ${network.toLowerCase()} address or .bit domain`
           }
           value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value && value.endsWith('.bit')) {
+              createInstance()
+                .addrs(value)
+                .then((d) => {
+                  const address = d.find(
+                    (addr) =>
+                      addr.key === `address.${direction === BridgeDirection.In ? 'ckb' : network.toLowerCase()}`,
+                  );
+                  if (address) {
+                    setRecipient(address.value);
+                  }
+                })
+                // eslint-disable-next-line no-console
+                .catch((e) => console.error(e));
+            }
+            setRecipient(value);
+          }}
         />
         <Help {...statusOf('recipient')} />
       </div>
