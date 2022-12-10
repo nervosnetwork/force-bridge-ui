@@ -291,7 +291,14 @@ export const BridgeOperationForm: React.FC = () => {
                 .then((d) => {
                   const address = d.find(
                     (addr) =>
-                      addr.key === `address.${direction === BridgeDirection.In ? 'ckb' : network.toLowerCase()}`,
+                      addr.key ===
+                      `address.${
+                        direction === BridgeDirection.In
+                          ? 'ckb'
+                          : network === 'Ethereum'
+                          ? 'eth'
+                          : network.toLowerCase()
+                      }`,
                   );
                   if (address) {
                     setRecipient(address.value);
