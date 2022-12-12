@@ -1,8 +1,8 @@
 import Icon from '@ant-design/icons';
-import { Button, Divider, Row, Spin, Typography } from 'antd';
+import { Button, Divider, Modal, Row, Spin, Table, Typography } from 'antd';
 import { createInstance } from 'dotbit/lib/index';
 import { useFormik } from 'formik';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAllowance } from '../hooks/useAllowance';
@@ -46,6 +46,23 @@ const HelpWrapper = styled(Typography.Text)`
   padding-left: 8px;
 `;
 
+const AlternateAddressesModalWrapper = styled(Modal)`
+  .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td,
+  .ant-table-row-hover,
+  .ant-table-row-hover > td {
+    background-color: #00ccc0 !important;
+  }
+  .ant-table-fixed {
+    .ant-table-row-hover,
+    .ant-table-row-hover > td {
+      background-color: #00ccc0 !important;
+    }
+  }
+  .ant-table-tbody {
+    cursor: default;
+  }
+`;
+
 const Help: React.FC<{ validateStatus: 'error' | ''; help?: string }> = ({ validateStatus, help }) => {
   if (validateStatus !== 'error') return null;
   return <HelpWrapper type="danger">{help}</HelpWrapper>;
@@ -66,6 +83,9 @@ export const BridgeOperationForm: React.FC = () => {
 
   const feeQuery = useBridgeFeeQuery();
   const { validate, status: validateStatus, reset, result: errors } = useValidateBridgeOperationForm();
+  const [showRecipientModal, setShowRecipientModal] = useState(false);
+  const [alternateAddresses, setAlternateAddresses] = useState([]);
+  const [alternateAddressesModalHeight, setAlternateAddressesModalHeight] = useState(450);
 
   useEffect(() => {
     validate();
@@ -289,7 +309,7 @@ export const BridgeOperationForm: React.FC = () => {
               createInstance()
                 .addrs(value)
                 .then((d) => {
-                  const address = d.find(
+                  const addresses = d.filter(
                     (addr) =>
                       addr.key ===
                       `address.${
@@ -300,8 +320,14 @@ export const BridgeOperationForm: React.FC = () => {
                           : network.toLowerCase()
                       }`,
                   );
-                  if (address) {
-                    setRecipient(address.value);
+                  if (addresses.length === 1) {
+                    setRecipient(addresses[0].value);
+                  } else if (addresses.length > 1) {
+                    setAlternateAddressesModalHeight(450 - window.document.documentElement.scrollTop);
+                    setTimeout(() => {
+                      setAlternateAddresses(addresses as never[]);
+                      setShowRecipientModal(true);
+                    }, 0);
                   }
                 })
                 // eslint-disable-next-line no-console
@@ -310,6 +336,39 @@ export const BridgeOperationForm: React.FC = () => {
             setRecipient(value);
           }}
         />
+        <AlternateAddressesModalWrapper
+          title={`Pick an address from .bit domain "${recipient}"`}
+          style={{ top: alternateAddressesModalHeight }}
+          visible={showRecipientModal}
+          closable={false}
+          footer={null}
+        >
+          <Table
+            columns={[
+              {
+                title: 'label',
+                dataIndex: 'label',
+                key: 'label',
+              },
+              {
+                title: 'address',
+                dataIndex: 'value',
+                key: 'value',
+              },
+            ]}
+            rowKey="value"
+            pagination={false}
+            onRow={(record, _) => {
+              return {
+                onClick: (_) => {
+                  setRecipient((record as { value: string }).value);
+                  setShowRecipientModal(false);
+                },
+              };
+            }}
+            dataSource={alternateAddresses}
+          />
+        </AlternateAddressesModalWrapper>
         <Help {...statusOf('recipient')} />
       </div>
 
