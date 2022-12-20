@@ -62,8 +62,8 @@ export const AppHeader: React.FC = () => {
         message={
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
-              The CKB wallet have been switched from pw-lock to omni-lock. If you have assets locked in previous wallet,
-              please visit{' '}
+              Due to the upgrade of Ethereum, Force Bridge has to be out of service for 10 hours respectively. Thanks
+              and please be patient during the maintenance.
               <Typography.Link
                 href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
                 target="_blank"
