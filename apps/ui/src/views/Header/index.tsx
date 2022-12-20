@@ -9,7 +9,7 @@ import { LinearGradientButton } from 'components/Styled';
 import { ForceBridgeContainer } from 'containers/ForceBridgeContainer';
 
 const AppHeaderWrapper = styled.header`
-  z-index: 1;
+  z-index: 1001;
   position: fixed;
   top: 0;
   left: 0;
@@ -62,14 +62,8 @@ export const AppHeader: React.FC = () => {
         message={
           <div style={{ textAlign: 'center' }}>
             <Typography.Text>
-              Due to the upgrade of Ethereum, Force Bridge has to be out of service for 10 hours respectively. Thanks
-              and please be patient during the maintenance.
-              <Typography.Link
-                href="https://github.com/nervosnetwork/force-bridge/blob/main/docs/asset-migration-guide.md"
-                target="_blank"
-              >
-                Asset Migration Guide
-              </Typography.Link>
+              Due to the upgrade of Force Bridge, Force Bridge has to be out of service for 10 hours respectively.
+              Thanks and please be patient during the maintenance.
             </Typography.Text>
           </div>
         }
